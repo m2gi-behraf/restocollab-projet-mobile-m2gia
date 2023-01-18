@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { HomePage } from './home.page';
 
 import { HomePageRoutingModule } from './home-routing.module';
+import { Topic } from '../models/topic';
+import { Observable } from 'rxjs';
+import { TopicService } from '../services/topic.service';
 
 
 @NgModule({
@@ -16,4 +19,18 @@ import { HomePageRoutingModule } from './home-routing.module';
   ],
   declarations: [HomePage]
 })
-export class HomePageModule {}
+export class HomePageModule {
+
+  constructor(private topicServce: TopicService ){
+
+  }
+
+  ngOnInit(){
+    this.getTopics();
+  }
+
+  getTopics() : Array<Topic>
+  {
+    return this.topicServce.findAll();
+  }
+}
