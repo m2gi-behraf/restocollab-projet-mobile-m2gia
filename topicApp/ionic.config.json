@@ -1,0 +1,7 @@
+{
+  "name": "topicApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
