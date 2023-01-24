@@ -10,7 +10,14 @@ export class TopicService {
 
   constructor() 
   {
-    this._allTopics = new Array(); 
+    this._allTopics = new Array();
+    
+    //Jeu de données
+    const top1 = {id: 1, name:"Topic 1"} as Topic;
+    const top2 = {id: 2, name:"Topic 2"} as Topic;
+    const top3 = {id: 3, name:"Topic 3"} as Topic;
+    
+    this._allTopics.push(top1, top2, top3)
   }
 
   /**
@@ -39,7 +46,18 @@ export class TopicService {
    * Ajoute un topic
    * @param topic Topic à ajouter
    */
-  createTopic(topic: Topic){
+  create(topic: Topic){
     this._allTopics.push(topic);
+  }
+
+  /**
+   * Supprime un topic.
+   * @param topic Topic à supprimer
+   */
+  delete(topic: Topic){
+    let index = this._allTopics.indexOf(topic)
+    if (index != -1){
+      this._allTopics.splice(index, 1)
+    }
   }
 }
