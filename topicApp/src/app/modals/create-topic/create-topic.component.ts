@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Post } from 'src/app/models/post';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
-import { PostService } from 'src/app/services/post.service';
 import { TopicService } from 'src/app/services/topic.service';
 
 @Component({
@@ -13,7 +12,6 @@ import { TopicService } from 'src/app/services/topic.service';
 export class CreateTopicComponent implements OnInit {
   constructor(
     private modalCtrl: ModalController, 
-    private postService : PostService, 
     private topicService: TopicService) { }
 
   topicForm = new FormGroup({
@@ -26,24 +24,23 @@ export class CreateTopicComponent implements OnInit {
   ngOnInit() {}
 
   onSubmit() {
-    this.topicForm.value.name
-    console.warn(this.topicForm.value);
+    //NOTHING
   }
 
   onWillDismiss(event: Event) { }
 
-  cancel() {
+  cancel(): void{
     this.modalCtrl.dismiss(null, 'cancel')
   }
 
-  confirm(){
+  confirm(): boolean{
     if (!this.topicForm.valid) {
-      console.log('Please provide all the required values!')
+      console.log('Veuillez remplir les champs obligatoires')
       return false;
-    } else {
-      const topic = this.topicService.create(this.topicForm.value.name ?? "", this.topicForm.value.posts ?? new Array())
-      this.modalCtrl.dismiss(topic, "confirm");
-      return true;
-    }  
+    }
+    
+    const topic = this.topicService.create(this.topicForm.value.name ?? "", this.topicForm.value.posts ?? new Array())
+    this.modalCtrl.dismiss(topic, "confirm");
+    return true;
   }
 }
