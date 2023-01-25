@@ -11,7 +11,7 @@ import { CreateTopicComponent } from './modals/create-topic/create-topic.compone
 import { CreatePostComponent } from './modals/create-post/create-post.component';
 
 @NgModule({
-  declarations: [AppComponent, CreateTopicComponent],
+  declarations: [AppComponent, CreateTopicComponent, CreatePostComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, ReactiveFormsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
