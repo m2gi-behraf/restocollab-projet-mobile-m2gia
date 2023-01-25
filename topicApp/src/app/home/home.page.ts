@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { CreatePostComponent } from '../modals/create-post/create-post.component';
 import { CreateTopicComponent } from '../modals/create-topic/create-topic.component';
 import { Topic } from '../models/topic';
@@ -14,24 +14,47 @@ export class HomePage {
 
   constructor(private topicService: TopicService, 
     private modalCtrl: ModalController,
-    private toastController: ToastController) {
+    private toastController: ToastController,
+    private alertController: AlertController) {
   }
 
   fetchAllTopics(): Array<Topic> {
     return this.topicService.findAll();
   }
 
+  /**
+   * Demande confirmation et supprime le topic
+   * @param topic Topic à supprimer
+   */
   async deleteTopic(topic: Topic) {
     if (topic != undefined){
-      this.topicService.delete(topic);
-      let toast = await this.toastController.create({
-        message: `Le topic \'${topic.name}'\ a été supprimé !`, 
-        duration: 3000,
-        position: 'bottom',
-        icon: 'checkmark-outline',
-        color: 'success'
+      let alert = await this.alertController.create({
+        message: `Confirmez-vous la suppression de ${topic.name} ?`,
+        header: '⚠️ Attention',
+        buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            cssClass: 'primary',
+            handler: (blah) => {}
+          }, {
+            text: 'Supprimer',
+            cssClass: 'secondary',
+            handler: async (blah) => {
+              this.topicService.delete(topic);
+              let toast = await this.toastController.create({
+                message: `Le topic \'${topic.name}'\ a été supprimé !`, 
+                duration: 3000,
+                position: 'bottom',
+                icon: 'checkmark-outline',
+                color: 'success'
+              });
+              await toast.present()
+            }
+          }
+        ]
       });
-      await toast.present()
+      await alert.present().then();
     }
   }
 
