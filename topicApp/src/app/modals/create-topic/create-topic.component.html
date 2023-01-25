@@ -1,3 +1,28 @@
-<p>
-  create-topic works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">❌</ion-button>
+    </ion-buttons>
+    <ion-title>New Topic</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="confirm()">✅</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="topicForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="stacked">Nom du topic</ion-label>
+      <ion-input type="text" placeholder="Nom du topic" formControlName="name"></ion-input>
+    </ion-item>
+<!--     
+    <ion-list *ngIf="topicForm.value.name">
+      <ion-item>
+        <ion-select placeholder="Sélectionnez les posts du topic" :multiple="true" formControlName="posts">
+          <ion-select-option value="apples">Apples</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list> -->
+  </form>
+</ion-content>
