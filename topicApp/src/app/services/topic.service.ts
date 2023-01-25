@@ -48,7 +48,7 @@ export class TopicService {
    * Ajoute un topic
    * @param topic Topic à ajouter
    */
-  create(name: string, posts: Post[]){
+  create(name: string, posts: Post[]): Topic{
     const topic = {
       id: this.newId(),
       name: name,
@@ -56,6 +56,7 @@ export class TopicService {
     } as Topic
 
     this._allTopics.push(topic);
+    return topic;
   }
 
   /**
