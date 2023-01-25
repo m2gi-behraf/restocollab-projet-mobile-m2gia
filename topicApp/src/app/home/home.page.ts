@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { CreatePostComponent } from '../modals/create-post/create-post.component';
 import { CreateTopicComponent } from '../modals/create-topic/create-topic.component';
 import { Topic } from '../models/topic';
 import { TopicService } from '../services/topic.service';
@@ -32,9 +33,13 @@ export class HomePage {
   /**
    * Ouvre la modal de création de topic, ajoute le topic créé après validation.
    */
+  // async createTopic() {
+  //   const modal = await this.modalCtrl.create({
+  //     component: CreateTopicComponent,
   async createTopic() {
+    //redirect to form
     const modal = await this.modalCtrl.create({
-      component: CreateTopicComponent,
+      component: CreatePostComponent,
     });
     modal.present();
 
