@@ -9,7 +9,7 @@ import { PostService } from './post.service';
 export class TopicService {
 
   private _allTopics: Array<Topic>;
-
+  
   constructor(private postService: PostService) 
   {
     this._allTopics = new Array();
@@ -39,7 +39,7 @@ export class TopicService {
   {
     let filteredArray = this._allTopics.filter(x => x.id == id);
     if (filteredArray != null && filteredArray.length >= 1)
-      return filteredArray[0]
+      return filteredArray[0];
 
     return undefined;
   }
@@ -48,7 +48,13 @@ export class TopicService {
    * Ajoute un topic
    * @param topic Topic à ajouter
    */
-  create(topic: Topic){
+  create(name: string, posts: Post[]){
+    const topic = {
+      id: this.newId(),
+      name: name,
+      posts: posts
+    } as Topic
+
     this._allTopics.push(topic);
   }
 
@@ -65,5 +71,9 @@ export class TopicService {
 
   getAllPosts(topic: Topic): Post[] {
     return this.postService.getAll(topic);
+  }
+
+  newId() : number{
+    return Math.random() * 10000
   }
 }

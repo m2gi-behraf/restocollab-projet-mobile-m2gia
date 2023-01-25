@@ -24,15 +24,21 @@ export class PostService {
     ));
   }
 
-  create(post: Post, topic: Topic) : void{
-    if (topic == undefined || post == undefined)
+  create(name: string, description: string, topic: Topic) : void{
+    if (topic == undefined || name == undefined || description == undefined)
       return;
       
+    const post = {
+      id: this.newId(),
+      name: name,
+      description: description
+    }
+
     if (this._allPosts.has(topic.id)){
       this._allPosts.get(topic.id)?.push(post);
     }
     else{
-      this._allPosts.set(topic.id, new Array(post))
+      this._allPosts.set(topic.id, new Array(post));
     }
   }
 
@@ -51,5 +57,9 @@ export class PostService {
     if (posts?.indexOf(post) ?? -1 >= 0){
       posts?.splice(posts?.indexOf(post), 1);
     }
+  }
+
+  newId() : number{
+    return Math.round(Math.random() * 10000, )
   }
 }
