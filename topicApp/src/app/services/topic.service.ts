@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Post } from '../models/post';
 import { Topic } from '../models/topic';
+import { PostService } from './post.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +10,7 @@ export class TopicService {
 
   private _allTopics: Array<Topic>;
 
-  constructor() 
+  constructor(private postService: PostService) 
   {
     this._allTopics = new Array();
     
@@ -59,5 +61,9 @@ export class TopicService {
     if (index != -1){
       this._allTopics.splice(index, 1)
     }
+  }
+
+  getAllPosts(topic: Topic): Post[] {
+    return this.postService.getAll(topic);
   }
 }
