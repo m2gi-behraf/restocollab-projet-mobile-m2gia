@@ -11,7 +11,7 @@ import { TopicService } from 'src/app/services/topic.service';
 })
 export class CreateTopicComponent implements OnInit {
   constructor(
-    private modalCtrl: ModalController, 
+    private modalCtrl: ModalController,
     private topicService: TopicService) { }
 
   topicForm = new FormGroup({
@@ -21,7 +21,7 @@ export class CreateTopicComponent implements OnInit {
 
   availablePosts: Post[] = new Array()
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   onSubmit() {
     //NOTHING
@@ -29,17 +29,17 @@ export class CreateTopicComponent implements OnInit {
 
   onWillDismiss(event: Event) { }
 
-  cancel(): void{
+  cancel(): void {
     this.modalCtrl.dismiss(null, 'cancel')
   }
 
-  confirm(): boolean{
+  confirm(): boolean {
     if (!this.topicForm.valid) {
       console.log('Veuillez remplir les champs obligatoires')
       return false;
     }
-    
-    const topic = this.topicService.create(this.topicForm.value.name ?? "", this.topicForm.value.posts ?? new Array())
+
+    const topic = this.topicService.create(this.topicForm.value.name ?? "", this.topicForm.value.posts ?? new Array());
     this.modalCtrl.dismiss(topic, "confirm");
     return true;
   }

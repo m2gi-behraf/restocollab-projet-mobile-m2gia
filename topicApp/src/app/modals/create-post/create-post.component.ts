@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController, NavParams, ToastController } from '@ionic/angular';
+import { Topic } from 'src/app/models/topic';
+import { PostService } from 'src/app/services/post.service';
+import { TopicService } from 'src/app/services/topic.service';
 
 @Component({
   selector: 'app-create-post',
@@ -14,9 +17,18 @@ export class CreatePostComponent implements OnInit {
     description: new FormControl('', Validators.required)
   });
 
-  constructor(private modalCtrl: ModalController, private toastController: ToastController) { }
+  public topic = {} as Topic;
 
-  ngOnInit() { }
+  constructor(private modalCtrl: ModalController,
+    private toastController: ToastController,
+    private postService: PostService,
+    private navParams: NavParams,
+    private topicService: TopicService) { }
+
+  ngOnInit() {
+    const id: number = this.navParams.get('id');
+    this.topic = this.topicService.findOneById(id) ?? this.topic;
+  }
 
   cancel() {
     return this.modalCtrl.dismiss(null, 'cancel');
@@ -50,9 +62,7 @@ export class CreatePostComponent implements OnInit {
       return false;
     } else {
       this.successToast('bottom');
-      console.log("Add post creation here.");
-      console.log("name: " + this.postForm.value.name);
-      console.log("description: " + this.postForm.value.description);
+      this.postService.create(this.postForm.value.name ?? "", this.postForm.value.description ?? "", this.topic);
       return this.modalCtrl.dismiss(null, 'cancel');
     }
   }

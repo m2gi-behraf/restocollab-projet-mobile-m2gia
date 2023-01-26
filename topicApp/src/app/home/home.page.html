@@ -16,8 +16,8 @@
   <ion-list>
     <ion-item-sliding *ngFor="let topic of fetchAllTopics()">
 
-      <ion-item href="" disabled="false" (click)="openTopic(topic)">
-        <ion-label>{{topic.name}}</ion-label>
+      <ion-item disabled="false">
+        <ion-label routerLink="/topic-details/{{topic.id}}">{{topic.name}}</ion-label>
       </ion-item>
   
       <ion-item-options side="end">
