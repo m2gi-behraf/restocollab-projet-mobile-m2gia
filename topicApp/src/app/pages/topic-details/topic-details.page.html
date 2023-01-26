@@ -13,11 +13,12 @@
       </ion-item>
   
       <ion-item-options side="end">
-        <ion-item-option color="danger">
+        <ion-item-option color="danger" (click)="deletePost(post)">
           <ion-icon slot="start" name="trash"></ion-icon>
           Supprimer
         </ion-item-option>
       </ion-item-options>
+
     </ion-item-sliding>
   </ion-list>
 

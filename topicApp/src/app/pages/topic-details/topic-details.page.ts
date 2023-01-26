@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { ModalController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { Console } from 'console';
 import { CreatePostComponent } from 'src/app/modals/create-post/create-post.component';
 import { Post } from 'src/app/models/post';
@@ -20,6 +20,7 @@ export class TopicDetailsPage implements OnInit {
     private postService: PostService,
     private modalCtrl: ModalController,
     private toastController: ToastController,
+    private alertController: AlertController
   ) { }
 
   public id: string = "";
@@ -59,6 +60,38 @@ export class TopicDetailsPage implements OnInit {
       });
 
       await toast.present()
+    }
+  }
+
+  async deletePost(post: Post) {
+    if (post != undefined) {
+      let alert = await this.alertController.create({
+        message: `Confirmez-vous la suppression de ${post.name} ?`,
+        header: '⚠️ Attention',
+        buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            cssClass: 'primary',
+            handler: (blah) => { }
+          }, {
+            text: 'Supprimer',
+            cssClass: 'secondary',
+            handler: async (blah) => {
+              this.postService.delete(post, this.topic);
+              let toast = await this.toastController.create({
+                message: `La post \'${post.name}'\ a été supprimé !`,
+                duration: 3000,
+                position: 'bottom',
+                icon: 'checkmark-outline',
+                color: 'success'
+              });
+              await toast.present()
+            }
+          }
+        ]
+      });
+      await alert.present().then();
     }
   }
 }
