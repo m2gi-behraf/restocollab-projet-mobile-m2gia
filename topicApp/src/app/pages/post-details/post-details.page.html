@@ -1,9 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>post-details</ion-title>
+    <ion-title>Post {{this.id}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Post {{this.id}}</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
+  <p>This is Post {{this.id}}.</p>
 </ion-content>

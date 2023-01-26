@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { throws } from 'assert';
+import { Post } from 'src/app/models/post';
+import { PostService } from 'src/app/services/post.service';
 
 @Component({
   selector: 'app-post-details',
@@ -7,9 +11,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PostDetailsPage implements OnInit {
 
-  constructor() { }
+  constructor(private postService: PostService,
+    private route: ActivatedRoute) { }
+
+  public id: string = "";
+  public post = {} as Post;
 
   ngOnInit() {
+    this.id = this.route.snapshot.paramMap.get('id') ?? "whatever";
   }
 
 }
