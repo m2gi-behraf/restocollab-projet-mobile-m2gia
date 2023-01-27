@@ -9,7 +9,7 @@
     <ion-item-sliding *ngFor="let post of fetchAllPosts()">
 
       <ion-item disabled="false">
-        <ion-label>{{post.name}}</ion-label>
+        <ion-label routerLink="/post-details/{{post.id}}">{{post.name}}</ion-label>
       </ion-item>
   
       <ion-item-options side="end">
