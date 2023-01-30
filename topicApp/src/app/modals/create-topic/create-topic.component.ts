@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Post } from 'src/app/models/post';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { TopicService } from 'src/app/services/topic.service';
 
 @Component({
@@ -12,6 +12,7 @@ import { TopicService } from 'src/app/services/topic.service';
 export class CreateTopicComponent implements OnInit {
   constructor(
     private modalCtrl: ModalController,
+    private toastController: ToastController,
     private topicService: TopicService) { }
 
   topicForm = new FormGroup({
@@ -23,9 +24,7 @@ export class CreateTopicComponent implements OnInit {
 
   ngOnInit() { }
 
-  onSubmit() {
-    //NOTHING
-  }
+  onSubmit() { }
 
   onWillDismiss(event: Event) { }
 
@@ -33,14 +32,30 @@ export class CreateTopicComponent implements OnInit {
     this.modalCtrl.dismiss(null, 'cancel')
   }
 
+  /**
+   * Valide la création du topic et ferme la modal
+   * @returns Vrai si les champs nécessaires ont été remplis, faux sinon.
+   */
   confirm(): boolean {
     if (!this.topicForm.valid) {
-      console.log('Veuillez remplir les champs obligatoires')
+      this.errorToast();
       return false;
     }
 
     const topic = this.topicService.create(this.topicForm.value.name ?? "", this.topicForm.value.posts ?? new Array());
     this.modalCtrl.dismiss(topic, "confirm");
     return true;
+  }
+
+  /**
+   * Affiche un toast d'erreur
+   */
+  async errorToast() {
+    const toast = await this.toastController.create({
+      message: 'Veuillez remplir les champs obligatoires',
+      duration: 1500,
+      position: 'bottom'
+    });
+    await toast.present();
   }
 }
