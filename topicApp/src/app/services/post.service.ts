@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Post } from '../models/post';
-import { Topic } from '../models/topic';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +30,8 @@ export class PostService {
    * @param topic Topic parent contenant le post à créer
    * @returns 
    */
-  create(name: string, description: string, topic: Topic) : void{
-    if (topic == undefined || name == undefined || description == undefined)
+  create(name: string, description: string, topicId: number) : void{
+    if (name == undefined || description == undefined)
       return;
       
     const post = {
@@ -41,11 +40,11 @@ export class PostService {
       description: description
     }
 
-    if (this._allPosts.has(topic.id)){
-      this._allPosts.get(topic.id)?.push(post);
+    if (this._allPosts.has(topicId)){
+      this._allPosts.get(topicId)?.push(post);
     }
     else{
-      this._allPosts.set(topic.id, new Array(post));
+      this._allPosts.set(topicId, new Array(post));
     }
   }
 
@@ -54,12 +53,12 @@ export class PostService {
    * @param topic Topic dont on veut les posts
    * @returns Tableau de Post
    */
-  getAll(topic: Topic): Array<Post>
+  getAll(topicId: number): Array<Post>
   {
-    if (topic == undefined || !this._allPosts.has(topic.id)) 
+    if (!this._allPosts.has(topicId)) 
       return new Array();
 
-    return this._allPosts.get(topic.id) ?? new Array();
+    return this._allPosts.get(topicId) ?? new Array();
   }
 
   /**
@@ -67,9 +66,9 @@ export class PostService {
    * @param post Post à supprimer
    * @param topic Topic contenant le post
    */
-  delete(post: Post, topic: Topic): void{
-    if (topic == undefined || !this._allPosts.has(topic.id)) return;
-    let posts = this._allPosts.get(topic.id);
+  delete(post: Post, topicId: number): void{
+    if (!this._allPosts.has(topicId)) return;
+    let posts = this._allPosts.get(topicId);
     
     if (posts != undefined && posts.indexOf(post) >= 0){
       posts?.splice(posts?.indexOf(post), 1);
@@ -80,9 +79,9 @@ export class PostService {
    * Supprime tous les posts d'un topic
    * @param topic Topic contenant les posts à supprimer
    */
-  deleteAll(topic: Topic): void{
-    if (topic == undefined || !this._allPosts.has(topic.id)) return;
-    this._allPosts.delete(topic.id);
+  deleteAll(topicId: number): void{
+    if (!this._allPosts.has(topicId)) return;
+    this._allPosts.delete(topicId);
   }
 
    /**

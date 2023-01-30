@@ -66,7 +66,7 @@ export class TopicService {
   delete(topic: Topic){
     let index = this._allTopics.indexOf(topic)
     if (index != -1){
-      this.postService.deleteAll(topic);
+      this.postService.deleteAll(topic.id);
       this._allTopics.splice(index, 1)
     }
   }
@@ -77,7 +77,7 @@ export class TopicService {
    * @returns un tableau de Post
    */
   getAllPosts(topic: Topic): Post[] {
-    return this.postService.getAll(topic);
+    return this.postService.getAll(topic.id);
   }
 
   /**

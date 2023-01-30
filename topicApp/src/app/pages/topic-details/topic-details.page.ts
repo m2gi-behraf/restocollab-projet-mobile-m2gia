@@ -30,12 +30,12 @@ export class TopicDetailsPage implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') ?? "whatever";
     this.topic = this.topicService.findOneById(Number(this.id)) ?? this.topic;
-    this.posts = this.postService.getAll(this.topic);
+    this.posts = this.postService.getAll(this.topic.id);
     console.log(this.posts);
   }
 
   fetchAllPosts(): Post[] {
-    return this.postService.getAll(this.topic);
+    return this.postService.getAll(this.topic.id);
   }
 
   async createPost() {
@@ -78,7 +78,7 @@ export class TopicDetailsPage implements OnInit {
             text: 'Supprimer',
             cssClass: 'secondary',
             handler: async (blah) => {
-              this.postService.delete(post, this.topic);
+              this.postService.delete(post, this.topic.id);
               let toast = await this.toastController.create({
                 message: `La post \'${post.name}'\ a été supprimé !`,
                 duration: 3000,

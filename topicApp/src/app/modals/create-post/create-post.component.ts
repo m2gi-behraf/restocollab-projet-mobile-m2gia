@@ -62,7 +62,7 @@ export class CreatePostComponent implements OnInit {
       return false;
     } else {
       this.successToast('bottom');
-      this.postService.create(this.postForm.value.name ?? "", this.postForm.value.description ?? "", this.topic);
+      this.postService.create(this.postForm.value.name ?? "", this.postForm.value.description ?? "", this.topic.id);
       return this.modalCtrl.dismiss(null, 'cancel');
     }
   }
