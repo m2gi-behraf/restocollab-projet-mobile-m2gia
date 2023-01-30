@@ -70,11 +70,20 @@ export class TopicService {
     }
   }
 
+  /**
+   * Récupère tous les posts d'un topic
+   * @param topic Topic contenant les posts souhaités
+   * @returns un tableau de Post
+   */
   getAllPosts(topic: Topic): Post[] {
     return this.postService.getAll(topic);
   }
 
+  /**
+   * Génère un nouvel Id
+   * @returns Nouvel Id, nombre compris entre 1 et 10000
+   */
   newId() : number{
-    return Math.random() * 10000
+    return Math.floor(Math.random() * 10000)
   }
 }

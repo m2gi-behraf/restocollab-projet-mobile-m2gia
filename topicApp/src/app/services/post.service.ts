@@ -24,6 +24,13 @@ export class PostService {
     ));
   }
 
+  /**
+   * Créer un post et l'ajoute dans la liste
+   * @param name Nom du post
+   * @param description Description du post
+   * @param topic Topic parent contenant le post à créer
+   * @returns 
+   */
   create(name: string, description: string, topic: Topic) : void{
     if (topic == undefined || name == undefined || description == undefined)
       return;
@@ -42,6 +49,11 @@ export class PostService {
     }
   }
 
+  /**
+   * Récupère tous les post d'un topic
+   * @param topic Topic dont on veut les posts
+   * @returns Tableau de Post
+   */
   getAll(topic: Topic): Array<Post>
   {
     if (topic == undefined || !this._allPosts.has(topic.id)) 
@@ -50,6 +62,11 @@ export class PostService {
     return this._allPosts.get(topic.id) ?? new Array();
   }
 
+  /**
+   * Supprime le post
+   * @param post Post à supprimer
+   * @param topic Topic contenant le post
+   */
   delete(post: Post, topic: Topic): void{
     if (topic == undefined || !this._allPosts.has(topic.id)) return;
     let posts = this._allPosts.get(topic.id);
@@ -59,7 +76,11 @@ export class PostService {
     }
   }
 
+   /**
+   * Génère un nouvel Id
+   * @returns Nouvel Id, nombre compris entre 1 et 10000
+   */
   newId() : number{
-    return Math.round(Math.random() * 10000, )
+    return Math.floor(Math.random() * 10000, )
   }
 }
