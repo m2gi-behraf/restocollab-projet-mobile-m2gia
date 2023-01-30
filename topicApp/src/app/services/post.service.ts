@@ -76,6 +76,15 @@ export class PostService {
     }
   }
 
+  /**
+   * Supprime tous les posts d'un topic
+   * @param topic Topic contenant les posts à supprimer
+   */
+  deleteAll(topic: Topic): void{
+    if (topic == undefined || !this._allPosts.has(topic.id)) return;
+    this._allPosts.delete(topic.id);
+  }
+
    /**
    * Génère un nouvel Id
    * @returns Nouvel Id, nombre compris entre 1 et 10000
