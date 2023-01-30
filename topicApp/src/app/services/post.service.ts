@@ -70,8 +70,8 @@ export class PostService {
   delete(post: Post, topic: Topic): void{
     if (topic == undefined || !this._allPosts.has(topic.id)) return;
     let posts = this._allPosts.get(topic.id);
-
-    if (posts?.indexOf(post) ?? -1 >= 0){
+    
+    if (posts != undefined && posts.indexOf(post) >= 0){
       posts?.splice(posts?.indexOf(post), 1);
     }
   }
