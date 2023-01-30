@@ -12,15 +12,29 @@ export class PostService {
     this._allPosts = new Map();
     
     this._allPosts.set(1, new Array(
-      {id: 1, name:"Post 1", description:"Ceci est le post 1"} as Post,
-      {id: 2, name:"Post 2", description:"Ceci est le post 2"} as Post,
-      {id: 3, name:"Post 3", description:"Ceci est le post 3"} as Post,
+      {id: 1, topicId: 1, name:"Post 1", description:"Ceci est le post 1"} as Post,
+      {id: 2, topicId: 1, name:"Post 2", description:"Ceci est le post 2"} as Post,
+      {id: 3, topicId: 1, name:"Post 3", description:"Ceci est le post 3"} as Post,
     ));
     
     this._allPosts.set(2, new Array(
-      {id: 4, name:"Post 4", description:"Ceci est le post 4"} as Post,
-      {id: 5, name:"Post 5", description:"Ceci est le post 5"} as Post,
+      {id: 4, topicId: 2, name:"Post 4", description:"Ceci est le post 4"} as Post,
+      {id: 5, topicId: 2, name:"Post 5", description:"Ceci est le post 5"} as Post,
     ));
+  }
+
+  edit(post: Post, name: string, description: string) : Post{
+    if (post != undefined && !this._allPosts.has(post.topicId)) return {} as Post;
+    post.description = description;
+    post.name = name;
+
+    let posts = this._allPosts.get(post.topicId) ?? new Array();
+    let index = posts?.indexOf(post) ?? -1;
+
+    posts[index] = post;
+    this._allPosts.set(post.topicId, posts);
+
+    return post;
   }
 
   /**
@@ -36,6 +50,7 @@ export class PostService {
       
     const post = {
       id: this.newId(),
+      topicId: topicId,
       name: name,
       description: description
     }
@@ -59,6 +74,24 @@ export class PostService {
       return new Array();
 
     return this._allPosts.get(topicId) ?? new Array();
+  }
+
+  /**
+   * Retourne le post demandé
+   * @param postId Id du post
+   */ 
+  get(postId: number): Post | undefined{
+
+    console.log("postId : " + postId)
+    let postToReturn: Post | undefined = undefined
+    this._allPosts.forEach((posts) => {
+      posts.forEach((post) => {
+        if (post.id == postId && !postToReturn)
+          postToReturn = post;
+      })
+    });
+
+    return postToReturn;
   }
 
   /**

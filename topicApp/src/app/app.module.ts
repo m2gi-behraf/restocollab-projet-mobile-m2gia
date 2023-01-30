@@ -9,6 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CreateTopicComponent } from './modals/create-topic/create-topic.component';
 import { CreatePostComponent } from './modals/create-post/create-post.component';
+import { EditPostComponent } from './modals/edit-post/edit-post.component';
 
 @NgModule({
   declarations: [AppComponent, CreateTopicComponent, CreatePostComponent],

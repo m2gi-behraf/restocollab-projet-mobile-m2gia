@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AlertController, ModalController, ToastController } from '@ionic/angular';
-import { CreatePostComponent } from '../modals/create-post/create-post.component';
 import { CreateTopicComponent } from '../modals/create-topic/create-topic.component';
 import { Topic } from '../models/topic';
 import { TopicService } from '../services/topic.service';
@@ -58,19 +57,12 @@ export class HomePage {
     }
   }
 
-  openTopic(topic: Topic) {
-    if (topic != undefined) {
-      //redirect to detail page
-    }
-  }
-
   /**
    * Ouvre la modal de création de topic, ajoute le topic créé après validation.
    */
   async createTopic() {
     const modal = await this.modalCtrl.create({
-      component: CreateTopicComponent,
-      //component: CreatePostComponent,
+      component: CreateTopicComponent
     });
     modal.present();
 

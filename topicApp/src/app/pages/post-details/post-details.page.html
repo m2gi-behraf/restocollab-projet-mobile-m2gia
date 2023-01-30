@@ -1,15 +1,22 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Post {{this.id}}</ion-title>
+    <ion-title>{{this.post.name}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Post {{this.id}}</ion-title>
+      <ion-title size="large">{{this.post.name}}</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <p>This is Post {{this.id}}.</p>
+  <p>Name: {{this.post.name}}.</p>
+  <p>Description : {{this.post.description}}</p>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" (click)="editPost()">
+    <ion-fab-button>
+      <ion-icon name="create-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
