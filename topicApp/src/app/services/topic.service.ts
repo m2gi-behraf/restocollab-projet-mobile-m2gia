@@ -34,11 +34,12 @@ export class TopicService {
   /**
    * Retourne le topic correspondant à l'id
    * @param id Identifiant du topic à trouver
+  * @returns Topic / undefined
    */
-  findOneById(id: number): Topic | undefined
+  findOneById(id: number): Topic | undefined
   {
     let filteredArray = this._allTopics.filter(x => x.id == id);
-    if (filteredArray != null && filteredArray.length >= 1)
+    if (filteredArray.length >= 1)
       return filteredArray[0];
 
     return undefined;
@@ -69,6 +70,14 @@ export class TopicService {
       this.postService.deleteAll(topic.id);
       this._allTopics.splice(index, 1)
     }
+  }
+
+  edit(topic: Topic, name: string): Topic | undefined {
+    let oldTopic = this._allTopics.find(x => x.id == topic.id);
+    if (oldTopic != undefined)
+      oldTopic.name = name;
+
+    return oldTopic;
   }
 
   /**
