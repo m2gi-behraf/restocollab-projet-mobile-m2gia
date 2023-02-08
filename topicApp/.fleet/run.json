@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "type": "command",
+      "name": "Launch server",
+      "program": "ionic serve",
+    },
+    
+  ]
+}

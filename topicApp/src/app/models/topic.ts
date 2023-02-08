@@ -1,7 +1,7 @@
-import { Post } from "./post";
+import { Post } from './post';
 
 export interface Topic {
-   id: number;
-   name: string;
-   posts: Array<Post>
+    id: string;
+    name: string;
+    posts: Post[];
 }

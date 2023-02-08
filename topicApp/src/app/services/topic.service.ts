@@ -1,90 +1,88 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, EMPTY, map, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { Post } from '../models/post';
 import { Topic } from '../models/topic';
-import { PostService } from './post.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TopicService {
 
-  private _allTopics: Array<Topic>;
-  
-  constructor(private postService: PostService) 
-  {
-    this._allTopics = new Array();
-    
-    //Jeu de données
-    const top1 = {id: 1, name:"Topic 1"} as Topic;
-    const top2 = {id: 2, name:"Topic 2"} as Topic;
-    const top3 = {id: 3, name:"Topic 3"} as Topic;
-    
-    this._allTopics.push(top1, top2, top3)
+  public topics$: BehaviorSubject<Topic[]> = new BehaviorSubject([
+    {id: '123', name: 'test', posts: []}, 
+    {id: '465', name: 'test2', posts: []}
+  ] as Topic[]);
+
+  constructor() { }
+
+  /**
+   * Method that returns all the topics
+   *
+   * @return An array of {Topic}
+   */
+  findAll(): Observable<Topic[]> {
+    return this.topics$.asObservable();
   }
 
   /**
-   * Récupère tous les topics
-   * @returns Tous les topics
+   * Method that returns the topic which match the given id
+   *
+   * @param id {string} the given id
+   * @return A {Topic}
    */
-  findAll(): Array<Topic>
-  {
-    return this._allTopics;
+  findOne(id: string): Observable<Topic | null> {
+    return this.findAll().pipe(
+      map(topics => topics.find(t => t.id === id) ?? null)
+    );
   }
 
   /**
-   * Retourne le topic correspondant à l'id
-   * @param id Identifiant du topic à trouver
+   * Add a new {Topic} to the list
+   *
+   * @param topic {Topic}, the {Topic} to add to the list
    */
-  findOneById(id: number): Topic | undefined
-  {
-    let filteredArray = this._allTopics.filter(x => x.id == id);
-    if (filteredArray != null && filteredArray.length >= 1)
-      return filteredArray[0];
-
-    return undefined;
+  create(topic: Topic): void {
+    this.topics$.next(this.topics$.value.concat(topic));
   }
 
   /**
-   * Ajoute un topic
-   * @param topic Topic à ajouter
+   * Remove a {Topic} from the list
+   *
+   * @param topic {Topic}, the {Topic} to remove from the list
    */
-  create(name: string, posts: Post[]): Topic{
-    const topic = {
-      id: this.newId(),
-      name: name,
-      posts: posts
-    } as Topic
-
-    this._allTopics.push(topic);
-    return topic;
+  delete(topic: Topic): void {
+    this.topics$.next(this.topics$.value.filter(t => t.id !== topic.id));
   }
 
   /**
-   * Supprime un topic.
-   * @param topic Topic à supprimer
+   * Add a new {Post} to the list of {Post} of the {Topic} that match the given topicId
+   *
+   * @param topicId {string}, the id of the {Topic} we want to add the new {Post}
+   * @param post {Post}, the new {Post} to add
    */
-  delete(topic: Topic){
-    let index = this._allTopics.indexOf(topic)
-    if (index != -1){
-      this.postService.deleteAll(topic.id);
-      this._allTopics.splice(index, 1)
+  createPost(topicId: string, post: Post): void {
+    const allValues = this.topics$.value;
+    const topicIndex = allValues.findIndex(t => t.id === topicId);
+
+    if(topicIndex > -1) {
+      allValues[topicIndex].posts = allValues[topicIndex]?.posts.concat(post);
+      this.topics$.next(allValues);
     }
   }
 
   /**
-   * Récupère tous les posts d'un topic
-   * @param topic Topic contenant les posts souhaités
-   * @returns un tableau de Post
+   * Remove a {Post} from the list of {Post} of the {Topic} that match the given topicId
+   *
+   * @param topicId {string}, the id of the {Topic} we want to remove the {Post}
+   * @param post {Post}, the {Post} to remove
    */
-  getAllPosts(topic: Topic): Post[] {
-    return this.postService.getAll(topic.id);
-  }
+  deletePost(topicId: string, post: Post): void {
+    const allValues = this.topics$.value;
+    const topicIndex = this.topics$.value.findIndex(t => t.id === topicId);
 
-  /**
-   * Génère un nouvel Id
-   * @returns Nouvel Id, nombre compris entre 1 et 10000
-   */
-  newId() : number{
-    return Math.floor(Math.random() * 10000)
+    if(topicIndex > -1){
+      allValues[topicIndex].posts = allValues[topicIndex]?.posts.filter(p => p.id !== post.id);
+      this.topics$.next(allValues);
+    }
   }
 }
