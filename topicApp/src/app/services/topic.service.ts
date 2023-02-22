@@ -1,20 +1,27 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, map, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { Post } from '../models/post';
 import { Topic } from '../models/topic';
+import { Firestore, collection, collectionData, DocumentData } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TopicService {
 
+  private firestore = inject(Firestore)
+
   public topics$: BehaviorSubject<Topic[]> = new BehaviorSubject([
-    {id: '123', name: 'test', posts: []}, 
-    {id: '465', name: 'test2', posts: []}
+    { id: '123', name: 'test', posts: [] },
+    { id: '465', name: 'test2', posts: [] }
   ] as Topic[]);
 
   constructor() { }
 
+  getAll(): Observable<DocumentData[]> {
+    const collectionRef = collection(this.firestore, `topics`);
+    return collectionData(collectionRef, { idField: 'id' })
+  }
   /**
    * Method that returns all the topics
    *
@@ -64,7 +71,7 @@ export class TopicService {
     const allValues = this.topics$.value;
     const topicIndex = allValues.findIndex(t => t.id === topicId);
 
-    if(topicIndex > -1) {
+    if (topicIndex > -1) {
       allValues[topicIndex].posts = allValues[topicIndex]?.posts.concat(post);
       this.topics$.next(allValues);
     }
@@ -80,7 +87,7 @@ export class TopicService {
     const allValues = this.topics$.value;
     const topicIndex = this.topics$.value.findIndex(t => t.id === topicId);
 
-    if(topicIndex > -1){
+    if (topicIndex > -1) {
       allValues[topicIndex].posts = allValues[topicIndex]?.posts.filter(p => p.id !== post.id);
       this.topics$.next(allValues);
     }
