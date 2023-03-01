@@ -1,27 +1,31 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY, map, Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, EMPTY, map, Observable, of, ReplaySubject, Subject, switchMap } from 'rxjs';
 import { Post } from '../models/post';
 import { Topic } from '../models/topic';
+import { Firestore, collection, collectionData, DocumentData, doc, addDoc, deleteDoc, docData, DocumentReference, CollectionReference } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TopicService {
 
-  public topics$: BehaviorSubject<Topic[]> = new BehaviorSubject([
-    {id: '123', name: 'test', posts: []}, 
-    {id: '465', name: 'test2', posts: []}
-  ] as Topic[]);
+  private firestore = inject(Firestore)
+
+  public topics$: BehaviorSubject<Topic[]> = new BehaviorSubject([] as Topic[]);
 
   constructor() { }
 
+  getAll(): Observable<Topic[]> {
+    const collectionRef = collection(this.firestore, `topics`);
+    return collectionData<any>(collectionRef, { idField: 'id' })
+  }
   /**
    * Method that returns all the topics
    *
    * @return An array of {Topic}
    */
   findAll(): Observable<Topic[]> {
-    return this.topics$.asObservable();
+    return this.getAll()
   }
 
   /**
@@ -31,8 +35,14 @@ export class TopicService {
    * @return A {Topic}
    */
   findOne(id: string): Observable<Topic | null> {
-    return this.findAll().pipe(
-      map(topics => topics.find(t => t.id === id) ?? null)
+    const documentRef = doc(this.firestore, `topics/${id}`) as DocumentReference<Topic>;
+    const collectionRef = collection(this.firestore, `topics/${id}/posts`) as CollectionReference<Post>;
+    return docData<Topic>(documentRef, {idField: 'id'}).pipe(
+      switchMap(topic => collectionData(collectionRef, {idField: 'id'}).pipe(
+        map(posts => ({
+          ...topic, posts
+        }))
+      ))
     );
   }
 
@@ -42,7 +52,8 @@ export class TopicService {
    * @param topic {Topic}, the {Topic} to add to the list
    */
   create(topic: Topic): void {
-    this.topics$.next(this.topics$.value.concat(topic));
+    const collectionRef = collection(this.firestore, `topics`);
+    addDoc(collectionRef, { name: topic.name })
   }
 
   /**
@@ -51,7 +62,8 @@ export class TopicService {
    * @param topic {Topic}, the {Topic} to remove from the list
    */
   delete(topic: Topic): void {
-    this.topics$.next(this.topics$.value.filter(t => t.id !== topic.id));
+    const documentRef = doc(this.firestore, `topics/${topic.id}`) as DocumentReference<Topic>
+    deleteDoc(documentRef)
   }
 
   /**
@@ -61,13 +73,14 @@ export class TopicService {
    * @param post {Post}, the new {Post} to add
    */
   createPost(topicId: string, post: Post): void {
-    const allValues = this.topics$.value;
-    const topicIndex = allValues.findIndex(t => t.id === topicId);
+    const collectionRef = doc(this.firestore, `topics/${topicId}/posts`)
+    //addDoc(collectionRef, { name: post.name, description: post.description})
 
-    if(topicIndex > -1) {
-      allValues[topicIndex].posts = allValues[topicIndex]?.posts.concat(post);
-      this.topics$.next(allValues);
-    }
+  }
+
+  getAllPosts(topicId: string): Observable<Post[] | null> {
+    const collectionRef = collection(this.firestore, `topics/${topicId}/posts`);
+    return collectionData<any>(collectionRef, { idField: 'id' }) 
   }
 
   /**
@@ -80,7 +93,7 @@ export class TopicService {
     const allValues = this.topics$.value;
     const topicIndex = this.topics$.value.findIndex(t => t.id === topicId);
 
-    if(topicIndex > -1){
+    if (topicIndex > -1) {
       allValues[topicIndex].posts = allValues[topicIndex]?.posts.filter(p => p.id !== post.id);
       this.topics$.next(allValues);
     }

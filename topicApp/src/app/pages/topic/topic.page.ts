@@ -86,14 +86,14 @@ export class TopicPage implements OnInit {
    * Fetch all the topic during the ngOnInit hook
    */
   ngOnInit(): void {
-
+    this.topicService.getAll().subscribe(res => console.log('getAll', res))
     //topics
-    this.topics$ = this.topicService.findAll().pipe(
-      switchMap(() => this.searchText$, (topics, filter) => topics.filter(t => t.name.includes(filter))
-    ));
+     this.topics$ = this.topicService.findAll().pipe(
+       switchMap(() => this.searchText$, (topics, filter) => topics.filter(t => t.name.includes(filter))
+     ));
   }
 
-  search(value: any){
+  search(value: any) {
     this.searchText$.next(value)
   }
 

@@ -75,14 +75,17 @@ export class TopicDetailsPage implements OnInit, OnDestroy {
    * Fetch all the current topic according to the topicId during the ngOnInit hook
    */
   ngOnInit(): void {
-    const topicId = this.route.snapshot.params['topicOd'];
+    const topicId = this.route.snapshot.params['topicId'];
     this.topicService.findOne(topicId as string)
       .pipe(
         takeUntil(this.destroy$)
       )
-      .subscribe(
-        topic => this.topic = topic
-      )
+      .subscribe((topic) => {
+        this.topic = topic
+        console.log(this.topicService.getAllPosts(topic?.id ?? ""))
+      })
+    
+      
   }
 
   /**
