@@ -1,0 +1,17 @@
+export enum CountryCuisine {
+  LEBANESE,
+  FRENCH,
+  GERMAN,
+  JAPANESE,
+  AMERICAN,
+  ITALIAN,
+  GREEK,
+  MOROCCAN,
+  ALGERIAN,
+  INDIAN,
+  NEPALESE,
+  MEXICAN,
+  CHINESE,
+  THAI,
+  SPANISH,
+}
