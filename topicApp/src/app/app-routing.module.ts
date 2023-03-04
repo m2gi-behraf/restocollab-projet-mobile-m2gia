@@ -15,6 +15,10 @@ export const routes: Routes = [
     path: 'topic/:topicId',
     loadComponent: () => import('./pages/topic-details/topic-details.page').then( m => m.TopicDetailsPage)
   },
+  {
+    path: 'login',
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+  },
 ];
 
 @NgModule({

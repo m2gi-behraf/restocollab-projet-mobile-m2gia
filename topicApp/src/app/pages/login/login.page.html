@@ -1,0 +1,51 @@
+<ion-content>
+  <div class="center-within-page">
+  <ion-card>
+  <ion-card-header>
+    <ion-card-title>🍽 Resto'collab</ion-card-title>
+  <ion-card-subtitle>
+    Where passion for food meets collaboration!
+  </ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    <div class="wrapform">
+      <ion-item>
+        <ion-icon name="mail-outline"></ion-icon>
+        <!-- Todo: Bind with Firebase/Auth !-->
+        <ion-input type="text" name="email" required="true" placeholder="Email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="lock-closed-outline"></ion-icon>
+        <!-- Todo: Bind with Firebase/Auth !-->
+        <ion-input type="password" name="password" required="true" placeholder="Password"></ion-input>
+      </ion-item>
+    </div>
+
+    <div class="forgot-password">
+      <ion-button fill="clear" class="ion-no-padding">Forgot password?</ion-button>
+    </div>
+    <div class="buttons">
+      <ion-button fill="solid" shape="round" class="login-button">Login</ion-button>
+      <div class="text-tag">
+      <span>
+        Don't have an account?
+      </span>
+      </div>
+      <ion-button fill="outline" shape="round" class="signup-button">Signup</ion-button>
+    </div>
+
+    <div class="text-tag">
+      <span>
+        or Authenticate via Social Media
+      </span>
+    </div>
+
+    <div class="social-buttons">
+      <ion-button fill="clear" class="login-button ion-no-padding"><ion-img src="assets/images/icon-facebook.png"></ion-img></ion-button>
+      <ion-button fill="clear" class="login-button ion-no-padding"><ion-img src="assets/images/icon-google.png"></ion-img></ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>
+  </div>
+</ion-content>
