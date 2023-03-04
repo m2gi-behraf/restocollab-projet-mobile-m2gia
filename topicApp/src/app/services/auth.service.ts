@@ -20,6 +20,13 @@ export class AuthService {
   }
 
   /**
+   * Indicate if the current User is logged in and if it's email is verified
+   */
+  get isLoggedIn(): boolean {
+    return this.user !== null && this.user.emailVerified
+  }
+
+  /**
    * Sign in an existent user with email and password
    * @param email User's email
    * @param password User's password
