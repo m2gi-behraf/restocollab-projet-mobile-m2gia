@@ -3,6 +3,7 @@ import {RestaurantCategories} from "./Enums/RestaurantCategories";
 import {CountryCuisine} from "./Enums/CountryCuisine";
 
 export interface Restaurant {
+  id: string;
   title: string;
   description: string;
   categories: RestaurantCategories[]
