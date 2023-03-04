@@ -4,16 +4,16 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'test-page',
+    redirectTo: 'topic',
     pathMatch: 'full'
   },
   {
-    path: 'test-page',
-    loadChildren: () => import('./pages/test-page/test-page.module').then( m => m.TestPagePageModule)
+    path: 'topic',
+    loadComponent: () => import('./pages/topic/topic.page').then( m => m.TopicPage)
   },
   {
-    path: 'test2-page',
-    loadChildren: () => import('./pages/test2-page/test2-page.module').then( m => m.Test2PagePageModule)
+    path: 'topic/:topicId',
+    loadComponent: () => import('./pages/topic-details/topic-details.page').then( m => m.TopicDetailsPage)
   },
 ];
 
