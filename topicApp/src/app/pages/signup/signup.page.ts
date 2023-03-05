@@ -33,7 +33,7 @@ export class SignupPage implements OnInit {
       confirmPassword: ['', Validators.compose([Validators.required])],
     }, {
       validators: [
-        this.Match('password', 'confirmPassword'),
+        this.match('password', 'confirmPassword'),
         ]}
     );
   }
@@ -68,7 +68,7 @@ export class SignupPage implements OnInit {
     }
   }
 
-  private Match(controlName: string, matchControlName: string): ValidatorFn {
+  private match(controlName: string, matchControlName: string): ValidatorFn {
     return (controls: AbstractControl) => {
       const control = controls.get(controlName);
       const matchControl = controls.get(matchControlName);
