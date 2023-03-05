@@ -8,6 +8,7 @@ import {
   ValidatorFn,
   Validators
 } from "@angular/forms";
+import {NavController} from "@ionic/angular";
 
 @Component({
   selector: 'app-signup',
@@ -18,7 +19,7 @@ export class SignupPage implements OnInit {
   signupForm!: FormGroup;
   isSubmitted = false;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder, public navigationControl: NavController) { }
 
   ngOnInit() {
 
@@ -70,6 +71,8 @@ export class SignupPage implements OnInit {
     };
   }
 
-
+  goLogin() {
+    this.navigationControl.navigateForward('login');
+  }
 }
 
