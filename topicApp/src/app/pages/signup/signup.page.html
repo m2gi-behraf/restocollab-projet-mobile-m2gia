@@ -1,0 +1,57 @@
+<ion-content>
+  <div class="center-within-page">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>📃 Sign Up</ion-card-title>
+        <ion-card-subtitle>
+          Millions of other people out there can't wait to see what your favourite restaurants are!
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="wrapform">
+          <ion-item>
+            <ion-icon name="person-circle-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input type="text" name="firstname" required="true" placeholder="First Name"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="person-circle-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input type="text" name="lastname" required="true" placeholder="Last Name"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="calendar-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input type="date" name="birthday" required="true" placeholder="Birthday"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="mail-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input type="text" name="email" required="true" placeholder="Email"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input type="password" name="password" required="true" placeholder="Password"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input type="password" name="password_confirmation" required="true" placeholder="Password confirmation"></ion-input>
+          </ion-item>
+        </div>
+
+        <div class="buttons">
+          <ion-button fill="outline" shape="round" class="signup-button">Signup</ion-button>
+          <div class="text-tag">
+      <span>
+        Already have an account?
+      </span>
+          </div>
+          <ion-button fill="solid" shape="round" class="login-button">Login</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
