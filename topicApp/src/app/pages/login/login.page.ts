@@ -1,6 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, FormControl, Form} from "@angular/forms";
-import {ToastController} from "@ionic/angular";
+import {ToastController, NavController} from "@ionic/angular";
+import {SignupPage} from "../signup/signup.page";
 
 @Component({
   selector: 'app-login',
@@ -11,9 +12,8 @@ export class LoginPage implements OnInit {
 
   loginForm!: FormGroup;
   isSubmitted = false;
-
   private toastController = inject(ToastController);
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(private formBuilder: FormBuilder, public navigationControl: NavController) {}
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -49,5 +49,9 @@ export class LoginPage implements OnInit {
       console.log(this.loginForm.value);
       return true;
     }
+  }
+
+  goSignUp() {
+    this.navigationControl.navigateForward('signup');
   }
 }
