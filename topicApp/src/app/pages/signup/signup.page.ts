@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,7 +8,7 @@ import {
   ValidatorFn,
   Validators
 } from "@angular/forms";
-import {NavController} from "@ionic/angular";
+import {NavController, ToastController} from "@ionic/angular";
 
 @Component({
   selector: 'app-signup',
@@ -17,6 +17,7 @@ import {NavController} from "@ionic/angular";
 })
 export class SignupPage implements OnInit {
   signupForm!: FormGroup;
+  private toastController = inject(ToastController);
   isSubmitted = false;
 
   constructor(private formBuilder: FormBuilder, public navigationControl: NavController) { }
@@ -41,12 +42,26 @@ export class SignupPage implements OnInit {
     return this.signupForm.controls;
   }
 
-  signup() {
+  async signup() {
     this.isSubmitted = true;
     if (!this.signupForm.valid) {
+      const toast = await this.toastController.create({
+        message: "Please make sure you provided all required values correctly.",
+        duration: 1500,
+        position: "bottom",
+        color: 'danger'
+      });
+      await toast.present();
       console.log('Please provide all the required values!')
       return false;
     } else {
+      const toast = await this.toastController.create({
+        message: "Signup successful.",
+        duration: 1500,
+        position: "bottom",
+        color: 'success'
+      });
+      await toast.present();
       console.log(this.signupForm.value);
       return true;
 
