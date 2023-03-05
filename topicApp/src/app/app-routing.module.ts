@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'topic',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
@@ -14,6 +14,14 @@ export const routes: Routes = [
   {
     path: 'topic/:topicId',
     loadComponent: () => import('./pages/topic-details/topic-details.page').then( m => m.TopicDetailsPage)
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'signup',
+    loadChildren: () => import('./pages/signup/signup.module').then( m => m.SignupPageModule)
   },
 ];
 
