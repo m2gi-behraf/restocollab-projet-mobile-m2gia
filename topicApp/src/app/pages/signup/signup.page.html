@@ -9,7 +9,7 @@
       </ion-card-header>
 
       <ion-card-content>
-        <form class="wrapform" [formGroup]="signupForm" (ngSubmit)="signup()" novalidate>
+        <form class="wrapform" [formGroup]="signupForm" (ngSubmit)="submitForm()" novalidate>
           <ion-item>
             <ion-icon name="person-circle-outline"></ion-icon>
             <!-- Todo: Bind with Firebase/Auth !-->
@@ -97,7 +97,7 @@
       </span>
           </ion-text>
           <div class="buttons">
-            <ion-button fill="outline" shape="round" class="signup-button" type="submit">Signup</ion-button>
+            <ion-button fill="outline" shape="round" class="signup-button" type="submit" >Signup</ion-button>
             <div class="text-tag">
       <span>
         Already have an account?

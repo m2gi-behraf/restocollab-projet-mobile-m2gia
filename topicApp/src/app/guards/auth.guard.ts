@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if (!this.authService.isLoggedIn){
-      this.navController.navigateRoot(['sign-in'])
+      this.navController.navigateRoot(['login'])
         .then((hasNavigated) => {
           console.log("Redirection to sign in page. -> ", hasNavigated)
         })

@@ -9,6 +9,7 @@ import {
   Validators
 } from "@angular/forms";
 import {NavController, ToastController} from "@ionic/angular";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-signup',
@@ -18,6 +19,7 @@ import {NavController, ToastController} from "@ionic/angular";
 export class SignupPage implements OnInit {
   signupForm!: FormGroup;
   private toastController = inject(ToastController);
+  private authService = inject(AuthService);
   isSubmitted = false;
 
   constructor(private formBuilder: FormBuilder, public navigationControl: NavController) { }
@@ -42,7 +44,10 @@ export class SignupPage implements OnInit {
     return this.signupForm.controls;
   }
 
-  async signup() {
+  /**
+   * Submission of the form, check all the mandatory fields and proceed to signup if good.
+   */
+  async submitForm() {
     this.isSubmitted = true;
     if (!this.signupForm.valid) {
       const toast = await this.toastController.create({
@@ -55,17 +60,37 @@ export class SignupPage implements OnInit {
       console.log('Please provide all the required values!')
       return false;
     } else {
-      const toast = await this.toastController.create({
+      console.log(this.signupForm.value);
+
+      //call signUp
+      const email = this.signupForm.controls['email'].value;
+      const pwd = this.signupForm.controls['password'].value;
+      this.signUp(email, pwd);
+
+      return true;
+    }
+  }
+
+  /**
+   * Register new user.
+   * @param email User's email
+   * @param password User's pwd
+   */
+  private signUp(email: string, password: string){
+    //Create User using UserService
+    //Passing created user to authService.
+    this.authService.SignUp(email, password).then(async (success) => {
+      this.toastController.create({
         message: "Signup successful.",
         duration: 1500,
         position: "bottom",
         color: 'success'
+      }).then(async (toast) => {
+        await toast.present()
       });
-      await toast.present();
-      console.log(this.signupForm.value);
-      return true;
-
-    }
+    }).catch((error) => {
+        console.log("Signup subsciption", error);
+      })
   }
 
   private match(controlName: string, matchControlName: string): ValidatorFn {

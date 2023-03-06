@@ -47,16 +47,18 @@ export class AuthService {
    * @param email User's email
    * @param password User's password
    */
-  SignUp(email: string, password: string){
+  SignUp(email: string, password: string) : Promise<boolean>{
     return createUserWithEmailAndPassword(this.afAuth, email, password)
       .then((userCredential) => {
         this.user = userCredential.user;
         console.log("User created", this.user)
         this.SendVerificationEmail();
+        return true;
         //TODO Fabien -> Set up user data
       })
       .catch((error) => {
         console.error("Error create User",error);
+        return false;
       });
   }
 
