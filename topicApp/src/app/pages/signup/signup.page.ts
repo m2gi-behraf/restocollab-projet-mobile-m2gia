@@ -1,15 +1,11 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators
-} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import {NavController, ToastController} from "@ionic/angular";
 import {AuthService} from "../../services/auth.service";
+import {UserService} from "../../services/user.service";
+import {User} from "../../models/User";
+import {AuthenticationMethod} from "../../models/Enums/AuthenticationMethod";
+import {Role} from "../../models/Enums/Role";
 
 @Component({
   selector: 'app-signup',
@@ -20,6 +16,7 @@ export class SignupPage implements OnInit {
   signupForm!: FormGroup;
   private toastController = inject(ToastController);
   private authService = inject(AuthService);
+  private userService = inject(UserService);
   isSubmitted = false;
 
   constructor(private formBuilder: FormBuilder, public navigationControl: NavController) { }
@@ -62,6 +59,8 @@ export class SignupPage implements OnInit {
     } else {
       console.log(this.signupForm.value);
 
+      //TODO Query to firestore to check if email already exists
+
       //call signUp
       const email = this.signupForm.controls['email'].value;
       const pwd = this.signupForm.controls['password'].value;
@@ -77,9 +76,22 @@ export class SignupPage implements OnInit {
    * @param password User's pwd
    */
   private signUp(email: string, password: string){
-    //Create User using UserService
-    //Passing created user to authService.
     this.authService.SignUp(email, password).then(async (success) => {
+      //Creation of the user
+      const user: User = {
+        firstname : this.signupForm.controls['firstname'].value,
+        lastname : this.signupForm.controls['lastname'].value,
+        dateOfBirth : this.signupForm.controls['birthday'].value,
+        email : email,
+        authenticationMethod : AuthenticationMethod.EMAIL,
+        role : Role.Consumer,
+        id: Date.now().toString() + (Math.random() * 100).toFixed().toString(),
+      }
+
+      //Add user in firestore
+      this.userService.create(user);
+
+      //toast success
       this.toastController.create({
         message: "Signup successful.",
         duration: 1500,
@@ -89,7 +101,7 @@ export class SignupPage implements OnInit {
         await toast.present()
       });
     }).catch((error) => {
-        console.log("Signup subsciption", error);
+        console.log("Signup subscription", error);
       })
   }
 

@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {User} from "../models/User";
-import {collection, collectionData, doc, Firestore} from '@angular/fire/firestore';
+import {addDoc, collection, collectionData, doc, Firestore} from '@angular/fire/firestore';
 import {Role} from "../models/Enums/Role";
 import {AuthenticationMethod} from "../models/Enums/AuthenticationMethod";
 
@@ -22,7 +22,14 @@ export class UserService {
   }
 
   create(user: User): void {
-    const documentRef = doc(this.firestore, "users/")
+    const collectionRef = collection(this.firestore, "users")
+    addDoc(collectionRef, {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      dateOfBirth: user.dateOfBirth,
+      authenticationMethod: user.authenticationMethod
+    })
   }
 
   get currentUser() : User {
