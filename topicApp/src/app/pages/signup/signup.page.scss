@@ -1,0 +1,84 @@
+// Buttons //
+.buttons {
+  display: grid;
+  margin-top: 25px;
+  text-align: center;
+  width: 100%;
+}
+
+.login-button {
+  --background: #ccffff;
+  color: #293838;
+  --border-color: none; --border-width: 0px !important;
+}
+
+.signup-button {
+  --background: #f9ffe8;
+  --border-color: none; --border-width: 0px !important;
+  color: #293838;
+}
+// End: Buttons //
+
+// Text //
+.text-tag {
+  margin-top: 40px;
+  text-align: center;
+  span {
+    font-size: 13px;
+    font-weight: normal;
+  }
+}
+// End: Text //
+
+// Ion-related //
+ion-content {
+  --background: #dfe7f7 url("../../../assets/images/login-background.png") no-repeat center center / cover;
+}
+
+ion-card-title {
+  font-size: 35px;
+  font-family: Avenir;
+  color: #fff;
+  text-align: center;
+}
+
+ion-card-subtitle {
+  text-align: center;
+}
+
+ion-item {
+  --highlight-color-focused: #d4fff6;
+  ion-input {
+    color: #ccffff;
+  }
+  ion-icon {
+    color: #ccffff;
+  }
+}
+
+ion-item {
+  --border-color: #ccffff;
+}
+
+ion-icon {
+  padding: 10px;
+}
+// End: Ion-related //
+
+// Other //
+.wrapform {
+  margin-top: 30px;
+}
+
+.center-within-page {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  ion-card {
+    width: 100%;
+  }
+}
+// End: Other //
+
+

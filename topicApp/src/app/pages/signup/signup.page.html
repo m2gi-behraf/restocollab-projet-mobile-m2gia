@@ -1,0 +1,112 @@
+<ion-content>
+  <div class="center-within-page">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>📃 Sign Up</ion-card-title>
+        <ion-card-subtitle>
+          Millions of other people out there can't wait to see what your favourite restaurants are!
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form class="wrapform" [formGroup]="signupForm" (ngSubmit)="signup()" novalidate>
+          <ion-item>
+            <ion-icon name="person-circle-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input formControlName="firstname" type="text" name="firstname" required="true"
+                       placeholder="First Name"></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+                    *ngIf="errorControl['firstname'].touched && errorControl['firstname'].errors?.['required'] || isSubmitted && errorControl['firstname'].errors?.['required']">
+      <span>
+        This field is required.
+      </span>
+          </ion-text>
+          <ion-item>
+            <ion-icon name="person-circle-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input formControlName="lastname" type="text" name="lastname" required="true"
+                       placeholder="Last Name"></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+                    *ngIf="errorControl['lastname'].touched && errorControl['lastname'].errors?.['required'] || isSubmitted && errorControl['lastname'].errors?.['required']">
+      <span>
+        This field is required.
+      </span>
+          </ion-text>
+          <ion-item>
+            <ion-icon name="calendar-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input formControlName="birthday" type="date" name="birthday" required="true"
+                       placeholder="Birthday"></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+                    *ngIf="errorControl['birthday'].touched && errorControl['birthday'].errors?.['required'] || isSubmitted && errorControl['birthday'].errors?.['required']">
+      <span>
+        This field is required.
+      </span>
+          </ion-text>
+          <ion-item>
+            <ion-icon name="mail-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input formControlName="email" type="text" name="email" required="true" placeholder="Email"></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+                    *ngIf="errorControl['email'].touched && errorControl['email'].errors?.['required'] || isSubmitted && errorControl['email'].errors?.['required']">
+      <span>
+        This field is required.
+      </span>
+          </ion-text>
+          <ion-text color="danger" *ngIf="errorControl['email'].touched && errorControl['email'].errors?.['pattern']">
+      <span>
+        Please, make sure you typed a valid email address.
+      </span>
+          </ion-text>
+          <ion-item>
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input formControlName="password" type="password" name="password" required="true"
+                       placeholder="Password"></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+                    *ngIf="errorControl['password'].touched && errorControl['password'].errors?.['required'] || isSubmitted && errorControl['password'].errors?.['required']">
+      <span>
+        This field is required.
+      </span>
+          </ion-text>
+          <ion-text color="danger" *ngIf="errorControl['password'].touched && !signupForm.controls['password'].valid">
+      <span>
+        Password must be between 6 and 12 characters, with at least one capital letter, one small letter, and one digit.
+      </span>
+        </ion-text>
+          <ion-item>
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input formControlName="confirmPassword" type="password" name="confirmPassword" required="true"
+                       placeholder="Password confirmation"></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+                    *ngIf="errorControl['confirmPassword'].touched && errorControl['confirmPassword'].errors?.['required'] || isSubmitted && errorControl['confirmPassword'].errors?.['required']">
+      <span>
+        This field is required.
+      </span>
+          </ion-text>
+          <ion-text color="danger" *ngIf="errorControl['confirmPassword'].touched && signupForm.hasError('mismatchedPasswords') && signupForm.controls['password'].valid">
+      <span>
+        Passwords do not match.
+      </span>
+          </ion-text>
+          <div class="buttons">
+            <ion-button fill="outline" shape="round" class="signup-button" type="submit">Signup</ion-button>
+            <div class="text-tag">
+      <span>
+        Already have an account?
+      </span>
+            </div>
+            <ion-button fill="solid" shape="round" class="login-button"(click)="goLogin()">Login</ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
