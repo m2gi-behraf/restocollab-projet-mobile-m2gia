@@ -2,6 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, FormControl, Form} from "@angular/forms";
 import {ToastController, NavController} from "@ionic/angular";
 import {SignupPage} from "../signup/signup.page";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ export class LoginPage implements OnInit {
   loginForm!: FormGroup;
   isSubmitted = false;
   private toastController = inject(ToastController);
+  private authService = inject(AuthService)
   constructor(private formBuilder: FormBuilder, public navigationControl: NavController) {}
 
   ngOnInit() {
@@ -26,7 +28,7 @@ export class LoginPage implements OnInit {
     return this.loginForm.controls;
   }
 
-  async login() {
+  async submitForm() {
     this.isSubmitted = true;
     if (!this.loginForm.valid) {
       const toast = await this.toastController.create({
@@ -39,16 +41,25 @@ export class LoginPage implements OnInit {
       console.log('Please provide all the required values!')
       return false;
     } else {
-      const toast = await this.toastController.create({
+      console.log(this.loginForm.value);
+      this.signIn(this.loginForm.controls['email'].value, this.loginForm.controls['password'].value);
+      return true;
+    }
+  }
+
+  private signIn(email: string, password: string){
+    this.authService.SignIn(email, password).then((userCred) => {
+      this.toastController.create({
         message: "Login successful.",
         duration: 1500,
         position: "bottom",
         color: 'success'
+      }).then(async (toast) => {
+        await toast.present();
       });
-      await toast.present();
-      console.log(this.loginForm.value);
-      return true;
-    }
+    }).catch((error) => {
+      console.log(error)
+    });
   }
 
   goSignUp() {

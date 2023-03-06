@@ -9,7 +9,7 @@
   </ion-card-header>
 
   <ion-card-content>
-    <form class="wrapform" [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
+    <form class="wrapform" [formGroup]="loginForm" (ngSubmit)="submitForm()" novalidate>
       <ion-item>
         <ion-icon name="mail-outline"></ion-icon>
         <!-- Todo: Bind with Firebase/Auth !-->

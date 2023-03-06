@@ -32,14 +32,7 @@ export class AuthService {
    * @param password User's password
    */
   SignIn(email: string, password: string) {
-    return signInWithEmailAndPassword(this.afAuth, email, password)
-      .then((userCredential) => {
-        //TODO Fabien -> Set up user data
-        console.log("User logged in", userCredential.user)
-      })
-      .catch((error) => {
-        console.error("Error signin user", error)
-      });
+    return signInWithEmailAndPassword(this.afAuth, email, password);
   }
 
   /**
@@ -52,9 +45,8 @@ export class AuthService {
       .then((userCredential) => {
         this.user = userCredential.user;
         console.log("User created", this.user)
-        this.SendVerificationEmail();
+        //this.SendVerificationEmail();
         return true;
-        //TODO Fabien -> Set up user data
       })
       .catch((error) => {
         console.error("Error create User",error);
