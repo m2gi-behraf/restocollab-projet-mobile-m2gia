@@ -32,14 +32,7 @@ export class AuthService {
    * @param password User's password
    */
   SignIn(email: string, password: string) {
-    return signInWithEmailAndPassword(this.afAuth, email, password)
-      .then((userCredential) => {
-        //TODO Fabien -> Set up user data
-        console.log("User logged in", userCredential.user)
-      })
-      .catch((error) => {
-        console.error("Error signin user", error)
-      });
+    return signInWithEmailAndPassword(this.afAuth, email, password);
   }
 
   /**
@@ -47,16 +40,17 @@ export class AuthService {
    * @param email User's email
    * @param password User's password
    */
-  SignUp(email: string, password: string){
+  SignUp(email: string, password: string) : Promise<boolean>{
     return createUserWithEmailAndPassword(this.afAuth, email, password)
       .then((userCredential) => {
         this.user = userCredential.user;
         console.log("User created", this.user)
-        this.SendVerificationEmail();
-        //TODO Fabien -> Set up user data
+        //this.SendVerificationEmail();
+        return true;
       })
       .catch((error) => {
         console.error("Error create User",error);
+        return false;
       });
   }
 
@@ -79,14 +73,8 @@ export class AuthService {
    * Send the password reset email
    * @param email receiver's email
    */
-  private SendResetPasswordEmail(email: string){
-    return sendPasswordResetEmail(this.afAuth, email)
-      .then(() => {
-        console.log("Reset password email sent");
-      })
-      .catch((error) => {
-        console.error("Error Reset password email", error)
-      })
+  ForgotPassword(email: string){
+    return sendPasswordResetEmail(this.afAuth, email);
   }
 
 }
