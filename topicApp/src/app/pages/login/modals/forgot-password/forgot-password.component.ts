@@ -22,14 +22,20 @@ export class ForgotPasswordComponent implements OnInit {
 
   ngOnInit() {
     this.forgotPwdForm = this.formBuilder.group({
-      email: ['', Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]
+      email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]]
     });
   }
 
-  get errorControl() {
+  /**
+   * Get form controls
+   */
+  get controls() {
     return this.forgotPwdForm.controls;
   }
 
+  /**
+   * Check all the mandatory fields, and call forgotPassword() if good.
+   */
   async submitForm(){
     this.isSubmitted = true;
     if (!this.forgotPwdForm.valid) {
@@ -54,16 +60,32 @@ export class ForgotPasswordComponent implements OnInit {
   private forgotPassword(email: string) {
     this.authService.ForgotPassword(email)
       .then(() => {
+        this.tostController.create({
+          message: "Reset password link sent to " + email,
+          duration: 1500,
+          position: "bottom",
+          color: 'success'
+        }).then(async (toast) => {
+          await toast.present();
+        });
         this.modalController.dismiss(email, 'confirmed');
       })
       .catch((error) => {
         console.error(error);
+        this.tostController.create({
+          message: "An error occurred while sending email, please be sure you provided the good address",
+          duration: 1500,
+          position: "bottom",
+          color: 'Danger'
+        }).then(async (toast) => {
+          await toast.present();
+        });
         this.modalController.dismiss(email, 'canceled');
       })
   }
 
   /**
-   * Public method to dissmiss the modal
+   * Public method to dismiss the modal
    *
    * @param email
    * @param status the {string} of the status on how is closed the modal,
