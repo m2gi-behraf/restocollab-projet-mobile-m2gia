@@ -37,13 +37,18 @@
           <ion-item>
             <ion-icon name="calendar-outline"></ion-icon>
             <!-- Todo: Bind with Firebase/Auth !-->
-            <ion-input formControlName="birthday" type="date" name="birthday" required="true"
-                       placeholder="Birthday"></ion-input>
+            <ion-input formControlName="birthday" type="text" name="birthday" required="true"
+                       placeholder="Birthday (dd/mm/yyyy)"></ion-input>
           </ion-item>
           <ion-text color="danger"
                     *ngIf="errorControl['birthday'].touched && errorControl['birthday'].errors?.['required'] || isSubmitted && errorControl['birthday'].errors?.['required']">
       <span>
         This field is required.
+      </span>
+          </ion-text>
+          <ion-text color="danger" *ngIf="errorControl['birthday'].touched && errorControl['birthday'].errors?.['pattern']">
+      <span>
+        Please, make sure you provided a valid date (e.g. 21/01/1997)
       </span>
           </ion-text>
           <ion-item>

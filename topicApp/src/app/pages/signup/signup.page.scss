@@ -35,6 +35,10 @@ ion-content {
   --background: #dfe7f7 url("../../../assets/images/login-background.png") no-repeat center center / cover;
 }
 
+ion-card {
+  background-color: #1e1e1e!important;
+}
+
 ion-card-title {
   font-size: 35px;
   font-family: Avenir;
