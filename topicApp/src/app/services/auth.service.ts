@@ -1,6 +1,8 @@
 import {inject, Injectable} from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "@angular/fire/auth";
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider } from "@angular/fire/auth";
 import { User, sendEmailVerification, sendPasswordResetEmail} from '@firebase/auth'
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -15,8 +17,11 @@ export class AuthService {
     this.user = this.afAuth.currentUser;
     this.afAuth.onAuthStateChanged((user) => {
       this.user = user;
+      console.log("Auth State Changed -> ", user);
       //TODO Fabien -> Set up user data
     });
+
+    GoogleAuth.initialize();
   }
 
   /**
@@ -67,6 +72,11 @@ export class AuthService {
       .then(() => {
         console.log("Verification mail sent", this.user);
       })
+  }
+
+  async signInWithGoogle(){
+    const user = await GoogleAuth.signIn();
+    console.log("Google Authentication : ", user);
   }
 
   /**

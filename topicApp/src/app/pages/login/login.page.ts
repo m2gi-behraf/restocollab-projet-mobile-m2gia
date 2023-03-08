@@ -75,4 +75,15 @@ export class LoginPage implements OnInit {
 
     const { data, role } = await modal.onWillDismiss();
   }
+
+  /**
+   * Redirect to log in form with Google account
+   */
+  signInWithGoogle() {
+    this.authService.signInWithGoogle()
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => console.error(error))
+  }
 }
