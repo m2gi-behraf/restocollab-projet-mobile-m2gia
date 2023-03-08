@@ -73,14 +73,8 @@ export class AuthService {
    * Send the password reset email
    * @param email receiver's email
    */
-  private SendResetPasswordEmail(email: string){
-    return sendPasswordResetEmail(this.afAuth, email)
-      .then(() => {
-        console.log("Reset password email sent");
-      })
-      .catch((error) => {
-        console.error("Error Reset password email", error)
-      })
+  ForgotPassword(email: string){
+    return sendPasswordResetEmail(this.afAuth, email);
   }
 
 }

@@ -1,8 +1,8 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, FormControl, Form} from "@angular/forms";
-import {ToastController, NavController} from "@ionic/angular";
-import {SignupPage} from "../signup/signup.page";
+import {ToastController, NavController, ModalController} from "@ionic/angular";
 import {AuthService} from "../../services/auth.service";
+import {ForgotPasswordComponent} from "./modals/forgot-password/forgot-password.component";
 
 @Component({
   selector: 'app-login',
@@ -14,6 +14,7 @@ export class LoginPage implements OnInit {
   loginForm!: FormGroup;
   isSubmitted = false;
   private toastController = inject(ToastController);
+  private modalControlelr = inject(ModalController);
   private authService = inject(AuthService)
   constructor(private formBuilder: FormBuilder, public navigationControl: NavController) {}
 
@@ -64,5 +65,14 @@ export class LoginPage implements OnInit {
 
   goSignUp() {
     this.navigationControl.navigateForward('signup');
+  }
+
+  async forgotPassword() {
+    const modal = await this.modalControlelr.create({
+      component: ForgotPasswordComponent,
+    });
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
   }
 }
