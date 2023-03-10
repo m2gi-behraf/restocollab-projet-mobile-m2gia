@@ -3,79 +3,29 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
+  <ion-list *ngFor="let restaurant of restaurantsList">
     <ion-item href detail class="item-custom-style">
       <ion-thumbnail class="ion-margin-end thumbnail">
-        <ion-img src="../../assets/images/home/restaurant-la-ferme-a-dede.png"></ion-img>
+        <ion-img src="{{restaurant.thumbnailURL}}"></ion-img>
       </ion-thumbnail>
       <ion-label class="ion-text-wrap">
         <h1>
           <ion-icon name="restaurant-outline"></ion-icon>
-          La Ferme à Dédé
+          {{restaurant.restaurantName}}
         </h1>
         <h4>
           <ion-icon name="star-half-outline"></ion-icon>
-          Ranking: 4/5
+          Ranking: {{restaurant.ranking}}/5
         </h4>
         <h4>
           <ion-icon name="earth-outline"></ion-icon>
-          Cuisine: 🇫🇷
+          Cuisine: {{restaurant.cuisine}}
         </h4>
         <p>
           <ion-icon name="pin-outline"></ion-icon>
-          24 Rue Barnave, 38000 Grenoble
+          {{restaurant.address}}
         </p>
       </ion-label>
     </ion-item>
-
-    <ion-item href detail class="item-custom-style">
-      <ion-thumbnail class="ion-margin-end thumbnail">
-        <ion-img src="../../assets/images/home/restaurant-au-liban.png"></ion-img>
-      </ion-thumbnail>
-      <ion-label class="ion-text-wrap">
-        <h1>
-          <ion-icon name="restaurant-outline"></ion-icon>
-          Au Liban
-        </h1>
-        <h4>
-          <ion-icon name="star-half-outline"></ion-icon>
-          Ranking: 4/5
-        </h4>
-        <h4>
-          <ion-icon name="earth-outline"></ion-icon>
-          Cuisine: 🇱🇧
-        </h4>
-        <p>
-          <ion-icon name="pin-outline"></ion-icon>
-          16 Pl. Sainte-Claire, 38000 Grenoble
-        </p>
-      </ion-label>
-    </ion-item>
-
-    <ion-item href detail class="item-custom-style">
-      <ion-thumbnail class="ion-margin-end thumbnail">
-        <ion-img src="../../assets/images/home/restaurant-au-liban.png"></ion-img>
-      </ion-thumbnail>
-      <ion-label class="ion-text-wrap">
-        <h1>
-          <ion-icon name="restaurant-outline"></ion-icon>
-          Comptoire d'Italie
-        </h1>
-        <h4>
-          <ion-icon name="star-half-outline"></ion-icon>
-          Ranking: 4/5
-        </h4>
-        <h4>
-          <ion-icon name="earth-outline"></ion-icon>
-          Cuisine: 🇮🇹
-        </h4>
-        <p>
-          <ion-icon name="pin-outline"></ion-icon>
-          4 Pl. de Gordes, 38000 Grenoble
-        </p>
-      </ion-label>
-    </ion-item>
-
   </ion-list>
-
 </ion-content>
