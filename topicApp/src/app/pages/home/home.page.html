@@ -10,7 +10,8 @@
 
 <ion-content>
   <ion-list *ngFor="let restaurant of restaurantsList | filter: filterRestaurantName">
-    <ion-item href detail class="item-custom-style">
+    <!-- todo: pass the link to the restaurant here via service !-->
+    <ion-item href="" detail class="item-custom-style">
       <ion-thumbnail class="ion-margin-end thumbnail">
         <ion-img src="{{restaurant.thumbnailURL}}"></ion-img>
       </ion-thumbnail>
