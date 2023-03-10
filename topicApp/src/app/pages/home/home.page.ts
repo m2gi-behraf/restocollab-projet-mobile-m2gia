@@ -13,6 +13,8 @@ export class HomePage implements OnInit {
     {thumbnailURL: "../../assets/images/home/restaurant-comptoire-ditalie.png", restaurantName: "Comptoire d'Italie", ranking: "4", cuisine: "🇮🇹", address:  "4 Pl. de Gordes, 38000 Grenoble"},
   ]
 
+  //todo: implement service to fetch restaurants 
+
   constructor() { }
 
   ngOnInit() {
