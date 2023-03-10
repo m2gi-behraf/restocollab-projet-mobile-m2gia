@@ -1,11 +1,15 @@
-<ion-header>
-  <ion-searchbar showCancelButton="focus" cancelButtonText="Custom Cancel">
-    //todo
-  </ion-searchbar>
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Search"
+      [(ngModel)]="filterRestaurantName"
+      showClearButton="focus"
+      animated></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list *ngFor="let restaurant of restaurantsList">
+  <ion-list *ngFor="let restaurant of restaurantsList | filter: filterRestaurantName">
     <ion-item href detail class="item-custom-style">
       <ion-thumbnail class="ion-margin-end thumbnail">
         <ion-img src="{{restaurant.thumbnailURL}}"></ion-img>
