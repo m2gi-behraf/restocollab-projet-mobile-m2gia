@@ -27,8 +27,4 @@ filterRestaurantName: any;
 
   ngOnInit() {
   }
-
-  clickMe() {
-    console.log("yassss");
-  }
 }
