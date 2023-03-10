@@ -1,7 +1,27 @@
+// Ion-related //
 ion-thumbnail {
   --border-radius: 8px;
 }
 
+ion-content {
+  --background: #363636 url("../../../assets/images/app-background.png") no-repeat center center / cover;
+}
+
+ion-card {
+  background-color: #1e1e1e!important;
+}
+
+ion-searchbar {
+  background-color: #1e1e1e!important;
+}
+
+ion-toolbar {
+  background-color: #1e1e1e!important;
+}
+
+// End: Ion-related //
+
+// Other //
 .thumbnail {
   height: 100px;
   width: 100px;
@@ -12,8 +32,4 @@ ion-thumbnail {
   border-bottom: 2px solid #4e4e4e;
   margin-bottom: 5px;
 }
-
-ion-content {
-  --background: #363636 url("../../../assets/images/app-background.png") no-repeat center center / cover;
-}
-
+// End: Other //
