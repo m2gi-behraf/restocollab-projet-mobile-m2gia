@@ -1,0 +1,18 @@
+ion-thumbnail {
+  --border-radius: 8px;
+}
+
+.thumbnail {
+  height: 100px;
+  width: 100px;
+}
+
+.item-custom-style {
+  border: none;
+  border-bottom: 2px solid #4e4e4e;
+  margin-bottom: 5px;
+}
+
+ion-content {
+  --background: #363636 url("../../../assets/images/login-background.png") no-repeat center center / cover;
+}
