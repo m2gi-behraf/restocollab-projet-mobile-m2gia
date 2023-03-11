@@ -1,12 +1,10 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-searchbar
-      placeholder="Search"
-      [(ngModel)]="filterRestaurantName"
-      showClearButton="focus"
-      animated></ion-searchbar>
-  </ion-toolbar>
-</ion-header>
+<app-header></app-header>
+<ion-searchbar
+  stick
+  placeholder="Search"
+  [(ngModel)]="filterRestaurantName"
+  showClearButton="focus"
+  animated></ion-searchbar>
 
 <ion-content>
   <ion-list *ngFor="let restaurant of restaurantsList | filter: filterRestaurantName">
