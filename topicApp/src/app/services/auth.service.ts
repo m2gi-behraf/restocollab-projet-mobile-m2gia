@@ -77,8 +77,13 @@ export class AuthService {
   }
 
   async signInWithGoogle(){
-    const googleUser = await GoogleAuth.signIn();
+    console.log("Sign in google....");
+    const googleUser = await GoogleAuth.signIn()
+    console.log("Google User", googleUser);
+
     const googleCredentials = GoogleAuthProvider.credential(googleUser.authentication.idToken);
+    console.log("Google Credentials", googleCredentials);
+
     signInWithCredential(this.afAuth, googleCredentials).then((userCredential) => {
       console.log("SIGN IN OK", userCredential);
     }).catch((error) => {
