@@ -87,7 +87,7 @@ export class AuthService {
     signInWithCredential(this.afAuth, googleCredentials).then((userCredential) => {
       console.log("SIGN IN OK", userCredential);
     }).catch((error) => {
-      console.error(error);
+      console.error("ERROR DURING SIGNIN", error);
     });
   }
 
