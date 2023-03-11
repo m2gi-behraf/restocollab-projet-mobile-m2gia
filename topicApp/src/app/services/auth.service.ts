@@ -1,7 +1,8 @@
 import {inject, Injectable} from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider } from "@angular/fire/auth";
-import { User, sendEmailVerification, sendPasswordResetEmail} from '@firebase/auth'
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithCredential } from "@angular/fire/auth";
+import { User, sendEmailVerification, sendPasswordResetEmail, GoogleAuthProvider} from '@firebase/auth'
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import {isPlatform} from "@ionic/angular";
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +19,12 @@ export class AuthService {
     this.afAuth.onAuthStateChanged((user) => {
       this.user = user;
       console.log("Auth State Changed -> ", user);
-      //TODO Fabien -> Set up user data
     });
 
-    GoogleAuth.initialize();
+    //Specific Web
+    if(!isPlatform('capacitor')){
+      GoogleAuth.initialize();
+    }
   }
 
   /**
@@ -49,7 +52,6 @@ export class AuthService {
     return createUserWithEmailAndPassword(this.afAuth, email, password)
       .then((userCredential) => {
         this.user = userCredential.user;
-        console.log("User created", this.user)
         //this.SendVerificationEmail();
         return true;
       })
@@ -75,15 +77,20 @@ export class AuthService {
   }
 
   async signInWithGoogle(){
-    const user = await GoogleAuth.signIn();
-    console.log("Google Authentication : ", user);
+    const googleUser = await GoogleAuth.signIn();
+    const googleCredentials = GoogleAuthProvider.credential(googleUser.authentication.idToken);
+    signInWithCredential(this.afAuth, googleCredentials).then((userCredential) => {
+      console.log("SIGN IN OK", userCredential);
+    }).catch((error) => {
+      console.error(error);
+    });
   }
 
   /**
    * Send the password reset email
    * @param email receiver's email
    */
-  ForgotPassword(email: string){
+  forgotPassword(email: string){
     return sendPasswordResetEmail(this.afAuth, email);
   }
 

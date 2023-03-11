@@ -58,7 +58,7 @@ export class ForgotPasswordComponent implements OnInit {
    * @param email email for reset
    */
   private forgotPassword(email: string) {
-    this.authService.ForgotPassword(email)
+    this.authService.forgotPassword(email)
       .then(() => {
         this.tostController.create({
           message: "Reset password link sent to " + email,
