@@ -4,4 +4,5 @@
     <string name="title_activity_main">topicApp</string>
     <string name="package_name">io.ionic.starter</string>
     <string name="custom_url_scheme">io.ionic.starter</string>
+    <string name="server_client_id">322642081353-nq896as543vke18b7ifeqvuq3tj8p2m7.apps.googleusercontent.com</string>
 </resources>
