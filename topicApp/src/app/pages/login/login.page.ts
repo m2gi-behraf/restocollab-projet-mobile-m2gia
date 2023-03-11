@@ -2,7 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, FormControl, Form} from "@angular/forms";
 import {ToastController, NavController, ModalController} from "@ionic/angular";
 import {AuthService} from "../../services/auth.service";
-import {ForgotPasswordComponent} from "./modals/forgot-password/forgot-password.component";
+import {ForgotPasswordComponent} from "../../modals/forgot-password/forgot-password.component";
 
 @Component({
   selector: 'app-login',
