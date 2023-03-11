@@ -1,5 +1,13 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+    <ion-toolbar>
+    <ion-title class="app-title">🍽 Resto'collab</ion-title>
+      <p style="text-align: center; color: grey">Where passion for food meets collaboration!</p>
+    <ion-toolbar>
+      <ion-icon name="notifications" slot="end"></ion-icon>
+      <ion-badge class="notifications-badge" color="danger">2</ion-badge>
+      <ion-icon name="color-filter-outline" slot="end"></ion-icon>
+      <img slot="end" src="./assets/images/user/user-profile-picture.png" class="user-avatar"/>
+    </ion-toolbar>
     <ion-searchbar
       placeholder="Search"
       [(ngModel)]="filterRestaurantName"
