@@ -1,5 +1,103 @@
 <app-header></app-header>
-
 <ion-content>
-  <p>User profile content.</p>
+  <ion-card>
+    <img src="./assets/images/user/user-profile-picture.png" class="user-profile-picture"/>
+    <h3>Profile Details</h3>
+    <ion-list>
+      <ion-item>
+        <ion-icon name="person-outline"></ion-icon>
+        <ion-label>First Name</ion-label>
+        <ion-label>Jad</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="person-outline"></ion-icon>
+        <ion-label>Last Name</ion-label>
+        <ion-label>Jawlakh</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="calendar-outline"></ion-icon>
+        <ion-label>Birthday</ion-label>
+        <ion-label>21/01/1997</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-card>
+    <h3>Friends List</h3>
+      <ion-item>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-row>
+                <img src="./assets/images/user/user-profile-picture.png" class="friends-avatar"/>
+              </ion-row>
+              <ion-row>
+                <p class="friend-name">Fabien</p>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-row>
+                <img src="./assets/images/user/user-profile-picture.png" class="friends-avatar"/>
+              </ion-row>
+              <ion-row>
+                <p class="friend-name">Georges</p>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-row>
+                <img src="./assets/images/user/user-profile-picture.png" class="friends-avatar"/>
+              </ion-row>
+              <ion-row>
+                <p class="friend-name">Georges</p>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-row>
+                <img src="./assets/images/user/user-profile-picture.png" class="friends-avatar"/>
+              </ion-row>
+              <ion-row>
+                <p class="friend-name">Georges</p>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-row>
+                <img src="./assets/images/user/user-profile-picture.png" class="friends-avatar"/>
+              </ion-row>
+              <ion-row>
+                <p class="friend-name">Georges</p>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-row>
+                <img src="./assets/images/user/user-profile-picture.png" class="friends-avatar"/>
+              </ion-row>
+              <ion-row>
+                <p class="friend-name">Georges</p>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-row>
+                <img src="./assets/images/user/user-profile-picture.png" class="friends-avatar"/>
+              </ion-row>
+              <ion-row>
+                <p class="friend-name">Georges</p>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+  </ion-card>
+
+  <ion-card>
+    <h3>Account Actions</h3>
+    <ion-list>
+      <ion-item>
+        <ion-button fill="solid" shape="round" class="logout-button">Logout</ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-button fill="solid" color="danger" shape="round" class="delete-account-button">Delete account</ion-button>
+      </ion-item>
+    </ion-list>
+
+  </ion-card>
 </ion-content>
