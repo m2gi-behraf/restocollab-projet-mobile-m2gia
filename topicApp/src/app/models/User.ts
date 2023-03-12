@@ -18,4 +18,5 @@ export interface User {
    * Défini la méthode d'autentification, Facebook, Google ou email.
    */
   authenticationMethod: AuthenticationMethod;
+  imageUrl: string;
 }

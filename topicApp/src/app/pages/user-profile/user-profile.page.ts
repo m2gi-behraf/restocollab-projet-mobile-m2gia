@@ -26,7 +26,6 @@ export class UserProfilePage implements OnInit {
   }
 
   async logout() {
-    // todo terminate account session via firebase
     this.toastController.create({
       message: "Account session successfully terminated. You are now logged out.",
       duration: 1500,

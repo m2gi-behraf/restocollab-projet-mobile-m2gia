@@ -3,6 +3,7 @@ import {FormGroup, FormBuilder, Validators, FormControl, Form} from "@angular/fo
 import {ToastController, NavController, ModalController} from "@ionic/angular";
 import {AuthService} from "../../services/auth.service";
 import {ForgotPasswordComponent} from "../../modals/forgot-password/forgot-password.component";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class LoginPage implements OnInit {
   private modalController = inject(ModalController);
   private navController = inject(NavController);
   private authService = inject(AuthService)
+  private userService = inject(UserService)
   constructor(private formBuilder: FormBuilder) {}
 
   ngOnInit() {
@@ -49,19 +51,26 @@ export class LoginPage implements OnInit {
     }
   }
 
-  private signIn(email: string, password: string){
-    this.authService.signIn(email, password).then((userCred) => {
+  private async signIn(email: string, password: string){
+    try {
+      const userCredential = await this.authService.signIn(email, password);
+
+      if (userCredential != null) {
+        this.userService.setUpCurrentUser(userCredential.user.email ?? "")
+        await this.redirectToHome()
+      }
+    }
+    catch (error) {
+      //todo handle error visually
       this.toastController.create({
-        message: "Login successful.",
+        message: "Login failed.",
         duration: 1500,
         position: "bottom",
-        color: 'success'
+        color: 'danger'
       }).then(async (toast) => {
         await toast.present();
       });
-    }).catch((error) => {
-      console.log(error)
-    });
+    }
   }
 
   goSignUp() {
@@ -85,10 +94,14 @@ export class LoginPage implements OnInit {
 
     if (result[0]) {
       //todo call userService to set / get infos
-      await this.navController.navigateRoot('dashboard/tabs/home');
+      await this.redirectToHome();
     }
     else {
       //todo handle errors & errors messages
     }
+  }
+
+  private async redirectToHome() {
+    return await this.navController.navigateRoot('dashboard/tabs/home');
   }
 }
