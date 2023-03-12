@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ForgotPasswordComponent} from "../../modals/forgot-password/forgot-password.component";
-import {ModalController} from "@ionic/angular";
+import {ModalController, NavController} from "@ionic/angular";
 import {NotificationsComponent} from "../../modals/notifications/notifications.component";
 
 @Component({
@@ -11,7 +11,7 @@ import {NotificationsComponent} from "../../modals/notifications/notifications.c
 export class HeaderComponent implements OnInit {
   private modalController = inject(ModalController);
 
-  constructor() { }
+  constructor(public navigationControl: NavController) { }
 
   ngOnInit() {}
 
@@ -23,4 +23,7 @@ export class HeaderComponent implements OnInit {
     const { data, role } = await modal.onWillDismiss();
   }
 
+  goToUserProfile() {
+    this.navigationControl.navigateForward('dashboard/tabs/user-profile')
+  }
 }
