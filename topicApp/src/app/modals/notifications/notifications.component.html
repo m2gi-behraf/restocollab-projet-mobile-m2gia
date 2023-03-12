@@ -1,0 +1,22 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="primary" (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="notifications-outline"></ion-icon>
+      Notifications
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngFor="let notification of notificationsList">
+    <ion-item (click)="goToNotification(notification.type)">
+        <ion-icon name="accessibility-outline" *ngIf="notification.type==='friend-request'"></ion-icon>
+        <ion-icon name="book-outline" *ngIf="notification.type==='read-only-invitation'"></ion-icon>
+        <ion-icon name="color-palette-outline" *ngIf="notification.type==='read-write-invitation'"></ion-icon>
+      <ion-label><p>{{notification.message}}</p></ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
