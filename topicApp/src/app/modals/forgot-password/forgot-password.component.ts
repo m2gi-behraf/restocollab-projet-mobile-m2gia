@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import {Component, inject, OnInit} from '@angular/core';
 import {IonicModule, ModalController, ToastController} from "@ionic/angular";
-import {AuthService} from "../../../../services/auth.service";
+import {AuthService} from "../../services/auth.service";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
