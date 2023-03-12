@@ -1,8 +1,8 @@
 import {inject, Injectable} from '@angular/core';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithCredential } from "@angular/fire/auth";
-import { User, sendEmailVerification, sendPasswordResetEmail, GoogleAuthProvider} from '@firebase/auth'
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithCredential, signOut } from "@angular/fire/auth";
+import { User, sendEmailVerification, sendPasswordResetEmail, GoogleAuthProvider} from '@firebase/auth';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
-import {isPlatform} from "@ionic/angular";
+import {isPlatform, NavController} from "@ionic/angular";
 
 @Injectable({
   providedIn: 'root'
@@ -11,27 +11,34 @@ export class AuthService {
   /**
    * Current Firebase User
    */
-  private user: User | null
+  private fireUser: User | null
   private afAuth = inject(Auth)
+  private navController = inject(NavController)
 
   constructor() {
-    this.user = this.afAuth.currentUser;
-    this.afAuth.onAuthStateChanged((user) => {
-      this.user = user;
-      console.log("Auth State Changed -> ", user);
-    });
+    this.fireUser = this.afAuth.currentUser;
 
-    //Specific Web
-    if(!isPlatform('capacitor')){
+    //Specific Web to initialize Google Auth
+    if(!isPlatform('capacitor')) {
       GoogleAuth.initialize();
     }
+
+    this.afAuth.onAuthStateChanged(async (user) => {
+      console.log("Auth State Changed -> ", user);
+      this.fireUser = user;
+
+      if (user === null) {
+        console.log("User logged out, redirect to login")
+        await this.redirectToLogin();
+      }
+    });
   }
 
   /**
    * Indicate if the current User is logged in and if it's email is verified
    */
   get isLoggedIn(): boolean {
-    return this.user !== null && this.user.emailVerified
+    return this.fireUser !== null && this.fireUser.emailVerified
   }
 
   /**
@@ -39,7 +46,7 @@ export class AuthService {
    * @param email User's email
    * @param password User's password
    */
-  SignIn(email: string, password: string) {
+  signIn(email: string, password: string) {
     return signInWithEmailAndPassword(this.afAuth, email, password);
   }
 
@@ -48,55 +55,57 @@ export class AuthService {
    * @param email User's email
    * @param password User's password
    */
-  SignUp(email: string, password: string) : Promise<boolean>{
-    return createUserWithEmailAndPassword(this.afAuth, email, password)
-      .then((userCredential) => {
-        this.user = userCredential.user;
-        //this.SendVerificationEmail();
-        return true;
-      })
-      .catch((error) => {
-        console.error("Error create User",error);
-        return false;
-      });
+  async signUp(email: string, password: string): Promise<[success: boolean, user: User | null, error: any | null]> {
+    try {
+      const credential = await createUserWithEmailAndPassword(this.afAuth, email, password);
+      this.fireUser = credential.user;
+      await sendEmailVerification(credential.user);
+      return [true, this.fireUser, null];
+    }
+    catch (error) {
+      console.error("Error create user", error);
+      return [false, null, error];
+    }
   }
 
   /**
-   * Send a verification Email to the created user
+   * Sign ou the current authentication
    */
-  private SendVerificationEmail(){
-    if (this.user == null) {
-      console.error("Send Verification Email failed, user null");
-      return;
-    }
-
-    sendEmailVerification(this.user)
-      .then(() => {
-        console.log("Verification mail sent", this.user);
-      })
+  async signOut(){
+    await GoogleAuth.signOut();
+    await signOut(this.afAuth);
+    await this.redirectToLogin();
   }
 
-  async signInWithGoogle(){
-    console.log("Sign in google....");
-    const googleUser = await GoogleAuth.signIn()
-    console.log("Google User", googleUser);
-
-    const googleCredentials = GoogleAuthProvider.credential(googleUser.authentication.idToken);
-    console.log("Google Credentials", googleCredentials);
-
-    signInWithCredential(this.afAuth, googleCredentials).then((userCredential) => {
-      console.log("SIGN IN OK", userCredential);
-    }).catch((error) => {
-      console.error("ERROR DURING SIGNIN", error);
-    });
+  /**
+   * Sign in with Google provider
+   */
+  async signInWithGoogle(): Promise<[success: boolean, user: User | null, error: any | null]> {
+    try {
+      const googleUser = await GoogleAuth.signIn()
+      const googleCredentials = GoogleAuthProvider.credential(googleUser.authentication.idToken);
+      const credential = await signInWithCredential(this.afAuth, googleCredentials);
+      console.log("User logged in with Google provider");
+      return [true, credential.user, null];
+    }
+    catch (error) {
+      console.error("Error sign in Google", error);
+      return [false, null, error];
+    }
   }
 
   /**
    * Send the password reset email
    * @param email receiver's email
    */
-  forgotPassword(email: string){
+  forgotPassword(email: string) {
     return sendPasswordResetEmail(this.afAuth, email);
   }
 
+  /**
+   * Redirect to login page
+   */
+  private async redirectToLogin(): Promise<void> {
+    await this.navController.navigateRoot('login');
+  }
 }

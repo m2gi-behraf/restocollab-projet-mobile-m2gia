@@ -76,7 +76,7 @@ export class SignupPage implements OnInit {
    * @param password User's pwd
    */
   private signUp(email: string, password: string){
-    this.authService.SignUp(email, password).then(async (success) => {
+    this.authService.signUp(email, password).then(async (success) => {
       //Creation of the user
       const user: User = {
         firstname : this.signupForm.controls['firstname'].value,

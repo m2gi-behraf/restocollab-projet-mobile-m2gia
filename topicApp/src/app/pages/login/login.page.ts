@@ -15,8 +15,9 @@ export class LoginPage implements OnInit {
   isSubmitted = false;
   private toastController = inject(ToastController);
   private modalController = inject(ModalController);
+  private navController = inject(NavController);
   private authService = inject(AuthService)
-  constructor(private formBuilder: FormBuilder, public navigationControl: NavController) {}
+  constructor(private formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -49,7 +50,7 @@ export class LoginPage implements OnInit {
   }
 
   private signIn(email: string, password: string){
-    this.authService.SignIn(email, password).then((userCred) => {
+    this.authService.signIn(email, password).then((userCred) => {
       this.toastController.create({
         message: "Login successful.",
         duration: 1500,
@@ -64,7 +65,7 @@ export class LoginPage implements OnInit {
   }
 
   goSignUp() {
-    this.navigationControl.navigateForward('signup');
+    this.navController.navigateForward('signup');
   }
 
   async forgotPassword() {
@@ -79,11 +80,15 @@ export class LoginPage implements OnInit {
   /**
    * Redirect to log in form with Google account
    */
-  signInWithGoogle() {
-    this.authService.signInWithGoogle()
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => console.error(error))
+  async signInWithGoogle() {
+    const result = await this.authService.signInWithGoogle()
+
+    if (result[0]) {
+      //todo call userService to set / get infos
+      await this.navController.navigateRoot('dashboard/tabs/home');
+    }
+    else {
+      //todo handle errors & errors messages
+    }
   }
 }
