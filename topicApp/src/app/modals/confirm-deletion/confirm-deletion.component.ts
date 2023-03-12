@@ -12,7 +12,7 @@ import {NgIf} from "@angular/common";
   styleUrls: ['./confirm-deletion.component.scss'],
 })
 export class ConfirmDeletionComponent implements OnInit {
-  private tostController = inject(ToastController);
+  private toastController = inject(ToastController);
   private modalController = inject(ModalController);
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -40,7 +40,7 @@ export class ConfirmDeletionComponent implements OnInit {
   async submitForm(){
     this.isSubmitted = true;
     if (!this.accountDeletionForm.valid) {
-      this.tostController.create({
+      this.toastController.create({
         message: "Please make sure you provided all required values correctly.",
         duration: 1500,
         position: "bottom",
@@ -56,7 +56,7 @@ export class ConfirmDeletionComponent implements OnInit {
 
   deleteAccount(email: string, password: string) {
     // todo
-    this.tostController.create({
+    this.toastController.create({
       message: "Account associated to the email address: " + email + " got successfully deleted.",
       duration: 1500,
       position: "bottom",

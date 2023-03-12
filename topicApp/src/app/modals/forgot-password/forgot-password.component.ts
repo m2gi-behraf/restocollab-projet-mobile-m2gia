@@ -12,7 +12,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   styleUrls: ['./forgot-password.component.scss'],
 })
 export class ForgotPasswordComponent implements OnInit {
-  private tostController = inject(ToastController);
+  private toastController = inject(ToastController);
   private modalController = inject(ModalController);
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -39,7 +39,7 @@ export class ForgotPasswordComponent implements OnInit {
   async submitForm(){
     this.isSubmitted = true;
     if (!this.forgotPasswordForm.valid) {
-      this.tostController.create({
+      this.toastController.create({
         message: "Please make sure you provided all required values correctly.",
         duration: 1500,
         position: "bottom",
@@ -60,7 +60,7 @@ export class ForgotPasswordComponent implements OnInit {
   private forgotPassword(email: string) {
     this.authService.ForgotPassword(email)
       .then(() => {
-        this.tostController.create({
+        this.toastController.create({
           message: "Reset password link sent to " + email,
           duration: 1500,
           position: "bottom",
@@ -72,7 +72,7 @@ export class ForgotPasswordComponent implements OnInit {
       })
       .catch((error) => {
         console.error(error);
-        this.tostController.create({
+        this.toastController.create({
           message: "An error occurred while sending email, please be sure you provided the good address",
           duration: 1500,
           position: "bottom",
