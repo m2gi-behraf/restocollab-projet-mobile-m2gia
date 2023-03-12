@@ -14,7 +14,7 @@ export class LoginPage implements OnInit {
   loginForm!: FormGroup;
   isSubmitted = false;
   private toastController = inject(ToastController);
-  private modalControlelr = inject(ModalController);
+  private modalController = inject(ModalController);
   private authService = inject(AuthService)
   constructor(private formBuilder: FormBuilder, public navigationControl: NavController) {}
 
@@ -68,7 +68,7 @@ export class LoginPage implements OnInit {
   }
 
   async forgotPassword() {
-    const modal = await this.modalControlelr.create({
+    const modal = await this.modalController.create({
       component: ForgotPasswordComponent,
     });
     modal.present();

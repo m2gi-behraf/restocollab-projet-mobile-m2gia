@@ -1,0 +1,56 @@
+// Ion-related //
+ion-content {
+  --background: #363636 url("../../../assets/images/app-background.png") no-repeat center center / cover;
+}
+
+ion-card {
+  background-color: #1e1e1e!important;
+}
+
+ion-icon {
+  padding: 10px;
+}
+// End: Ion-related //
+
+// Other //
+h3 {
+  padding: 5px 0px 0px 20px;
+  color: #fff;
+}
+
+.user-profile-picture {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  display: block;
+  margin: 20px auto;
+}
+
+.logout-button {
+  --background: #ccffff;
+  color: #293838;
+  --border-color: none; --border-width: 0px !important;
+  width: 100%;
+}
+
+.delete-account-button {
+  --background: #ff4961;
+  --border-color: none; --border-width: 0px !important;
+  width: 100%;
+}
+
+.friends-avatar {
+  align-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.friend-name {
+  display: inline-block;
+  justify-content: center;
+  font-size: 12px;
+  color: #fff;
+}
+// End: Other //
