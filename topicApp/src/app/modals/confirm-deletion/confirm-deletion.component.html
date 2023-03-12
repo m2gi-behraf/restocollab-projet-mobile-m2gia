@@ -1,0 +1,42 @@
+<form [formGroup]="accountDeletionForm" (ngSubmit)="submitForm()" novalidate>
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="primary" (click)="dismissModal(null, 'canceled')">Close</ion-button>
+    </ion-buttons>
+    <ion-title>Confirm Account Deletion</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-icon name="mail-outline"></ion-icon>
+    <ion-input formControlName="email" type="text" name="email" required="true" placeholder="Email"></ion-input>
+  </ion-item>
+  <ion-text color="danger" *ngIf="errorControl['email'].touched && errorControl['email'].errors?.['required'] || isSubmitted && errorControl['email'].errors?.['required']">
+            <span>
+              This field is required.
+            </span>
+  </ion-text>
+  <ion-text color="danger" *ngIf="errorControl['email'].touched && errorControl['email'].errors?.['pattern']">
+            <span>
+              Please, make sure you typed a valid email address.
+            </span>
+  </ion-text>
+  <ion-item>
+    <ion-icon name="lock-closed-outline"></ion-icon>
+    <!-- Todo: Bind with Firebase/Auth !-->
+    <ion-input formControlName="password" type="password" name="password" required="true" placeholder="Password"></ion-input>
+  </ion-item>
+  <ion-text color="danger" *ngIf="errorControl['password'].touched && errorControl['password'].errors?.['required'] || isSubmitted && errorControl['email'].errors?.['required']">
+      <span>
+        This field is required.
+      </span>
+  </ion-text>
+
+  <div class="buttons">
+    <ion-button fill="outline" shape="round" class="forgot-button" type="submit">Delete Account</ion-button>
+  </div>
+</ion-content>
+
+</form>

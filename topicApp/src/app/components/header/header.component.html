@@ -3,10 +3,10 @@
     <ion-title class="app-title">🍽 Resto'collab</ion-title>
     <p style="text-align: center; color: grey">Where passion for food meets collaboration!</p>
     <ion-toolbar>
-      <ion-icon name="notifications" slot="end"></ion-icon>
-      <ion-badge class="notifications-badge" color="danger">2</ion-badge>
+      <ion-icon name="notifications" slot="end" (click)="showNotifications()"></ion-icon>
+      <ion-badge class="notifications-badge" color="danger">3</ion-badge>
       <ion-icon name="color-filter-outline" slot="end"></ion-icon>
-      <img slot="end" src="./assets/images/user/user-profile-picture.png" class="user-avatar"/>
+      <img slot="end" src="./assets/images/user/user-profile-picture.png" class="user-avatar" (click)="goToUserProfile()"/>
     </ion-toolbar>
   </ion-toolbar>
 </ion-header>

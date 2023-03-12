@@ -1,0 +1,79 @@
+// Buttons //
+.buttons {
+  display: grid;
+  margin-top: 25px;
+  text-align: center;
+  width: 100%;
+}
+
+.forgot-button {
+  --background: #ccffff;
+  --border-color: none; --border-width: 0px !important;
+  margin-left: auto;
+  margin-right: auto;
+  color: #293838;
+}
+// End: Buttons //
+
+form {
+  height: 100%;
+}
+
+// Text //
+.text-tag {
+  margin-top: 40px;
+  text-align: center;
+  span {
+    font-size: 13px;
+    font-weight: normal;
+  }
+}
+// End: Text //
+
+ion-card-title {
+  font-size: 35px;
+  font-family: Avenir;
+  color: #fff;
+  text-align: center;
+}
+
+ion-card-subtitle {
+  text-align: center;
+}
+
+ion-item {
+  --highlight-color-focused: #d4fff6;
+  ion-input {
+    color: #ccffff;
+  }
+  ion-icon {
+    color: #ccffff;
+  }
+}
+
+ion-item {
+  --border-color: #ccffff;
+}
+
+ion-icon {
+  padding: 10px;
+}
+// End: Ion-related //
+
+// Other //
+.wrapform {
+  margin-top: 30px;
+}
+
+.center-within-page {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  ion-card {
+    width: 100%;
+  }
+}
+// End: Other //
+
+
