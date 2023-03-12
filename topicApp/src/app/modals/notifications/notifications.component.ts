@@ -16,7 +16,7 @@ export class NotificationsComponent implements OnInit {
     {type: "friend-request", message: "Laura sent you a friend request!"},
     {type: "read-write-invitation", message: "Jad invited you to collaborate on a restaurant list!"},
     {type: "read-only-invitation", message: "Josh invited you to view his restaurant list!"},
-  ];
+  ]; //todo: create a notification class/model with relevant properties and getters
 
   constructor() { }
 
