@@ -124,7 +124,7 @@ export class SignupPage implements OnInit {
   }
 
   goLogin() {
-    this.navigationControl.navigateForward('login');
+    this.navigationControl.navigateBack('login');
   }
 }
 
