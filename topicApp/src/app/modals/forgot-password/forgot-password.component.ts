@@ -16,12 +16,12 @@ export class ForgotPasswordComponent implements OnInit {
   private modalController = inject(ModalController);
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
-  forgotPwdForm!: FormGroup;
+  forgotPasswordForm!: FormGroup;
   isSubmitted= false;
   constructor() { }
 
   ngOnInit() {
-    this.forgotPwdForm = this.formBuilder.group({
+    this.forgotPasswordForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]]
     });
   }
@@ -29,8 +29,8 @@ export class ForgotPasswordComponent implements OnInit {
   /**
    * Get form controls
    */
-  get controls() {
-    return this.forgotPwdForm.controls;
+  get errorControl() {
+    return this.forgotPasswordForm.controls;
   }
 
   /**
@@ -38,7 +38,7 @@ export class ForgotPasswordComponent implements OnInit {
    */
   async submitForm(){
     this.isSubmitted = true;
-    if (!this.forgotPwdForm.valid) {
+    if (!this.forgotPasswordForm.valid) {
       this.tostController.create({
         message: "Please make sure you provided all required values correctly.",
         duration: 1500,
@@ -49,7 +49,7 @@ export class ForgotPasswordComponent implements OnInit {
       });
     }
     else {
-      this.forgotPassword(this.forgotPwdForm.controls['email'].value);
+      this.forgotPassword(this.forgotPasswordForm.controls['email'].value);
     }
   }
 
