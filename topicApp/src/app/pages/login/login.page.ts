@@ -59,8 +59,7 @@ export class LoginPage implements OnInit {
       const userCredential = await this.authService.signIn(email, password);
 
       if (userCredential != null) {
-        // todo
-        //this.userService.setUpCurrentUser(userCredential.user.email ?? "")
+        await this.userService.setUpCurrentUser(userCredential.user.email ?? "")
         await this.redirectToHome()
       }
     }

@@ -1,7 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {ForgotPasswordComponent} from "../../modals/forgot-password/forgot-password.component";
 import {ModalController, NavController} from "@ionic/angular";
 import {NotificationsComponent} from "../../modals/notifications/notifications.component";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'app-header',
@@ -10,7 +10,9 @@ import {NotificationsComponent} from "../../modals/notifications/notifications.c
 })
 export class HeaderComponent implements OnInit {
   private modalController = inject(ModalController);
+  private userService = inject(UserService)
 
+  user = this.userService.currentUser
   constructor(public navigationControl: NavController) { }
 
   ngOnInit() {}

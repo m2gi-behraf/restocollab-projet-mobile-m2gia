@@ -14,36 +14,55 @@ import {
 import {Role} from "../models/Enums/Role";
 import {AuthenticationMethod} from "../models/Enums/AuthenticationMethod";
 import {Topic} from "../models/topic";
-import {lastValueFrom, Observable, of} from "rxjs";
+import {firstValueFrom, lastValueFrom, Observable, of} from "rxjs";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-
-  private user: User =
-    { firstname: "Fabien", lastname: "Behra", role: Role.Consumer, id: "", authenticationMethod: AuthenticationMethod.EMAIL, dateOfBirth: new Date("1998-12-05"), email: "behra407@gmail.com", imageUrl: "" };
+  private readonly defaultUser: User = {
+    firstname: "DEFAULT",
+    lastname: "DEFAULT",
+    role: Role.Consumer,
+    id: "",
+    authenticationMethod: AuthenticationMethod.EMAIL,
+    dateOfBirth: new Date("2000-01-01"),
+    email: "DEFAULT@gmail.com",
+    imageUrl: "https://raw.githubusercontent.com/a6digital/laravel-default-profile-image/master/docs/images/profile.png"
+  };
+  private user: User = this.defaultUser
 
   private firestore = inject(Firestore)
   constructor() {
   }
 
   // Todo implementer le getUser
-  // async getUser(email: string): Observable<User> {
-  //   const usersRef = collection(this.firestore, "users");
-  //   const q = query(usersRef, where('email', '==', email));
-  //   const querySnapshot = await getDocs(q);
-  //
-  //   if (!querySnapshot.empty && querySnapshot.docs[0].exists()) {
-  //     const id = querySnapshot.docs[0].id
-  //     const docRef = doc(this.firestore, `users/${id}`) as DocumentReference<User>
-  //     const user = await lastValueFrom(of(docData(docRef)))
-  //     //voir comment gérer les observable
-  //   }
-  //   else{
-  //
-  //   }
-  // }
+  async getUser(email: string): Promise<User | null> {
+    const usersRef = collection(this.firestore, "users");
+    const q = query(usersRef, where('email', '==', email));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty && querySnapshot.docs[0].exists()) {
+      const id = querySnapshot.docs[0].id
+      const docRef = doc(this.firestore, `users/${id}`) as DocumentReference<User>
+      return firstValueFrom(docData(docRef))
+    }
+    else{
+      return null
+    }
+  }
+
+  async setUpCurrentUser(email: string) {
+    await this.getUser(email).
+      then((user) => {
+        this.user = (user) ? user : this.defaultUser
+        console.log("Current User", user);
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
 
   create(user: User) {
     const collectionRef = collection(this.firestore, "users")

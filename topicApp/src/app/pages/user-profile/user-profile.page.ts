@@ -1,6 +1,8 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ModalController, NavController, ToastController} from "@ionic/angular";
 import {ConfirmDeletionComponent} from "../../modals/confirm-deletion/confirm-deletion.component";
+import {UserService} from "../../services/user.service";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-user-profile',
@@ -10,11 +12,13 @@ import {ConfirmDeletionComponent} from "../../modals/confirm-deletion/confirm-de
 export class UserProfilePage implements OnInit {
   private modalController = inject(ModalController);
   private toastController = inject(ToastController);
+  private userService = inject(UserService)
+  private authService = inject(AuthService)
+  user = this.userService.currentUser
 
   constructor(public navigationControl: NavController) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   async deleteAccount() {
     const modal = await this.modalController.create({
@@ -26,6 +30,8 @@ export class UserProfilePage implements OnInit {
   }
 
   async logout() {
+    await this.authService.signOut();
+    await this.navigationControl.navigateRoot('login');
     this.toastController.create({
       message: "Account session successfully terminated. You are now logged out.",
       duration: 1500,
@@ -34,6 +40,5 @@ export class UserProfilePage implements OnInit {
     }).then(async (toast) => {
       await toast.present();
     });
-    await this.navigationControl.navigateRoot('login');
   }
 }
