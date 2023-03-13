@@ -28,6 +28,7 @@ export class UserService {
   constructor() {
   }
 
+  // Todo implementer le getUser
   // async getUser(email: string): Observable<User> {
   //   const usersRef = collection(this.firestore, "users");
   //   const q = query(usersRef, where('email', '==', email));
@@ -43,10 +44,6 @@ export class UserService {
   //
   //   }
   // }
-
-  setUpCurrentUser(connectedUsersEmail: string){
-
-  }
 
   create(user: User) {
     const collectionRef = collection(this.firestore, "users")
@@ -64,7 +61,4 @@ export class UserService {
     return this.user;
   }
 
-  isEmailAlreadyExists(email: string) {
-
-  }
 }

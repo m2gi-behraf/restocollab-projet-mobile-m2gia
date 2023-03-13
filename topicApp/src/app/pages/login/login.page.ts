@@ -4,6 +4,8 @@ import {ToastController, NavController, ModalController} from "@ionic/angular";
 import {AuthService} from "../../services/auth.service";
 import {ForgotPasswordComponent} from "../../modals/forgot-password/forgot-password.component";
 import {UserService} from "../../services/user.service";
+import { FirebaseError } from '@firebase/util';
+import { AuthErrorCodes } from '@firebase/auth';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +16,7 @@ export class LoginPage implements OnInit {
 
   loginForm!: FormGroup;
   isSubmitted = false;
+  errorMessage = "";
   private toastController = inject(ToastController);
   private modalController = inject(ModalController);
   private navController = inject(NavController);
@@ -46,7 +49,7 @@ export class LoginPage implements OnInit {
       return false;
     } else {
       console.log(this.loginForm.value);
-      this.signIn(this.loginForm.controls['email'].value, this.loginForm.controls['password'].value);
+      await this.signIn(this.loginForm.controls['email'].value, this.loginForm.controls['password'].value);
       return true;
     }
   }
@@ -56,21 +59,50 @@ export class LoginPage implements OnInit {
       const userCredential = await this.authService.signIn(email, password);
 
       if (userCredential != null) {
-        this.userService.setUpCurrentUser(userCredential.user.email ?? "")
+        // todo
+        //this.userService.setUpCurrentUser(userCredential.user.email ?? "")
         await this.redirectToHome()
       }
     }
-    catch (error) {
+    catch (error: unknown) {
       //todo handle error visually
-      this.toastController.create({
-        message: "Login failed.",
-        duration: 1500,
-        position: "bottom",
-        color: 'danger'
-      }).then(async (toast) => {
-        await toast.present();
-      });
+      if (error instanceof FirebaseError){
+        this.showSignInErrorMessages(error)
+      }
+      else {
+        console.error(error)
+      }
     }
+  }
+
+  /**
+   * Show a toast with the reason of the failed sign in
+   * @param error
+   */
+  showSignInErrorMessages(error: FirebaseError) {
+    let message = ""
+    switch (error.code) {
+      case AuthErrorCodes.USER_DELETED :
+        message = "No user found with the specified mail"
+        break
+
+      case AuthErrorCodes.INVALID_PASSWORD :
+        message = "The specified password is invalid"
+        break
+
+      case AuthErrorCodes.UNVERIFIED_EMAIL :
+        message = "Please, verify your email before signing in"
+        break
+    }
+
+    this.toastController.create({
+      message: message,
+      duration: 1500,
+      position: "bottom",
+      color: 'danger'
+    }).then(async (toast) => {
+      await toast.present();
+    });
   }
 
   goSignUp() {
@@ -82,7 +114,6 @@ export class LoginPage implements OnInit {
       component: ForgotPasswordComponent,
     });
     modal.present();
-
     const { data, role } = await modal.onWillDismiss();
   }
 
@@ -91,13 +122,11 @@ export class LoginPage implements OnInit {
    */
   async signInWithGoogle() {
     const result = await this.authService.signInWithGoogle()
-
     if (result[0]) {
-      //todo call userService to set / get infos
       await this.redirectToHome();
     }
     else {
-      //todo handle errors & errors messages
+      console.log(result[2]);
     }
   }
 
