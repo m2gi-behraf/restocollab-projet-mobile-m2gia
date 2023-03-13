@@ -9,6 +9,10 @@
   </ion-card-header>
 
   <ion-card-content>
+    <div class="errorMessageContainer" *ngIf="errorMessage">
+
+    </div>
+
     <form class="wrapform" [formGroup]="loginForm" (ngSubmit)="submitForm()" novalidate>
       <ion-item>
         <ion-icon name="mail-outline"></ion-icon>
@@ -58,7 +62,11 @@
 
     <div class="social-buttons">
       <ion-button fill="clear" class="login-button ion-no-padding"><ion-img src="assets/icon/icon-facebook.png"></ion-img></ion-button>
-      <ion-button fill="clear" class="login-button ion-no-padding"><ion-img src="assets/icon/icon-google.png"></ion-img></ion-button>
+      <ion-button fill="clear"
+                  class="login-button ion-no-padding"
+                  (click)="signInWithGoogle()">
+        <ion-img src="assets/icon/icon-google.png"/>
+      </ion-button>
     </div>
   </ion-card-content>
 </ion-card>
