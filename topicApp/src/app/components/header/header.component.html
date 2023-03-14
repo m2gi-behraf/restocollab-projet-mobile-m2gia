@@ -6,7 +6,8 @@
       <ion-icon name="notifications" slot="end" (click)="showNotifications()"></ion-icon>
       <ion-badge class="notifications-badge" color="danger">3</ion-badge>
       <ion-icon name="color-filter-outline" slot="end"></ion-icon>
-      <img slot="end" src="./assets/images/user/user-profile-picture.png" class="user-avatar" (click)="goToUserProfile()"/>
+      <img *ngIf="user.imageUrl" src="{{user.imageUrl}}" class="user-avatar" (click)="goToUserProfile()" slot="end"/>
+      <img *ngIf="!user.imageUrl" src="./assets/images/user/user-profile-picture.png" class="user-avatar" (click)="goToUserProfile()" slot="end"/>
     </ion-toolbar>
   </ion-toolbar>
 </ion-header>
