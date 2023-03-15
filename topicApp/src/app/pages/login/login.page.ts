@@ -6,6 +6,7 @@ import {ForgotPasswordComponent} from "../../modals/forgot-password/forgot-passw
 import {UserService} from "../../services/user.service";
 import { FirebaseError } from '@firebase/util';
 import { AuthErrorCodes } from '@firebase/auth';
+import {user} from "@angular/fire/auth";
 
 @Component({
   selector: 'app-login',
@@ -57,8 +58,21 @@ export class LoginPage implements OnInit {
   private async signIn(email: string, password: string){
     try {
       const userCredential = await this.authService.signIn(email, password);
-
+      console.log(userCredential)
       if (userCredential != null) {
+        if(!userCredential.user.emailVerified){
+          this.toastController.create({
+            message: "Please, verify your email before signing in",
+            duration: 1500,
+            position: "bottom",
+            color: 'danger'
+          }).then(async (toast) => {
+            await toast.present();
+          });
+          await this.authService.signOut();
+          return;
+        }
+
         await this.userService.setUpCurrentUser(userCredential.user.email ?? "")
         await this.redirectToHome()
       }
