@@ -11,11 +11,8 @@ import {
   getDoc,
   getDocs, DocumentReference, docData
 } from '@angular/fire/firestore';
-import {Role} from "../models/Enums/Role";
 import {AuthenticationMethod} from "../models/Enums/AuthenticationMethod";
-import {Topic} from "../models/topic";
-import {firstValueFrom, lastValueFrom, Observable, of} from "rxjs";
-import {error} from "@angular/compiler-cli/src/transformers/util";
+import {firstValueFrom} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +21,6 @@ export class UserService {
   private readonly defaultUser: User = {
     firstname: "DEFAULT",
     lastname: "DEFAULT",
-    role: Role.Consumer,
     id: "",
     authenticationMethod: AuthenticationMethod.EMAIL,
     dateOfBirth: new Date("2000-01-01"),

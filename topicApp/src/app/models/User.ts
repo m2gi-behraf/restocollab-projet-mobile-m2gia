@@ -1,4 +1,3 @@
-import {Role} from "./Enums/Role";
 import {AuthenticationMethod} from "./Enums/AuthenticationMethod";
 
 /**
@@ -10,10 +9,6 @@ export interface User {
   firstname: string;
   dateOfBirth: Date;
   email: string;
-  /**
-   * Indique si l'utilisateur est un RestaurantOwner ou un Consumer
-   */
-  role: Role;
   /**
    * Défini la méthode d'autentification, Facebook, Google ou email.
    */

@@ -5,7 +5,6 @@ import {AuthService} from "../../services/auth.service";
 import {UserService} from "../../services/user.service";
 import {User} from "../../models/User";
 import {AuthenticationMethod} from "../../models/Enums/AuthenticationMethod";
-import {Role} from "../../models/Enums/Role";
 
 @Component({
   selector: 'app-signup',
@@ -84,7 +83,6 @@ export class SignupPage implements OnInit {
       email : email,
       imageUrl: "",
       authenticationMethod : AuthenticationMethod.EMAIL,
-      role : Role.Consumer,
       id: Date.now().toString() + (Math.random() * 100).toFixed().toString()
     }
 
