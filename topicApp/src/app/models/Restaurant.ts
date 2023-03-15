@@ -5,7 +5,9 @@ export interface Restaurant {
   id: string;
   title: string;
   description: string;
-
+  cuisine: string;
+  imageURL : string;
+  ranking: number;
   /**
    * Adresse postale
    */
@@ -15,11 +17,6 @@ export interface Restaurant {
    * Coordonnées GPS
    */
   coordinates: [number, number];
-
-  /**
-   * Commentaires laissés
-   */
-  comments: Comment[];
 
   /**
    * Collection d'URLs d'images
