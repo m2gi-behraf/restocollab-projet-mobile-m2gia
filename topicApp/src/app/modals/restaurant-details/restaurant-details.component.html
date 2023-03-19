@@ -2,7 +2,15 @@
   <ion-toolbar>
     <ion-buttons slot="end">
       <ion-button fill="clear" color="primary"><ion-icon name="add-circle-outline"></ion-icon></ion-button>
-      <ion-button fill="clear" color="primary"><ion-icon name="share-outline"></ion-icon></ion-button>
+      <ion-button fill="clear" color="primary"
+                  (click)="shareRestaurant(
+      this.thumbnailURL,
+      this.restaurantName,
+      this.restaurantRanking,
+      this.restaurantCuisine,
+      this.restaurantAddress,
+      this.restaurantDescription)"><ion-icon name="share-outline"></ion-icon>
+      </ion-button>
       <ion-button fill="clear" color="primary" (click)="dismissModal()">Close</ion-button>
     </ion-buttons>
     <ion-title>
