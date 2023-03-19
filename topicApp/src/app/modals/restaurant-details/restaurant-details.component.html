@@ -1,0 +1,40 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="primary"><ion-icon name="add-circle-outline"></ion-icon></ion-button>
+      <ion-button fill="clear" color="primary"><ion-icon name="share-outline"></ion-icon></ion-button>
+      <ion-button fill="clear" color="primary" (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="fast-food-outline"></ion-icon>
+      {{restaurantId}} - {{restaurantName}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-item>
+      <img src="{{thumbnailURL}}" class="restaurant-image"></ion-item>
+    <ion-list>
+      <ion-item>
+        <ion-icon name="star-half-outline"></ion-icon>
+        Ranking: {{restaurantRanking}}/5
+      </ion-item>
+      <ion-item>
+        <ion-icon name="earth-outline"></ion-icon>
+        Cuisine: {{restaurantCuisine}}
+      </ion-item>
+      <ion-item>
+        <ion-icon name="pin-outline"></ion-icon>
+        {{restaurantAddress}}
+      </ion-item>
+      <ion-item>
+        <ion-icon name="book-outline"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          {{restaurantDescription}}
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>

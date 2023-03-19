@@ -9,7 +9,6 @@ import { HomePageRoutingModule } from './home-routing.module';
 import { HomePage } from './home.page';
 
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
-import {SettingsPageModule} from "../settings/settings.module";
 import {HeaderModule} from "../../components/header/header.module";
 
 @NgModule({
@@ -19,7 +18,6 @@ import {HeaderModule} from "../../components/header/header.module";
     IonicModule,
     HomePageRoutingModule,
     Ng2SearchPipeModule,
-    SettingsPageModule,
     HeaderModule
   ],
   declarations: [HomePage]
