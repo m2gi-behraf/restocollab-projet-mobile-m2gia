@@ -20,6 +20,8 @@
     "@angular/platform-browser": "^15.0.0",
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
+    "cordova-plugin-x-socialsharing": "^6.0.4",
+    "@awesome-cordova-plugins/social-sharing": "^5.41.0",
     "@capacitor/android": "4.6.2",
     "@capacitor/app": "4.1.1",
     "@capacitor/core": "4.6.2",

@@ -11,6 +11,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app'
 import { provideFirestore, getFirestore } from '@angular/fire/firestore'
 import { provideAuth, getAuth } from '@angular/fire/auth'
 import { environment } from 'src/environments/environment'
+import { SocialSharing } from "@awesome-cordova-plugins/social-sharing/ngx";
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,7 +25,10 @@ import { environment } from 'src/environments/environment'
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    SocialSharing,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
