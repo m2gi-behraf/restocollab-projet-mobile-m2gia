@@ -7,25 +7,25 @@
   animated></ion-searchbar>
 
 <ion-content>
-  <ion-list *ngFor="let restaurant of restaurantsList | filter: filterRestaurantName">
+  <ion-list *ngFor="let restaurant of restaurants$ | async">
     <!-- todo: pass the link to the restaurant here via service,
          it would look something like this: href="restaurant-details/{{restaurant.name}}"-->
+<!--    (click)="showRestaurantDetails(restaurant.id,-->
+<!--    restaurant.thumbnailURL,-->
+<!--    restaurant.restaurantName,-->
+<!--    restaurant.ranking,-->
+<!--    restaurant.cuisine,-->
+<!--    restaurant.address,-->
+<!--    restaurant.description)"-->
     <ion-item
-      (click)="showRestaurantDetails(restaurant.id,
-      restaurant.thumbnailURL,
-      restaurant.restaurantName,
-      restaurant.ranking,
-      restaurant.cuisine,
-      restaurant.address,
-      restaurant.description)"
       detail class="item-custom-style">
       <ion-thumbnail class="ion-margin-end thumbnail">
-        <ion-img src="{{restaurant.thumbnailURL}}"></ion-img>
+        <ion-img src="{{restaurant.imageURL}}"></ion-img>
       </ion-thumbnail>
       <ion-label class="ion-text-wrap">
         <h1>
           <ion-icon name="restaurant-outline"></ion-icon>
-          {{restaurant.restaurantName}}
+          {{restaurant.name}}
         </h1>
         <h4>
           <ion-icon name="star-half-outline"></ion-icon>
