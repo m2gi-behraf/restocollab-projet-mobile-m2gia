@@ -25,7 +25,7 @@ export class CreateRestaurantListComponent implements OnInit {
     {id: 3, thumbnailURL: "../../assets/images/home/restaurant-comptoire-ditalie.png", restaurantName: "Comptoire d'Italie", ranking: "4", cuisine: "🇮🇹", address:  "4 Pl. de Gordes, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
   ]
 
-  restaurantPlaylistName = "";
+  restaurantListName = "";
   selectedRestaurantsList = [];
 
   constructor(private formBuilder: FormBuilder) { }
@@ -72,8 +72,8 @@ export class CreateRestaurantListComponent implements OnInit {
       return false;
     } else {
       //todo: add server/service side
-      this.restaurantPlaylistName = this.restaurantListCreationForm.controls['listname'].value;
-      console.log("The restaurant list name is: " + this.restaurantPlaylistName
+      this.restaurantListName = this.restaurantListCreationForm.controls['listname'].value;
+      console.log("The restaurant list name is: " + this.restaurantListName
         + "\nSelected restaurants are: " + this.selectedRestaurantsList);
       this.toastController.create({
         message: "Restaurant list creation successful!",
