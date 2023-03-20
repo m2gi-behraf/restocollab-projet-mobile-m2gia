@@ -1,11 +1,13 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormControl, Form} from "@angular/forms";
-import {ToastController, NavController, ModalController} from "@ionic/angular";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ModalController, NavController, ToastController} from "@ionic/angular";
 import {AuthService} from "../../services/auth.service";
 import {ForgotPasswordComponent} from "../../modals/forgot-password/forgot-password.component";
 import {UserService} from "../../services/user.service";
-import { FirebaseError } from '@firebase/util';
-import { AuthErrorCodes } from '@firebase/auth';
+import {FirebaseError} from '@firebase/util';
+import {AuthErrorCodes, User as FireUser} from '@firebase/auth';
+import {User} from '../../models/User';
+import {AuthenticationMethod} from "../../models/Enums/AuthenticationMethod";
 
 @Component({
   selector: 'app-login',
@@ -121,7 +123,19 @@ export class LoginPage implements OnInit {
    */
   async signInWithGoogle() {
     const result = await this.authService.signInWithGoogle()
+    console.log(result);
     if (result[0]) {
+      //Creation of the user
+      const fireUser = result[1] as FireUser;
+      const user: User = this.userService.DEFAULT_USER;
+      user.imageUrl = fireUser.photoURL ?? user.imageUrl;
+      user.firstname = fireUser.displayName ?? user.firstname;
+      user.lastname = "";
+      user.email = fireUser.email ?? user.email;
+      user.authenticationMethod = AuthenticationMethod.GOOGLE;
+
+      //Set up current user
+      await this.userService.setUpCurrentUserFromGoogle(user)
       await this.redirectToHome();
     }
     else {

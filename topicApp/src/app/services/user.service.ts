@@ -1,16 +1,6 @@
 import {inject, Injectable} from '@angular/core';
-import {User} from "../models/User";
-import {
-  addDoc,
-  collection,
-  collectionData,
-  doc,
-  where,
-  query,
-  Firestore,
-  getDoc,
-  getDocs, DocumentReference, docData
-} from '@angular/fire/firestore';
+import { User } from "../models/User";
+import { addDoc, collection, doc, where, query, Firestore, getDocs, DocumentReference, docData } from '@angular/fire/firestore';
 import {AuthenticationMethod} from "../models/Enums/AuthenticationMethod";
 import {firstValueFrom} from "rxjs";
 
@@ -18,7 +8,7 @@ import {firstValueFrom} from "rxjs";
   providedIn: 'root'
 })
 export class UserService {
-  private readonly defaultUser: User = {
+  readonly DEFAULT_USER: User = {
     firstname: "DEFAULT",
     lastname: "DEFAULT",
     id: "",
@@ -27,11 +17,10 @@ export class UserService {
     email: "DEFAULT@gmail.com",
     imageUrl: "https://raw.githubusercontent.com/a6digital/laravel-default-profile-image/master/docs/images/profile.png"
   };
-  private user: User = this.defaultUser
+  private user: User = this.DEFAULT_USER
 
   private firestore = inject(Firestore)
-  constructor() {
-  }
+  constructor() { }
 
   // Todo implementer le getUser
   async getUser(email: string): Promise<User | null> {
@@ -49,15 +38,39 @@ export class UserService {
     }
   }
 
+  /**
+   * Get the database user matching the given email.
+   * Set up the current user with the one got
+   * @param email User's email to set up.
+   */
   async setUpCurrentUser(email: string) {
-    await this.getUser(email).
-      then((user) => {
-        this.user = (user) ? user : this.defaultUser
+    await this.getUser(email).then((user) => {
+        this.user = (user) ? user : this.DEFAULT_USER
         console.log("Current User", user);
       })
       .catch((error) => {
         console.error(error)
       })
+  }
+
+  /**
+   * Create or get the database user matching the given user's email address.
+   * If the user is not registered yet, create it with the provider's infos.
+   * Set up the current user with the one got or created
+   * @param user User to set up.
+   */
+  async setUpCurrentUserFromGoogle(user: User) {
+    await this.getUser(user.email).then(async (dbUser) => {
+        if (dbUser === null) {
+          await this.create(user);
+          this.user = user;
+        }
+        else {
+          this.user = dbUser;
+        }
+    }).catch((error) => {
+      console.error(error);
+    })
   }
 
   create(user: User) {
