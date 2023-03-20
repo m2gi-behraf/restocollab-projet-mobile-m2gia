@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import { Firestore, collection, collectionData, DocumentData, doc, addDoc, deleteDoc, docData, DocumentReference, CollectionReference } from '@angular/fire/firestore';
 import {Restaurant} from "../models/Restaurant";
-import {Observable} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +9,7 @@ import {Observable} from "rxjs";
 export class RestaurantService {
 
   private firestore = inject(Firestore)
+  public restaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([] as Restaurant[]);
   constructor() { }
 
   /**
@@ -23,9 +24,9 @@ export class RestaurantService {
   /**
    * Return all restaurants
    */
-  findAll(): Observable<Restaurant[] | null> {
+  findAll(): Observable<Restaurant[]> {
     const collectionRef = collection(this.firestore, `restaurants`) as CollectionReference<Restaurant>;
-    return collectionData(collectionRef);
+    return collectionData<any>(collectionRef, { idField: 'id' });
   }
 
   create(restaurant: Restaurant): void {

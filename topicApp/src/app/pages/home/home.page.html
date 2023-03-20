@@ -1,6 +1,7 @@
 <app-header></app-header>
 <ion-searchbar
   stick
+  (ionChange)="search($any($event.target).value)"
   placeholder="Search"
   [(ngModel)]="filterRestaurantName"
   showClearButton="focus"
@@ -8,16 +9,8 @@
 
 <ion-content>
   <ion-list *ngFor="let restaurant of restaurants$ | async">
-    <!-- todo: pass the link to the restaurant here via service,
-         it would look something like this: href="restaurant-details/{{restaurant.name}}"-->
-<!--    (click)="showRestaurantDetails(restaurant.id,-->
-<!--    restaurant.thumbnailURL,-->
-<!--    restaurant.restaurantName,-->
-<!--    restaurant.ranking,-->
-<!--    restaurant.cuisine,-->
-<!--    restaurant.address,-->
-<!--    restaurant.description)"-->
     <ion-item
+      (click)="showRestaurantDetails(restaurant)"
       detail class="item-custom-style">
       <ion-thumbnail class="ion-margin-end thumbnail">
         <ion-img src="{{restaurant.imageURL}}"></ion-img>

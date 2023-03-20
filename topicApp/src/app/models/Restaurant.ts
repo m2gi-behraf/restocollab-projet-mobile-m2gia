@@ -3,7 +3,7 @@
  */
 export interface Restaurant {
   id: string;
-  title: string;
+  name: string;
   description: string;
   cuisine: string;
   imageURL : string;

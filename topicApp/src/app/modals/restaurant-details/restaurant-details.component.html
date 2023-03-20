@@ -3,44 +3,39 @@
     <ion-buttons slot="end">
       <ion-button fill="clear" color="primary"><ion-icon name="add-circle-outline"></ion-icon></ion-button>
       <ion-button fill="clear" color="primary"
-                  (click)="shareRestaurant(
-      this.thumbnailURL,
-      this.restaurantName,
-      this.restaurantRanking,
-      this.restaurantCuisine,
-      this.restaurantAddress,
-      this.restaurantDescription)"><ion-icon name="share-outline"></ion-icon>
+                  (click)="shareRestaurant()"><ion-icon name="share-outline"></ion-icon>
       </ion-button>
       <ion-button fill="clear" color="primary" (click)="dismissModal()">Close</ion-button>
     </ion-buttons>
     <ion-title>
       <ion-icon name="fast-food-outline"></ion-icon>
-      {{restaurantId}} - {{restaurantName}}
+      {{restaurant.name}}
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-card>
+    <ion-card-title>{{restaurant.name}}</ion-card-title>
     <ion-item>
-      <img src="{{thumbnailURL}}" class="restaurant-image"></ion-item>
+      <img src="{{restaurant.imageURL}}" class="restaurant-image"></ion-item>
     <ion-list>
       <ion-item>
         <ion-icon name="star-half-outline"></ion-icon>
-        Ranking: {{restaurantRanking}}/5
+        Ranking: {{restaurant.ranking}}/5
       </ion-item>
       <ion-item>
         <ion-icon name="earth-outline"></ion-icon>
-        Cuisine: {{restaurantCuisine}}
+        Cuisine: {{restaurant.cuisine}}
       </ion-item>
       <ion-item>
         <ion-icon name="pin-outline"></ion-icon>
-        {{restaurantAddress}}
+        {{restaurant.address}}
       </ion-item>
       <ion-item>
         <ion-icon name="book-outline"></ion-icon>
         <ion-label class="ion-text-wrap">
-          {{restaurantDescription}}
+          {{restaurant.description}}
         </ion-label>
       </ion-item>
     </ion-list>
