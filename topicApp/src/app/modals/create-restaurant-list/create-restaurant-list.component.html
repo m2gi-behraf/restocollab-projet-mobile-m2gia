@@ -27,7 +27,7 @@
           <ion-icon name="fast-food-outline"></ion-icon>
           <ion-select placeholder="Add Restaurant(s)" [multiple]="true" formControlName="restaurants"
                       (ionChange)="handleRestaurantSelectionChange($event)" (ionCancel)="handleCancel()" (ionDismiss)="handleCancel()">
-            <ion-select-option *ngFor="let restaurant of restaurantsList" value="{{restaurant.restaurantName}}">{{restaurant.restaurantName}}</ion-select-option>
+            <ion-select-option *ngFor="let restaurant of existingRestaurantsList" value="{{restaurant.restaurantName}}">{{restaurant.restaurantName}}</ion-select-option>
           </ion-select>
         </ion-item>
         <ion-text color="danger" *ngIf="errorControl['restaurants'].touched && errorControl['restaurants'].errors?.['restaurants'] || isSubmitted && errorControl['restaurants'].errors?.['restaurants']">
