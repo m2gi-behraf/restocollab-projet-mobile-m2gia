@@ -1,0 +1,57 @@
+// Ion-related //
+ion-content {
+  --background: #363636 url("../../../assets/images/app-background.png") no-repeat center center / cover;
+}
+
+ion-card {
+  background-color: #1e1e1e!important;
+}
+
+ion-img {
+  width: 200px;
+  height: 200px;
+}
+
+ion-item {
+  ion-icon {
+    color: #ccffff;
+    font-size: 20px;
+    padding: 10px;
+  }
+}
+
+ion-header {
+  ion-icon {
+    position: relative;
+    align-content: center;
+    font-size: 15px;
+  }
+}
+
+ion-buttons {
+  ion-icon {
+    color: #ccffff;
+    font-size: 30px;
+    padding: 10px;
+  }
+}
+// End: Ion-related //
+
+// Other //
+.restaurant-image {
+  margin-top: 15px;
+  max-height: 200px !important;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  border: 5px solid #555;
+  border-radius: 10%;
+}
+
+.restaurant-content {
+  color: #ffffff;
+  font-size: 14px;
+}
+// End: Other //
+
