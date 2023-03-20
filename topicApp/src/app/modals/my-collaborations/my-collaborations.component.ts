@@ -2,6 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {ReactiveFormsModule} from "@angular/forms";
 import {IonicModule, ModalController} from "@ionic/angular";
 import {NgForOf, NgIf} from "@angular/common";
+import {CreateRestaurantListComponent} from "../create-restaurant-list/create-restaurant-list.component";
 
 @Component({
   selector: 'app-my-collaborations',
@@ -128,6 +129,14 @@ export class MyCollaborationsComponent implements OnInit {
   //todo: if your permissions are "read-write" then display add button to the list
   goToSharedList(sharedListName: string) {
     console.log("Expand concerned shared list: " + sharedListName);
+  }
+
+  async showCreateRestaurantList() {
+    const modal = await this.modalController.create({
+      component: CreateRestaurantListComponent,
+    });
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss();
   }
 
 }

@@ -1,0 +1,45 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="primary" (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="list-circle-outline"></ion-icon>
+      Create a Restaurant List
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card>
+      <form class="wrapform" [formGroup]="restaurantListCreationForm" (ngSubmit)="submitForm()" novalidate>
+        <ion-item>
+          <ion-icon name="newspaper-outline"></ion-icon>
+          <ion-input formControlName="listname" type="text" name="listname" required="true" placeholder="List Name"></ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="errorControl['listname'].touched && errorControl['listname'].errors?.['required'] || isSubmitted && errorControl['listname'].errors?.['listname']">
+      <span>
+        This field is required.
+      </span>
+        </ion-text>
+        <ion-item>
+          <ion-icon name="fast-food-outline"></ion-icon>
+          <ion-select placeholder="Add Restaurant(s)" [multiple]="true" formControlName="restaurants"
+                      (ionChange)="handleRestaurantSelectionChange($event)" (ionCancel)="handleCancel()" (ionDismiss)="handleCancel()">
+            <ion-select-option *ngFor="let restaurant of restaurantsList" value="{{restaurant.restaurantName}}">{{restaurant.restaurantName}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-text color="danger" *ngIf="errorControl['restaurants'].touched && errorControl['restaurants'].errors?.['restaurants'] || isSubmitted && errorControl['restaurants'].errors?.['restaurants']">
+      <span>
+        This field is required.
+      </span>
+        </ion-text>
+        <div class="buttons">
+        <ion-button class="submit-button" fill="outline" shape="round" type="submit">Submit</ion-button>
+        </div>
+      </form>
+  </ion-card>
+</ion-content>
+
+
