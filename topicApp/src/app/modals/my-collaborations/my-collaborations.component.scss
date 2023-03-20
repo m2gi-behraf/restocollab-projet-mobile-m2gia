@@ -27,11 +27,13 @@ ion-header {
   }
 }
 
-ion-buttons {
+ion-button {
   ion-icon {
     color: #ccffff;
-    font-size: 30px;
+    font-size: 20px;
     padding: 10px;
+    position: center;
+    display: block;
   }
 }
 
