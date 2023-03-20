@@ -13,7 +13,7 @@ import {Restaurant} from "../../models/Restaurant";
 })
 export class RestaurantDetailsComponent implements OnInit {
 
-  restaurant: Restaurant = {} as Restaurant;
+  public restaurant: Restaurant = {} as Restaurant;
   private modalController = inject(ModalController);
 
   constructor() { }
@@ -24,17 +24,14 @@ export class RestaurantDetailsComponent implements OnInit {
     this.modalController.dismiss();
   }
 
+  /**
+   * Show modal to share restaurant.
+   */
   async shareRestaurant() {
+    const restaurant = this.restaurant;
     const modal = await this.modalController.create({
       component: ShareRestaurantComponent,
-      componentProps: {
-        thumbnailURL: this.restaurant.imageURL,
-        restaurantName: this.restaurant.name,
-        restaurantRanking: this.restaurant.ranking,
-        restaurantCuisine: this.restaurant.cuisine,
-        restaurantAddress: this.restaurant.address,
-        restaurantDescription: this.restaurant.description
-      }
+      componentProps: { restaurant }
     });
     await modal.present();
     const { data, role } = await modal.onWillDismiss();

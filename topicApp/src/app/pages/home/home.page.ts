@@ -28,7 +28,10 @@ export class HomePage implements OnInit {
     this.searchText$.next(value)
   }
 
-
+  /**
+   * Show a modal of the restaurant
+   * @param restaurant restaurant to show
+   */
   async showRestaurantDetails(restaurant: Restaurant) {
     const modal = await this.modalController.create({
       component: RestaurantDetailsComponent,
