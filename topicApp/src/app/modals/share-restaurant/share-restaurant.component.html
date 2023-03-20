@@ -1,0 +1,28 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="primary" (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="share-outline"></ion-icon>
+      Share: {{restaurantName}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item (click)="shareElement('sms')">
+      <ion-icon name="chatbox-ellipses-outline"></ion-icon>
+      <p>via SMS</p>
+    </ion-item>
+    <ion-item (click)="shareElement('email')">
+      <ion-icon name="mail-outline"></ion-icon>
+      <p>Via Email</p>
+    </ion-item>
+    <ion-item (click)="shareElement('whatsapp')">
+      <ion-icon name="logo-whatsapp"></ion-icon>
+      <p>via WhatsApp</p>
+    </ion-item>
+  </ion-list>
+</ion-content>

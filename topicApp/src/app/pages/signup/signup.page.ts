@@ -5,7 +5,6 @@ import {AuthService} from "../../services/auth.service";
 import {UserService} from "../../services/user.service";
 import {User} from "../../models/User";
 import {AuthenticationMethod} from "../../models/Enums/AuthenticationMethod";
-import {Role} from "../../models/Enums/Role";
 
 @Component({
   selector: 'app-signup',
@@ -64,7 +63,7 @@ export class SignupPage implements OnInit {
       //call signUp
       const email = this.signupForm.controls['email'].value;
       const pwd = this.signupForm.controls['password'].value;
-      this.signUp(email, pwd);
+      await this.signUp(email, pwd);
 
       return true;
     }
@@ -75,34 +74,33 @@ export class SignupPage implements OnInit {
    * @param email User's email
    * @param password User's pwd
    */
-  private signUp(email: string, password: string){
-    this.authService.SignUp(email, password).then(async (success) => {
-      //Creation of the user
-      const user: User = {
-        firstname : this.signupForm.controls['firstname'].value,
-        lastname : this.signupForm.controls['lastname'].value,
-        dateOfBirth : this.signupForm.controls['birthday'].value,
-        email : email,
-        authenticationMethod : AuthenticationMethod.EMAIL,
-        role : Role.Consumer,
-        id: Date.now().toString() + (Math.random() * 100).toFixed().toString(),
-      }
+  private async signUp(email: string, password: string): Promise<void> {
+    //Creation of the user
+    const user: User = {
+      firstname : this.signupForm.controls['firstname'].value,
+      lastname : this.signupForm.controls['lastname'].value,
+      dateOfBirth : this.signupForm.controls['birthday'].value,
+      email : email,
+      imageUrl: "",
+      authenticationMethod : AuthenticationMethod.EMAIL,
+      id: Date.now().toString() + (Math.random() * 100).toFixed().toString()
+    }
 
-      //Add user in firestore
-      this.userService.create(user);
+    //Add user in firestore
+    const authResult = await this.authService.signUp(email, password)
+    if (authResult[0]) {
+      await this.userService.create(user);
+    }
 
-      //toast success
-      this.toastController.create({
-        message: "Signup successful.",
-        duration: 1500,
-        position: "bottom",
-        color: 'success'
-      }).then(async (toast) => {
-        await toast.present()
-      });
-    }).catch((error) => {
-        console.log("Signup subscription", error);
-      })
+    //toast success
+    this.toastController.create({
+      message: "Signup successful.",
+      duration: 1500,
+      position: "bottom",
+      color: 'success'
+    }).then(async (toast) => {
+      await toast.present()
+    });
   }
 
   private match(controlName: string, matchControlName: string): ValidatorFn {
@@ -124,7 +122,7 @@ export class SignupPage implements OnInit {
   }
 
   goLogin() {
-    this.navigationControl.navigateForward('login');
+    this.navigationControl.navigateBack('login');
   }
 }
 

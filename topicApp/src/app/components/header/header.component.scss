@@ -1,0 +1,76 @@
+// Ion-related //
+ion-thumbnail {
+  --border-radius: 8px;
+}
+
+ion-content {
+  --background: #363636 url("../../../assets/images/app-background.png") no-repeat center center / cover;
+}
+
+ion-card {
+  background-color: #1e1e1e!important;
+}
+
+ion-searchbar {
+  background-color: #1e1e1e!important;
+}
+
+ion-toolbar {
+  background-color: #1e1e1e!important;
+}
+
+ion-header {
+  font-family: Avenir;
+  ion-icon {
+    font-size: 30px;
+    position: relative;
+    margin-right: 10px;
+    margin-top: 0px;
+  }
+  .notifications-badge {
+    position: absolute;
+    top: 5px;
+    right:110px;
+    z-index: 111;
+  }
+}
+// End: Ion-related //
+
+// Other //
+.thumbnail {
+  height: 100px;
+  width: 100px;
+}
+
+.item-custom-style {
+  border: none;
+  border-bottom: 2px solid #4e4e4e;
+  margin-bottom: 5px;
+}
+
+.app-title {
+  margin-top: 10px;
+  margin-bottom: 0px;
+  font-size: 35px;
+  font-family: Avenir;
+  color: #fff;
+  text-align: center;
+}
+
+.user-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 10px;
+
+  &:hover{
+    cursor: pointer;
+  }
+}
+
+ion-icon {
+  &:hover{
+    cursor: pointer;
+  }
+}
+// End: Other //

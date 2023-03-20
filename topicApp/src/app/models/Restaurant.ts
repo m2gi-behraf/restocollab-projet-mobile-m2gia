@@ -1,14 +1,13 @@
-import {Rate} from "./Rate";
-import {RestaurantCategories} from "./Enums/RestaurantCategories";
-import {CountryCuisine} from "./Enums/CountryCuisine";
-
+/**
+ * Define the class Restaurant
+ */
 export interface Restaurant {
   id: string;
   title: string;
   description: string;
-  categories: RestaurantCategories[]
-  countryCuisine: CountryCuisine;
-
+  cuisine: string;
+  imageURL : string;
+  ranking: number;
   /**
    * Adresse postale
    */
@@ -18,16 +17,6 @@ export interface Restaurant {
    * Coordonnées GPS
    */
   coordinates: [number, number];
-
-  /**
-   * Avis laissés sur 5
-   */
-  rates: Rate[];
-
-  /**
-   * Commentaires laissés
-   */
-  comments: Comment[];
 
   /**
    * Collection d'URLs d'images

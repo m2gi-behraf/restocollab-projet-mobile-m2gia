@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import {Component, inject, OnInit} from '@angular/core';
 import {IonicModule, ModalController, ToastController} from "@ionic/angular";
-import {AuthService} from "../../../../services/auth.service";
+import {AuthService} from "../../services/auth.service";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
@@ -12,16 +12,16 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   styleUrls: ['./forgot-password.component.scss'],
 })
 export class ForgotPasswordComponent implements OnInit {
-  private tostController = inject(ToastController);
+  private toastController = inject(ToastController);
   private modalController = inject(ModalController);
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
-  forgotPwdForm!: FormGroup;
+  forgotPasswordForm!: FormGroup;
   isSubmitted= false;
   constructor() { }
 
   ngOnInit() {
-    this.forgotPwdForm = this.formBuilder.group({
+    this.forgotPasswordForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]]
     });
   }
@@ -29,8 +29,8 @@ export class ForgotPasswordComponent implements OnInit {
   /**
    * Get form controls
    */
-  get controls() {
-    return this.forgotPwdForm.controls;
+  get errorControl() {
+    return this.forgotPasswordForm.controls;
   }
 
   /**
@@ -38,8 +38,8 @@ export class ForgotPasswordComponent implements OnInit {
    */
   async submitForm(){
     this.isSubmitted = true;
-    if (!this.forgotPwdForm.valid) {
-      this.tostController.create({
+    if (!this.forgotPasswordForm.valid) {
+      this.toastController.create({
         message: "Please make sure you provided all required values correctly.",
         duration: 1500,
         position: "bottom",
@@ -49,7 +49,7 @@ export class ForgotPasswordComponent implements OnInit {
       });
     }
     else {
-      this.forgotPassword(this.forgotPwdForm.controls['email'].value);
+      this.forgotPassword(this.forgotPasswordForm.controls['email'].value);
     }
   }
 
@@ -58,9 +58,9 @@ export class ForgotPasswordComponent implements OnInit {
    * @param email email for reset
    */
   private forgotPassword(email: string) {
-    this.authService.ForgotPassword(email)
+    this.authService.forgotPassword(email)
       .then(() => {
-        this.tostController.create({
+        this.toastController.create({
           message: "Reset password link sent to " + email,
           duration: 1500,
           position: "bottom",
@@ -72,7 +72,7 @@ export class ForgotPasswordComponent implements OnInit {
       })
       .catch((error) => {
         console.error(error);
-        this.tostController.create({
+        this.toastController.create({
           message: "An error occurred while sending email, please be sure you provided the good address",
           duration: 1500,
           position: "bottom",

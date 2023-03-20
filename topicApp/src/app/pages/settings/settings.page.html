@@ -1,0 +1,28 @@
+<app-header></app-header>
+<ion-content>
+  <ion-card>
+    <h3>Notifications</h3>
+    <ion-item>
+      <ion-label>Application</ion-label>
+      <ion-toggle color="secondary" mode="MD" [(ngModel)]="settings.appNotifications" (ionChange)="changeAppNotifications({ev : $event})"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Email</ion-label>
+      <ion-toggle color="secondary" mode="MD" [(ngModel)]="settings.emailNotifications" (ionChange)="changeEmailNotifications({ev : $event})"></ion-toggle>
+    </ion-item>
+  </ion-card>
+
+  <ion-card>
+    <h3>Permissions</h3>
+    <ion-item>
+      <ion-label>GPS Location</ion-label>
+      <ion-toggle color="secondary" mode="MD" [(ngModel)]="settings.gpsLocation" (ionChange)="changeGPSPermission({ev : $event})"></ion-toggle>
+    </ion-item>
+  </ion-card>
+
+  <ion-footer class="ion-no-border">
+    <p>Resto'collab • v.1.0 • Fabien Behra, Jad Jawlakh</p>
+    <p>© All right reserved, 2023</p>
+  </ion-footer>
+
+</ion-content>

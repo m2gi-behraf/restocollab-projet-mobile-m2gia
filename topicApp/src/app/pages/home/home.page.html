@@ -1,0 +1,45 @@
+<app-header></app-header>
+<ion-searchbar
+  stick
+  placeholder="Search"
+  [(ngModel)]="filterRestaurantName"
+  showClearButton="focus"
+  animated></ion-searchbar>
+
+<ion-content>
+  <ion-list *ngFor="let restaurant of restaurantsList | filter: filterRestaurantName">
+    <!-- todo: pass the link to the restaurant here via service,
+         it would look something like this: href="restaurant-details/{{restaurant.name}}"-->
+    <ion-item
+      (click)="showRestaurantDetails(restaurant.id,
+      restaurant.thumbnailURL,
+      restaurant.restaurantName,
+      restaurant.ranking,
+      restaurant.cuisine,
+      restaurant.address,
+      restaurant.description)"
+      detail class="item-custom-style">
+      <ion-thumbnail class="ion-margin-end thumbnail">
+        <ion-img src="{{restaurant.thumbnailURL}}"></ion-img>
+      </ion-thumbnail>
+      <ion-label class="ion-text-wrap">
+        <h1>
+          <ion-icon name="restaurant-outline"></ion-icon>
+          {{restaurant.restaurantName}}
+        </h1>
+        <h4>
+          <ion-icon name="star-half-outline"></ion-icon>
+          Ranking: {{restaurant.ranking}}/5
+        </h4>
+        <h4>
+          <ion-icon name="earth-outline"></ion-icon>
+          Cuisine: {{restaurant.cuisine}}
+        </h4>
+        <p>
+          <ion-icon name="pin-outline"></ion-icon>
+          {{restaurant.address}}
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
