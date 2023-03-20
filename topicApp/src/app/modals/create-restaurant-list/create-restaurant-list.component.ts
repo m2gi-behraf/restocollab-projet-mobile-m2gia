@@ -58,6 +58,7 @@ export class CreateRestaurantListComponent implements OnInit {
 
   async submitForm() {
     //todo: add server/service side
+    // -> we will keep the addition of collaborators exclusive to the edition of a list for now (v1.0)
     this.isSubmitted = true;
     console.log("Restaurant list submission.");
     if (!this.restaurantListCreationForm.valid) {
