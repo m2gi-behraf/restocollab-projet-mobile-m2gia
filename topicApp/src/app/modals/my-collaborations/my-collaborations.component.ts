@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ReactiveFormsModule} from "@angular/forms";
-import {IonicModule, ModalController} from "@ionic/angular";
+import {AlertController, IonicModule, ModalController} from "@ionic/angular";
 import {NgForOf, NgIf} from "@angular/common";
 import {CreateRestaurantListComponent} from "../create-restaurant-list/create-restaurant-list.component";
 
@@ -13,7 +13,10 @@ import {CreateRestaurantListComponent} from "../create-restaurant-list/create-re
 })
 export class MyCollaborationsComponent implements OnInit {
   private modalController = inject(ModalController);
+  alertHandlerMessage = '';
+  alertRoleMessage = '';
 
+  // todo: replace the hard-coded lists with the appropriate service implementation
   yourRestaurantsLists = [
     { listID: 1,
       listName: "My favourite restaurants",
@@ -116,7 +119,7 @@ export class MyCollaborationsComponent implements OnInit {
     }
   ];
 
-  constructor() {}
+  constructor(private alertController: AlertController) {}
 
   ngOnInit() {}
 
@@ -137,6 +140,42 @@ export class MyCollaborationsComponent implements OnInit {
     });
     await modal.present();
     const { data, role } = await modal.onWillDismiss();
+  }
+
+  deleteRestaurantList(restaurantListID: number, restaurantListName: string) {
+    //todo: removal of said restaurant list works, remains to implement this on the server/firebase side
+    console.log("Your Restaurants Lists -- BEFORE DELETION: \n" + this.yourRestaurantsLists.length);
+    console.log("DELETED: " + restaurantListName.toString(), restaurantListID.toString());
+    this.yourRestaurantsLists = this.yourRestaurantsLists.filter(list => list.listID != restaurantListID);
+    console.log("Your Restaurants Lists -- AFTER DELETION: \n" + this.yourRestaurantsLists.length);
+  }
+
+  async presentRestaurantListDeletionAlert(restaurantListID: number, restaurantListName: string) {
+    const alert = await this.alertController.create({
+      header: "You're about to delete: " + restaurantListName + "\nThis action is irreversible, are you sure you want to proceed?",
+      buttons: [
+        {
+          text: "Yes, I'm sure. \nDelete " + restaurantListName + ". ",
+          role: 'confirm',
+          handler: () => {
+            this.alertHandlerMessage = 'Deletion confirmed!';
+            this.deleteRestaurantList(restaurantListID, restaurantListName);
+          },
+        },
+        {
+          text: "Abort",
+          role: 'cancel',
+          handler: () => {
+            this.alertHandlerMessage = 'Deletion aborted. Alert canceled!';
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+
+    const { role } = await alert.onDidDismiss();
+    this.alertRoleMessage = `Dismissed with role: ${role}`;
   }
 
 }

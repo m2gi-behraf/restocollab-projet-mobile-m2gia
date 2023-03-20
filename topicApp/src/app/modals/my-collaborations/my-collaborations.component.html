@@ -31,6 +31,7 @@
       <ion-list>
         <ion-item>
           <h3>{{restaurantList.listName}}</h3>
+          <ion-button fill="clear" color="primary" slot="end" (click)="presentRestaurantListDeletionAlert(restaurantList.listID, restaurantList.listName)"><ion-icon name="trash-outline"></ion-icon></ion-button>
           <ion-button fill="clear" color="primary" slot="end"><ion-icon name="create-outline"></ion-icon></ion-button>
         </ion-item>
         <ion-item>
