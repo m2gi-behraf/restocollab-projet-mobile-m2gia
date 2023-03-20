@@ -1,10 +1,10 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
-import {NavController, ToastController} from "@ionic/angular";
-import {AuthService} from "../../services/auth.service";
-import {UserService} from "../../services/user.service";
-import {User} from "../../models/User";
-import {AuthenticationMethod} from "../../models/Enums/AuthenticationMethod";
+import { Component, inject, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from "@angular/forms";
+import { NavController, ToastController } from "@ionic/angular";
+import { AuthService } from "../../services/auth.service";
+import { UserService } from "../../services/user.service";
+import { User } from "../../models/User";
+import { AuthenticationMethod } from "../../models/Enums/AuthenticationMethod";
 
 @Component({
   selector: 'app-signup',
@@ -14,14 +14,14 @@ import {AuthenticationMethod} from "../../models/Enums/AuthenticationMethod";
 export class SignupPage implements OnInit {
   signupForm!: FormGroup;
   private toastController = inject(ToastController);
+  private navController = inject(NavController);
   private authService = inject(AuthService);
   private userService = inject(UserService);
   isSubmitted = false;
 
-  constructor(private formBuilder: FormBuilder, public navigationControl: NavController) { }
+  constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-
     this.signupForm = this.formBuilder.group({
       firstname: ['', Validators.required],
       lastname: ['', Validators.required],
@@ -102,7 +102,7 @@ export class SignupPage implements OnInit {
 
     //toast success
     this.toastController.create({
-      message: "Signup successful.",
+      message: "Signup successful. Please verify your email before signing in",
       duration: 1500,
       position: "bottom",
       color: 'success'
@@ -111,6 +111,11 @@ export class SignupPage implements OnInit {
     });
   }
 
+  /**
+   * Check if both parameters containing the same value.
+   * @param controlName First parameter to compare
+   * @param matchControlName Second parameter to compare
+   */
   private match(controlName: string, matchControlName: string): ValidatorFn {
     return (controls: AbstractControl) => {
       const control = controls.get(controlName);
@@ -129,8 +134,11 @@ export class SignupPage implements OnInit {
     };
   }
 
-  goLogin() {
-    this.navigationControl.navigateBack('login');
+  /**
+   * Navigate back to login page
+   */
+  async backToLogin() {
+    await this.navController.navigateBack('login');
   }
 }
 

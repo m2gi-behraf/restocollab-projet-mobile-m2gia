@@ -1,9 +1,9 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormControl, Form} from "@angular/forms";
-import {ToastController, NavController, ModalController} from "@ionic/angular";
-import {AuthService} from "../../services/auth.service";
-import {ForgotPasswordComponent} from "../../modals/forgot-password/forgot-password.component";
-import {UserService} from "../../services/user.service";
+import { Component, inject, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { ToastController, NavController, ModalController } from "@ionic/angular";
+import { AuthService } from "../../services/auth.service";
+import { ForgotPasswordComponent } from "../../modals/forgot-password/forgot-password.component";
+import { UserService } from "../../services/user.service";
 import { FirebaseError } from '@firebase/util';
 import { AuthErrorCodes } from '@firebase/auth';
 
@@ -13,7 +13,6 @@ import { AuthErrorCodes } from '@firebase/auth';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-
   loginForm!: FormGroup;
   isSubmitted = false;
   errorMessage = "";
@@ -35,6 +34,9 @@ export class LoginPage implements OnInit {
     return this.loginForm.controls;
   }
 
+  /**
+   * Submit the form and check for invalid fields.
+   */
   async submitForm() {
     this.isSubmitted = true;
     if (!this.loginForm.valid) {
@@ -54,11 +56,34 @@ export class LoginPage implements OnInit {
     }
   }
 
+  /**
+   * Try to sign-in user with his credentials, handle errors and redirect to home of there aren't.
+   * @param email User's email
+   * @param password User's password
+   */
   private async signIn(email: string, password: string){
     try {
       const userCredential = await this.authService.signIn(email, password);
-
+      console.log(userCredential)
       if (userCredential != null) {
+
+        //Check mail is verified here bc Firebase does not throw error if email not verified
+        if(!userCredential.user.emailVerified){
+          this.toastController.create({
+            message: "Please, verify your email before signing in",
+            duration: 1500,
+            position: "bottom",
+            color: 'danger'
+          }).then(async (toast) => {
+            await toast.present();
+          });
+
+          //Disconnect user
+          await this.authService.signOut();
+          return;
+        }
+
+        //Set up user Data
         await this.userService.setUpCurrentUser(userCredential.user.email ?? "")
         await this.redirectToHome()
       }
@@ -104,15 +129,21 @@ export class LoginPage implements OnInit {
     });
   }
 
-  goSignUp() {
-    this.navController.navigateForward('signup');
+  /**
+   * Navigate to signup page.
+   */
+  async navToSignUp() {
+    await this.navController.navigateForward('signup');
   }
 
+  /**
+   * Show modal for the forgot password form
+   */
   async forgotPassword() {
     const modal = await this.modalController.create({
       component: ForgotPasswordComponent,
     });
-    modal.present();
+    await modal.present();
     const { data, role } = await modal.onWillDismiss();
   }
 
@@ -129,6 +160,9 @@ export class LoginPage implements OnInit {
     }
   }
 
+  /**
+   * Redirect to the home page.
+   */
   private async redirectToHome() {
     return await this.navController.navigateRoot('dashboard/tabs/home');
   }
