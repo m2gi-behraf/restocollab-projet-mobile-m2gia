@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithCredential, signOut } from "@angular/fire/auth";
 import { User, sendEmailVerification, sendPasswordResetEmail, GoogleAuthProvider} from '@firebase/auth';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
-import { isPlatform, NavController, ToastController } from "@ionic/angular";
+import { isPlatform, NavController } from "@ionic/angular";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,6 @@ export class AuthService {
   private fireUser: User | null
   private afAuth = inject(Auth)
   private navController = inject(NavController)
-  private toastController = inject(ToastController)
 
   constructor() {
     this.fireUser = this.afAuth.currentUser;
@@ -37,14 +36,6 @@ export class AuthService {
       if (!user.emailVerified) {
         await this.redirectToLogin();
         console.log("User disconnected because email isn't verified", user);
-        this.toastController.create({
-          message: `Your email isn't verified, please verify it before signing in`,
-          duration: 1500,
-          position: 'bottom',
-          color: 'danger'
-        }).then(async (toast) => {
-          await toast.present();
-        });
         return;
       }
     });
