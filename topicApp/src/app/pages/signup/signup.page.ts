@@ -56,15 +56,23 @@ export class SignupPage implements OnInit {
       console.log('Please provide all the required values!')
       return false;
     } else {
-      console.log(this.signupForm.value);
-
-      //TODO Query to firestore to check if email already exists
-
-      //call signUp
       const email = this.signupForm.controls['email'].value;
       const pwd = this.signupForm.controls['password'].value;
-      await this.signUp(email, pwd);
 
+      // Check if email is already used.
+      if (await this.userService.isEmailAlreadyRegistered(email))
+      {
+        this.toastController.create({
+          message: "The given email is already registered, are you sure you used the right email address?",
+          duration: 1500,
+          position: "bottom",
+          color: 'danger'
+        }).then((toast) => toast.present());
+        return false;
+      }
+
+      //Signing up
+      await this.signUp(email, pwd);
       return true;
     }
   }

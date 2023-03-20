@@ -22,23 +22,36 @@ export class UserService {
   private firestore = inject(Firestore)
   constructor() { }
 
-  // Todo implementer le getUser
+  /**
+   * Get the User class of the matching user with the same email address.
+   * @param email User's email
+   */
   async getUser(email: string): Promise<User | null> {
     const usersRef = collection(this.firestore, "users");
     const q = query(usersRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
 
+    //check if query have matches
     if (!querySnapshot.empty && querySnapshot.docs[0].exists()) {
       const id = querySnapshot.docs[0].id
       const docRef = doc(this.firestore, `users/${id}`) as DocumentReference<User>
-      return firstValueFrom(docData(docRef))
+      return firstValueFrom(docData(docRef)) //return first match in a Promise
     }
-    else{
+    else {
       return null
     }
   }
 
   /**
+   * Check if the given email is already in the registered user's collection.
+   * @param email Email to verify
+   */
+  async isEmailAlreadyRegistered(email: string): Promise<boolean> {
+    const user = await this.getUser(email);
+    return user !== null;
+  }
+
+  /*
    * Get the database user matching the given email.
    * Set up the current user with the one got
    * @param email User's email to set up.
@@ -88,5 +101,4 @@ export class UserService {
   get currentUser() : User {
     return this.user;
   }
-
 }
