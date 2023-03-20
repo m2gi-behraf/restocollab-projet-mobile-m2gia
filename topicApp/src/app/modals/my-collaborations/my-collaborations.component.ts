@@ -145,7 +145,7 @@ export class MyCollaborationsComponent implements OnInit {
   deleteRestaurantList(restaurantListID: number, restaurantListName: string) {
     //todo: removal of said restaurant list works, remains to implement this on the server/firebase side
     console.log("Your Restaurants Lists -- BEFORE DELETION: \n" + this.yourRestaurantsLists.length);
-    console.log("DELETED: " + restaurantListName.toString(), restaurantListID.toString());
+    console.log("DELETED: " + "\nListName: " + restaurantListName.toString() + "\nListID: " + restaurantListID.toString());
     this.yourRestaurantsLists = this.yourRestaurantsLists.filter(list => list.listID != restaurantListID);
     console.log("Your Restaurants Lists -- AFTER DELETION: \n" + this.yourRestaurantsLists.length);
   }
