@@ -248,7 +248,14 @@ export class ModifyRestaurantListComponent implements OnInit {
               this.existingDatabaseRestaurantsList.splice(index, 1);
             }
             this.alertHandlerMessage = 'Deletion confirmed!';
-            console.log("UPDATED LIST OF RESTAURANTS");
+            this.toastController.create({
+              message: "Restaurant list deletion successful!",
+              duration: 1500,
+              position: "bottom",
+              color: 'success'
+            }).then(async (toast) => {
+              await toast.present()
+            });
             this.dismissModal();
           },
         },
