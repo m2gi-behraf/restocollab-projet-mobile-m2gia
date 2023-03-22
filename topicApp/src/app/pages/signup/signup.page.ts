@@ -97,6 +97,7 @@ export class SignupPage implements OnInit {
     //Add user in firestore
     const authResult = await this.authService.signUp(email, password)
     if (authResult[0]) {
+      user.id = authResult[1]?.uid ?? user.id; //id fireAuth for userId
       await this.userService.create(user);
     }
 
