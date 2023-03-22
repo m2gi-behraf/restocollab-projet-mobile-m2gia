@@ -14,8 +14,6 @@ export class CreateRestaurantListComponent implements OnInit {
   restaurantListCreationForm!: FormGroup;
   isSubmitted = false;
   private toastController = inject(ToastController);
-
-
   private modalController = inject(ModalController);
 
   // todo: this will need to be removed and replaced by the restaurant service that fetches all existing restaurants in the db

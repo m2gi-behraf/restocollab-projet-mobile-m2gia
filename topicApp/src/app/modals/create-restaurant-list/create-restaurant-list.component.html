@@ -18,7 +18,7 @@
           <ion-icon name="newspaper-outline"></ion-icon>
           <ion-input formControlName="listname" type="text" name="listname" required="true" placeholder="List Name"></ion-input>
         </ion-item>
-        <ion-text color="danger" *ngIf="errorControl['listname'].touched && errorControl['listname'].errors?.['required'] || isSubmitted && errorControl['listname'].errors?.['listname']">
+        <ion-text color="danger" *ngIf="errorControl['listname'].touched && errorControl['listname'].errors?.['required'] || isSubmitted && errorControl['listname'].errors?.['required']">
       <span>
         This field is required.
       </span>
