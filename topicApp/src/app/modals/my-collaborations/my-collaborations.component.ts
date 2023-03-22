@@ -183,6 +183,7 @@ export class MyCollaborationsComponent implements OnInit {
 
   async showModifyRestaurantList(restaurantsListID: number) {
     const matchingRestaurantList = this.yourRestaurantsLists.find(list => list.listID == restaurantsListID);
+
     const collaborators = matchingRestaurantList?.collaborators?.map((collaborator) => {
       return {
         id: collaborator.id,
@@ -207,9 +208,10 @@ export class MyCollaborationsComponent implements OnInit {
     const modal = await this.modalController.create({
       component: ModifyRestaurantListComponent,
       componentProps: {
+        matchingRestaurantList: matchingRestaurantList,
         restaurantListName: matchingRestaurantList?.listName,
         restaurantsList: restaurants,
-        restaurantsListCollaborators: collaborators
+        restaurantsListCollaborators: collaborators,
       }
     });
     await modal.present();

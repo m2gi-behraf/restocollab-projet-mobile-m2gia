@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {IonicModule, ModalController, ToastController} from "@ionic/angular";
+import {AlertController, IonicModule, ModalController, NavController, ToastController} from "@ionic/angular";
 import {NgForOf, NgIf} from "@angular/common";
 import { NavParams } from '@ionic/angular';
 
@@ -30,11 +30,13 @@ interface Restaurant {
 })
 
 export class ModifyRestaurantListComponent implements OnInit {
-  isModalOpen = false;
+  userLoggedInIsOwner = true;
   modifyRestaurantListForm!: FormGroup;
   isSubmitted = false;
   private modalController = inject(ModalController);
   private toastController = inject(ToastController);
+  private navController = inject(NavController);
+
   restaurantListName: string = "";
   restaurantsList: Restaurant[] = [];
   restaurantsListCollaborators: User[] = [
@@ -52,6 +54,9 @@ export class ModifyRestaurantListComponent implements OnInit {
     {id: 3, thumbnailURL: "../../assets/images/home/restaurant-comptoire-ditalie.png", restaurantName: "Comptoire d'Italie", ranking: "4", cuisine: "🇮🇹", address:  "4 Pl. de Gordes, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
   ]
 
+  alertHandlerMessage = '';
+  alertRoleMessage = '';
+
   updateRole(user: User) {
     if (user.isCollab) {
       user.isReadOnly = true;
@@ -66,7 +71,8 @@ export class ModifyRestaurantListComponent implements OnInit {
     }
   }
 
-  constructor(private navParams: NavParams, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder) {
+  constructor(private navParams: NavParams, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder,
+              private alertController: AlertController) {
     this.restaurantsListCollaborators = this.navParams.get('restaurantsListCollaborators');
     this.restaurantsList = this.navParams.get('restaurantsList');
     console.log(this.restaurantsListCollaborators);
@@ -106,11 +112,33 @@ export class ModifyRestaurantListComponent implements OnInit {
     });
   }
 
-  removeCollaborator(user: User) {
-    const index = this.restaurantsListCollaborators.findIndex(collaborator => collaborator.username === user.username);
-    if (index !== -1) {
-      this.restaurantsListCollaborators.splice(index, 1);
-    }
+  async removeCollaborator(user: User) {
+    const alert = await this.alertController.create({
+      header: "You're about to delete the following user from your list: " + user.username + ".\nThis action is irreversible, are you sure you want to proceed?",
+      buttons: [
+        {
+          text: "Yes, I'm sure. \nDelete " + user.username + ". ",
+          role: 'confirm',
+          handler: () => {
+            this.alertHandlerMessage = 'Deletion confirmed!';
+            const index = this.restaurantsListCollaborators.findIndex(collaborator => collaborator.username === user.username);
+            if (index !== -1) {
+              this.restaurantsListCollaborators.splice(index, 1);
+            }
+          },
+        },
+        {
+          text: "Abort",
+          role: 'cancel',
+          handler: () => {
+            this.alertHandlerMessage = 'Deletion aborted. Alert canceled!';
+          },
+        },
+      ],
+    });
+    await alert.present();
+    const {role} = await alert.onDidDismiss();
+    this.alertRoleMessage = `Dismissed with role: ${role}`;
   }
 
   addRestaurants(selectedRestaurants: string[]) {
@@ -140,11 +168,33 @@ export class ModifyRestaurantListComponent implements OnInit {
     });
   }
 
-  removeRestaurant(restaurantName: string) {
-    const index = this.restaurantsList.findIndex(r => r.restaurantName === restaurantName);
-    if (index !== -1) {
-      this.restaurantsList.splice(index, 1);
-    }
+  async removeRestaurant(restaurantName: string) {
+    const alert = await this.alertController.create({
+      header: "You're about to delete the following restaurant from your list: " + restaurantName + ".\nThis action is irreversible, are you sure you want to proceed?",
+      buttons: [
+        {
+          text: "Yes, I'm sure. \nDelete " + restaurantName + ". ",
+          role: 'confirm',
+          handler: () => {
+            this.alertHandlerMessage = 'Deletion confirmed!';
+            const index = this.restaurantsList.findIndex(r => r.restaurantName === restaurantName);
+            if (index !== -1) {
+              this.restaurantsList.splice(index, 1);
+            }
+          },
+        },
+        {
+          text: "Abort",
+          role: 'cancel',
+          handler: () => {
+            this.alertHandlerMessage = 'Deletion aborted. Alert canceled!';
+          },
+        },
+      ],
+    });
+    await alert.present();
+    const {role} = await alert.onDidDismiss();
+    this.alertRoleMessage = `Dismissed with role: ${role}`;
   }
 
   async submitForm() {
@@ -182,4 +232,38 @@ export class ModifyRestaurantListComponent implements OnInit {
     }
   }
 
+  async deleteRestaurantList(listName: string) {
+    const alert = await this.alertController.create({
+      header: "You're about to delete the list: " + listName + ".\nThis action is irreversible, are you sure you want to proceed?",
+      buttons: [
+        {
+          text: "Yes, I'm sure. \nDelete " + listName + ". ",
+          role: 'confirm',
+          handler: () => {
+            // todo: replace existingDatabaseRestaurantsList with list of restaurants that is displayed in the my-collaborations
+            // (user's list of restaurants)
+            //todo:               replace here
+            const index = this.existingDatabaseRestaurantsList.findIndex(l => listName === listName);
+            if (index !== -1) {
+              //todo: replace here
+              this.existingDatabaseRestaurantsList.splice(index, 1);
+            }
+            this.alertHandlerMessage = 'Deletion confirmed!';
+            console.log("UPDATED LIST OF RESTAURANTS");
+            this.dismissModal();
+          },
+        },
+        {
+          text: "Abort",
+          role: 'cancel',
+          handler: () => {
+            this.alertHandlerMessage = 'Deletion aborted. Alert canceled!';
+          },
+        },
+      ],
+    });
+    await alert.present();
+    const {role} = await alert.onDidDismiss();
+    this.alertRoleMessage = `Dismissed with role: ${role}`;
+  }
 }
