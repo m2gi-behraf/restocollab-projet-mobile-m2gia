@@ -3,6 +3,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {AlertController, IonicModule, ModalController} from "@ionic/angular";
 import {NgForOf, NgIf} from "@angular/common";
 import {CreateRestaurantListComponent} from "../create-restaurant-list/create-restaurant-list.component";
+import {ModifyRestaurantListComponent} from "../modify-restaurant-list/modify-restaurant-list.component";
 
 @Component({
   selector: 'app-my-collaborations',
@@ -26,8 +27,8 @@ export class MyCollaborationsComponent implements OnInit {
         {id: 2, thumbnailURL: "../../assets/images/home/restaurant-au-liban.png", restaurantName: "Au Liban", ranking: "4", cuisine: "🇱🇧", address:  "16 Pl. Sainte-Claire, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
         ],
       collaborators: [
-        { id: 1, username: "Josh", permission: "read-only" },
-        { id: 2, username: "Jona", permission: "read-write"}
+        { id: 1, username: "Josh", isReadOnly: true, isCollab: false, },
+        { id: 2, username: "Jona", isReadOnly: false, isCollab: true  }
       ]
     },
     { listID: 2,
@@ -39,9 +40,9 @@ export class MyCollaborationsComponent implements OnInit {
           {id: 9, thumbnailURL: "../../assets/images/home/restaurant-comptoire-ditalie.png", restaurantName: "Comptoire d'Italie", ranking: "4", cuisine: "🇮🇹", address:  "4 Pl. de Gordes, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
         ],
       collaborators: [
-        { id: 1, username: "Lana", permission: "read-only" },
-        { id: 2, username: "Patrick", permission: "read-write"},
-        { id: 3, username: "Ariana", permission: "read-write"},
+        { id: 1, username: "Lana", isReadOnly: true, isCollab: false },
+        { id: 2, username: "Patrick", isReadOnly: false, isCollab: true },
+        { id: 3, username: "Ariana", isReadOnly: false, isCollab: true },
       ]
     },
   ];
@@ -64,7 +65,8 @@ export class MyCollaborationsComponent implements OnInit {
   //   collaborators?: {
   //     id: number,
   //     username: string,
-  //     permission: string
+  //     isReadOnly: bool, (READ-ONLY)   > BOTH ARE MUTUALLY EXCLUSIVE
+  //     isCollab: bool (READ-WRITE)     > BOTH ARE MUTUALLY EXCLUSIVE
   //   }[]
   // }[] = [];
 
@@ -86,7 +88,8 @@ export class MyCollaborationsComponent implements OnInit {
   //   collaborators?: {
   //     id: number,
   //     username: string,
-  //     permission: string
+  //     isReadOnly: bool, (READ-ONLY)   > BOTH ARE MUTUALLY EXCLUSIVE
+  //     isCollab: bool (READ-WRITE)     > BOTH ARE MUTUALLY EXCLUSIVE
   //   }[],
   // }[] = [];
 
@@ -176,6 +179,41 @@ export class MyCollaborationsComponent implements OnInit {
 
     const { role } = await alert.onDidDismiss();
     this.alertRoleMessage = `Dismissed with role: ${role}`;
+  }
+
+  async showModifyRestaurantList(restaurantsListID: number) {
+    const matchingRestaurantList = this.yourRestaurantsLists.find(list => list.listID == restaurantsListID);
+    const collaborators = matchingRestaurantList?.collaborators?.map((collaborator) => {
+      return {
+        id: collaborator.id,
+        username: collaborator.username,
+        isReadOnly: collaborator.isReadOnly,
+        isCollab: collaborator.isCollab
+      }
+    }) ?? [];
+
+    const restaurants = matchingRestaurantList?.restaurants?.map((restaurant) => {
+      return {
+        id: restaurant.id,
+        thumbnailURL: restaurant.thumbnailURL,
+        restaurantName: restaurant.restaurantName,
+        ranking: restaurant.ranking,
+        cuisine: restaurant.cuisine,
+        address: restaurant.address,
+        description: restaurant.description
+      }
+    }) ?? [];
+
+    const modal = await this.modalController.create({
+      component: ModifyRestaurantListComponent,
+      componentProps: {
+        restaurantListName: matchingRestaurantList?.listName,
+        restaurantsList: restaurants,
+        restaurantsListCollaborators: collaborators
+      }
+    });
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss();
   }
 
 }

@@ -34,7 +34,7 @@
         <ion-item>
           <h3>{{restaurantList.listName}}</h3>
           <ion-button fill="clear" color="primary" slot="end" (click)="presentRestaurantListDeletionAlert(restaurantList.listID, restaurantList.listName)"><ion-icon name="trash-outline"></ion-icon></ion-button>
-          <ion-button fill="clear" color="primary" slot="end"><ion-icon name="create-outline"></ion-icon></ion-button>
+          <ion-button fill="clear" color="primary" slot="end" (click)="showModifyRestaurantList(restaurantList.listID)"><ion-icon name="create-outline"></ion-icon></ion-button>
         </ion-item>
         <ion-item>
           <ion-icon name="calendar-outline"></ion-icon>
@@ -47,7 +47,13 @@
           <ion-label>Collaborators:</ion-label>
           <ion-list>
             <ion-item *ngFor="let collaborator of restaurantList.collaborators" class="collaborators-list">
-              User: {{collaborator.username}} • Permissions: {{collaborator.permission}}
+              User: {{collaborator.username}}
+              <p *ngIf="collaborator.isCollab">
+                • Permission: Collaborator
+              </p>
+              <p *ngIf="collaborator.isReadOnly">
+                • Permission: Reader
+              </p>
             </ion-item>
           </ion-list>
         </ion-item>
