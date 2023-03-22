@@ -215,7 +215,7 @@ export class ModifyRestaurantListComponent implements OnInit {
       //todo: add server/service side (if successful)
       this.restaurantListName = this.modifyRestaurantListForm.controls['restaurantslistname'].value;
       this.toastController.create({
-        message: "Restaurant list creation successful!",
+        message: "Restaurant list modification successful!",
         duration: 1500,
         position: "bottom",
         color: 'success'
