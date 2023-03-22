@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {IonicModule, ModalController} from "@ionic/angular";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {IonicModule, ModalController, ToastController} from "@ionic/angular";
 import {NgForOf, NgIf} from "@angular/common";
 import { NavParams } from '@ionic/angular';
 
@@ -31,7 +31,10 @@ interface Restaurant {
 
 export class ModifyRestaurantListComponent implements OnInit {
   isModalOpen = false;
+  modifyRestaurantListForm!: FormGroup;
+  isSubmitted = false;
   private modalController = inject(ModalController);
+  private toastController = inject(ToastController);
   restaurantListName: string = "";
   restaurantsList: Restaurant[] = [];
   restaurantsListCollaborators: User[] = [
@@ -63,7 +66,7 @@ export class ModifyRestaurantListComponent implements OnInit {
     }
   }
 
-  constructor(private navParams: NavParams, private cdRef: ChangeDetectorRef) {
+  constructor(private navParams: NavParams, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder) {
     this.restaurantsListCollaborators = this.navParams.get('restaurantsListCollaborators');
     this.restaurantsList = this.navParams.get('restaurantsList');
     console.log(this.restaurantsListCollaborators);
@@ -71,11 +74,16 @@ export class ModifyRestaurantListComponent implements OnInit {
   }
 
   ngOnInit() {
-    // todo: remove everything in here at the end once the service/backend part is implemented
-    // this was an attempt to fix error: ExpressionChangedAfterItHasBeenCheckedError
-    this.isModalOpen = true;
-    this.cdRef.detectChanges(); // manually trigger change detection
+    this.modifyRestaurantListForm = this.formBuilder.group({
+      restaurantslistname: ['', [Validators.required]],
+      addedcollaborators: new FormControl(null),
+      addedrestaurants: new FormControl(null)
+    })
   }
+  get errorControl() {
+    return this.modifyRestaurantListForm.controls;
+  }
+
 
   dismissModal() {
     this.modalController.dismiss();
@@ -136,6 +144,41 @@ export class ModifyRestaurantListComponent implements OnInit {
     const index = this.restaurantsList.findIndex(r => r.restaurantName === restaurantName);
     if (index !== -1) {
       this.restaurantsList.splice(index, 1);
+    }
+  }
+
+  async submitForm() {
+    // todo: add server/service side (if failure)
+    // -> we will keep the addition of collaborators exclusive to the edition of a list for now (v1.0)
+    this.isSubmitted = true;
+    console.log("Restaurant list submission.");
+    if (!this.modifyRestaurantListForm.valid) {
+      const toast = await this.toastController.create({
+        message: "Please make sure you provided all required values correctly.",
+        duration: 1500,
+        position: "bottom",
+        color: 'danger'
+      });
+      await toast.present();
+      console.log('Please provide all the required values!')
+      return false;
+    } else {
+      //todo: add server/service side (if successful)
+      this.restaurantListName = this.modifyRestaurantListForm.controls['restaurantslistname'].value;
+      this.toastController.create({
+        message: "Restaurant list creation successful!",
+        duration: 1500,
+        position: "bottom",
+        color: 'success'
+      }).then(async (toast) => {
+        await toast.present()
+        console.log("The restaurant list now contains the following values: " +
+          "\nRestaurant list name: " + this.restaurantListName +
+          "\nRestaurants inside: " + this.restaurantsList.map(m => m.restaurantName).join(", ") +
+          "\nCollaborators on the list and their permissions: " + "\n" + this.restaurantsListCollaborators.map(m => m.username).join(", "));
+      });
+      this.dismissModal(); // dismiss modal upon creation of list
+      return true;
     }
   }
 

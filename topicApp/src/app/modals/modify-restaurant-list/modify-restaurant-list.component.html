@@ -13,13 +13,19 @@
 <ion-content>
 
   <ion-card>
-      <ion-item>
+    <form class="wrapform" [formGroup]="modifyRestaurantListForm" (ngSubmit)="submitForm()" novalidate>
+    <ion-item>
         <ion-icon name="newspaper-outline"></ion-icon>
         <ion-label>List Name</ion-label>
       </ion-item>
     <ion-item>
-      <ion-input formControlName="listname" type="text" name="listname" required="true" placeholder="{{restaurantListName}}"></ion-input>
+      <ion-input formControlName="restaurantslistname" type="text" name="restaurantslistname" required="true" placeholder="{{restaurantListName}}"></ion-input>
     </ion-item>
+      <ion-text color="danger" *ngIf="errorControl['restaurantslistname'].touched && errorControl['restaurantslistname'].errors?.['required'] || isSubmitted && errorControl['restaurantslistname'].errors?.['required']">
+      <span>
+        This field is required.
+      </span>
+      </ion-text>
         <ion-list>
           <ion-item>
             <ion-icon name="people-circle-outline"></ion-icon>
@@ -30,7 +36,7 @@
        and then we can change the properties within the list using the toggle switch
        -->
           <ion-item>
-            <ion-select placeholder="Add user(s)..." [multiple]="true" #userSelect>
+            <ion-select formControlName="addedcollaborators" placeholder="Add user(s)..." [multiple]="true" #userSelect>
               <ion-select-option *ngFor="let user of existingDatabaseUsers" value="{{user.username}}">{{user.username}}</ion-select-option>
             </ion-select>
             <ion-button fill="clear" color="primary" (click)="addCollaborators(userSelect.value)"><ion-icon name="person-add-outline"></ion-icon>ADD</ion-button>
@@ -62,8 +68,8 @@
             <ion-label>Restaurants</ion-label>
           </ion-item>
           <ion-item>
-            <ion-select placeholder="Add Restaurant(s)" [multiple]="true" #restaurantSelect
-                        formControlName="restaurants"><ion-select-option *ngFor="let restaurant of existingDatabaseRestaurantsList" value="{{restaurant.restaurantName}}">{{restaurant.restaurantName}}</ion-select-option>
+            <ion-select formControlName="addedrestaurants" placeholder="Add Restaurant(s)" [multiple]="true" #restaurantSelect>
+              <ion-select-option *ngFor="let restaurant of existingDatabaseRestaurantsList" value="{{restaurant.restaurantName}}">{{restaurant.restaurantName}}</ion-select-option>
             </ion-select>
             <ion-button fill="clear" color="primary" (click)="addRestaurants(restaurantSelect.value)">ADD</ion-button>
           </ion-item>
@@ -109,6 +115,7 @@
         <ion-button class="submit-button" fill="outline" shape="round" type="submit">Submit</ion-button>
         <ion-button fill="solid" color="danger" shape="round" class="delete-restaurant-list-button">Delete List</ion-button>
       </div>
+    </form>
   </ion-card>
 </ion-content>
 
