@@ -2,6 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {ModalController, NavController} from "@ionic/angular";
 import {NotificationsComponent} from "../../modals/notifications/notifications.component";
 import {UserService} from "../../services/user.service";
+import {MyCollaborationsComponent} from "../../modals/my-collaborations/my-collaborations.component";
 
 @Component({
   selector: 'app-header',
@@ -25,6 +26,13 @@ export class HeaderComponent implements OnInit {
     const { data, role } = await modal.onWillDismiss();
   }
 
+  async showMyCollaborations() {
+    const modal = await this.modalController.create({
+      component: MyCollaborationsComponent,
+    });
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss();
+  }
   goToUserProfile() {
     this.navigationControl.navigateForward('dashboard/tabs/user-profile')
   }
