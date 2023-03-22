@@ -35,7 +35,6 @@ export class ModifyRestaurantListComponent implements OnInit {
   isSubmitted = false;
   private modalController = inject(ModalController);
   private toastController = inject(ToastController);
-  private navController = inject(NavController);
 
   restaurantListName: string = "";
   restaurantsList: Restaurant[] = [];
@@ -81,7 +80,7 @@ export class ModifyRestaurantListComponent implements OnInit {
 
   ngOnInit() {
     this.modifyRestaurantListForm = this.formBuilder.group({
-      restaurantslistname: ['', [Validators.required]],
+      restaurantslistname: new FormControl(null),
       addedcollaborators: new FormControl(null),
       addedrestaurants: new FormControl(null)
     })
