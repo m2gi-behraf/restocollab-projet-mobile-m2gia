@@ -1,9 +1,24 @@
 import {inject, Injectable} from '@angular/core';
-import { Firestore, collection, collectionData, DocumentData, doc, addDoc, deleteDoc, docData, DocumentReference, CollectionReference } from '@angular/fire/firestore';
-import {Observable} from "rxjs";
+import {
+  Firestore,
+  collection,
+  collectionData,
+  DocumentData,
+  doc,
+  addDoc,
+  deleteDoc,
+  docData,
+  DocumentReference,
+  CollectionReference,
+  query, where, getDocs, limit
+} from '@angular/fire/firestore';
+import {firstValueFrom, Observable, of} from "rxjs";
 import {RestaurantsList} from "../models/RestaurantsList";
 import {Restaurant} from "../models/Restaurant";
 import {UserService} from "./user.service";
+import {User} from "../models/User";
+import {Role} from "../models/Enums/Role";
+import {user} from "@angular/fire/auth";
 
 @Injectable({
   providedIn: 'root'
@@ -20,9 +35,15 @@ export class RestaurantsListService {
     return docData<RestaurantsList>(documentRef);
   }
 
-  findAllRestaurants(idRestaurantsList: String): Observable<Restaurant[] | null> {
-    const collectionRef = collection(this.firestore, `guides/${idRestaurantsList}/restaurants`) as CollectionReference<Restaurant>;
-    return collectionData<any>(collectionRef)
+  /**
+   * Get all RestaurantsLists where the current user is Owner, Reader, or Writer
+   */
+  findMyRestaurantsLists(): Observable<RestaurantsList[]> {
+    const collectionRef = collection(this.firestore, `restaurants-list`) as CollectionReference<RestaurantsList>;
+    const allowedRoles = [Role[Role.OWNER].toLowerCase(), Role[Role.WRITER].toLowerCase(), Role[Role.READER].toLowerCase()]
+
+    const q = query(collectionRef, where(`roles.${this.userService.currentUser.id}`, 'in', allowedRoles), limit(50));
+    return collectionData(q, { idField: 'id' })
   }
 
   addRestaurant(idRestaurantsList: string, restaurant: Restaurant): void {

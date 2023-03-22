@@ -35,7 +35,7 @@ export class UserService {
     if (!querySnapshot.empty && querySnapshot.docs[0].exists()) {
       const id = querySnapshot.docs[0].id
       const docRef = doc(this.firestore, `users/${id}`) as DocumentReference<User>
-      return firstValueFrom(docData(docRef)) //return first match in a Promise
+      return firstValueFrom(docData(docRef, { idField: 'id' })) //return first match in a Promise
     }
     else {
       return null
@@ -81,6 +81,7 @@ export class UserService {
         else {
           this.user = dbUser;
         }
+        console.log("SetUp User from google", dbUser);
     }).catch((error) => {
       console.error(error);
     })

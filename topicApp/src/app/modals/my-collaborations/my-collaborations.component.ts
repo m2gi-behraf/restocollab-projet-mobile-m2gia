@@ -1,19 +1,26 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ReactiveFormsModule} from "@angular/forms";
 import {AlertController, IonicModule, ModalController} from "@ionic/angular";
-import {NgForOf, NgIf} from "@angular/common";
+import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import {CreateRestaurantListComponent} from "../create-restaurant-list/create-restaurant-list.component";
 import {ModifyRestaurantListComponent} from "../modify-restaurant-list/modify-restaurant-list.component";
+import {RestaurantsListService} from "../../services/restaurantsList.service";
+import {EMPTY, Observable} from "rxjs";
+import {Restaurant} from "../../models/Restaurant";
+import {RestaurantsList} from "../../models/RestaurantsList";
 
 @Component({
   selector: 'app-my-collaborations',
   standalone: true,
-  imports: [ReactiveFormsModule, IonicModule, NgIf, NgForOf],
+  imports: [ReactiveFormsModule, IonicModule, NgIf, NgForOf, AsyncPipe],
   templateUrl: './my-collaborations.component.html',
   styleUrls: ['./my-collaborations.component.scss'],
 })
 export class MyCollaborationsComponent implements OnInit {
   private modalController = inject(ModalController);
+  private restaurantsListService = inject(RestaurantsListService);
+  restaurantsList$: Observable<RestaurantsList[] | null> = EMPTY;
+
   alertHandlerMessage = '';
   alertRoleMessage = '';
 
@@ -124,7 +131,9 @@ export class MyCollaborationsComponent implements OnInit {
 
   constructor(private alertController: AlertController) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.restaurantsList$ = this.restaurantsListService.findMyRestaurantsLists()
+  }
 
   dismissModal() {
     this.modalController.dismiss();
@@ -153,7 +162,7 @@ export class MyCollaborationsComponent implements OnInit {
     console.log("Your Restaurants Lists -- AFTER DELETION: \n" + this.yourRestaurantsLists.length);
   }
 
-  async presentRestaurantListDeletionAlert(restaurantListID: number, restaurantListName: string) {
+  async presentRestaurantListDeletionAlert(restaurantListID: string, restaurantListName: string) {
     const alert = await this.alertController.create({
       header: "You're about to delete: " + restaurantListName + "\nThis action is irreversible, are you sure you want to proceed?",
       buttons: [
@@ -162,7 +171,7 @@ export class MyCollaborationsComponent implements OnInit {
           role: 'confirm',
           handler: () => {
             this.alertHandlerMessage = 'Deletion confirmed!';
-            this.deleteRestaurantList(restaurantListID, restaurantListName);
+            //this.deleteRestaurantList(restaurantListID, restaurantListName);
           },
         },
         {
@@ -181,41 +190,41 @@ export class MyCollaborationsComponent implements OnInit {
     this.alertRoleMessage = `Dismissed with role: ${role}`;
   }
 
-  async showModifyRestaurantList(restaurantsListID: number) {
-    const matchingRestaurantList = this.yourRestaurantsLists.find(list => list.listID == restaurantsListID);
-
-    const collaborators = matchingRestaurantList?.collaborators?.map((collaborator) => {
-      return {
-        id: collaborator.id,
-        username: collaborator.username,
-        isReadOnly: collaborator.isReadOnly,
-        isCollab: collaborator.isCollab
-      }
-    }) ?? [];
-
-    const restaurants = matchingRestaurantList?.restaurants?.map((restaurant) => {
-      return {
-        id: restaurant.id,
-        thumbnailURL: restaurant.thumbnailURL,
-        restaurantName: restaurant.restaurantName,
-        ranking: restaurant.ranking,
-        cuisine: restaurant.cuisine,
-        address: restaurant.address,
-        description: restaurant.description
-      }
-    }) ?? [];
-
-    const modal = await this.modalController.create({
-      component: ModifyRestaurantListComponent,
-      componentProps: {
-        matchingRestaurantList: matchingRestaurantList,
-        restaurantListName: matchingRestaurantList?.listName,
-        restaurantsList: restaurants,
-        restaurantsListCollaborators: collaborators,
-      }
-    });
-    await modal.present();
-    const { data, role } = await modal.onWillDismiss();
+  async showModifyRestaurantList(restaurantsListID: string) {
+    // const matchingRestaurantList = this.yourRestaurantsLists.find(list => list.listID == restaurantsListID);
+    //
+    // const collaborators = matchingRestaurantList?.collaborators?.map((collaborator) => {
+    //   return {
+    //     id: collaborator.id,
+    //     username: collaborator.username,
+    //     isReadOnly: collaborator.isReadOnly,
+    //     isCollab: collaborator.isCollab
+    //   }
+    // }) ?? [];
+    //
+    // const restaurants = matchingRestaurantList?.restaurants?.map((restaurant) => {
+    //   return {
+    //     id: restaurant.id,
+    //     thumbnailURL: restaurant.thumbnailURL,
+    //     restaurantName: restaurant.restaurantName,
+    //     ranking: restaurant.ranking,
+    //     cuisine: restaurant.cuisine,
+    //     address: restaurant.address,
+    //     description: restaurant.description
+    //   }
+    // }) ?? [];
+    //
+    // const modal = await this.modalController.create({
+    //   component: ModifyRestaurantListComponent,
+    //   componentProps: {
+    //     matchingRestaurantList: matchingRestaurantList,
+    //     restaurantListName: matchingRestaurantList?.listName,
+    //     restaurantsList: restaurants,
+    //     restaurantsListCollaborators: collaborators,
+    //   }
+    // });
+    // await modal.present();
+    // const { data, role } = await modal.onWillDismiss();
   }
 
 }

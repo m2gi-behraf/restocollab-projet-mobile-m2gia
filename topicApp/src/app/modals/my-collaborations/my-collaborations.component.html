@@ -18,7 +18,7 @@
     </ion-item>
 
   </ion-toolbar>
-  <ion-card *ngIf="!(yourRestaurantsLists && yourRestaurantsLists.length > 0)">
+  <ion-card *ngIf="!(restaurantsList$)">
     <ion-item>
       <h3>You still haven't created a list!</h3>
     </ion-item>
@@ -27,48 +27,48 @@
     </ion-item>
   </ion-card>
 
-  <div *ngIf="(yourRestaurantsLists && yourRestaurantsLists.length > 0)">
-  <ion-card *ngFor="let restaurantList of yourRestaurantsLists">
+  <div *ngIf="(restaurantsList$) | async">
+  <ion-card *ngFor="let restaurantList of restaurantsList$ | async">
     <ion-item>
       <ion-list>
         <ion-item>
-          <h3>{{restaurantList.listName}}</h3>
-          <ion-button fill="clear" color="primary" slot="end" (click)="presentRestaurantListDeletionAlert(restaurantList.listID, restaurantList.listName)"><ion-icon name="trash-outline"></ion-icon></ion-button>
-          <ion-button fill="clear" color="primary" slot="end" (click)="showModifyRestaurantList(restaurantList.listID)"><ion-icon name="create-outline"></ion-icon></ion-button>
+          <h3>{{restaurantList.name}}</h3>
+          <ion-button fill="clear" color="primary" slot="end" (click)="presentRestaurantListDeletionAlert(restaurantList.id, restaurantList.name)"><ion-icon name="trash-outline"></ion-icon></ion-button>
+          <ion-button fill="clear" color="primary" slot="end" (click)="showModifyRestaurantList(restaurantList.id)"><ion-icon name="create-outline"></ion-icon></ion-button>
         </ion-item>
-        <ion-item>
-          <ion-icon name="calendar-outline"></ion-icon>
-          <ion-label>Date of creation:</ion-label>
-          {{restaurantList.dateOfCreation}}
-        </ion-item>
+<!--        <ion-item>-->
+<!--          <ion-icon name="calendar-outline"></ion-icon>-->
+<!--          <ion-label>Date of creation:</ion-label>-->
+<!--          {{restaurantList.}}-->
+<!--        </ion-item>-->
 
-        <ion-item *ngIf="restaurantList.collaborators && restaurantList.collaborators.length > 0">
-          <ion-icon name="people-circle-outline"></ion-icon>
-          <ion-label>Collaborators:</ion-label>
-          <ion-list>
-            <ion-item *ngFor="let collaborator of restaurantList.collaborators" class="collaborators-list">
-              User: {{collaborator.username}}
-              <p *ngIf="collaborator.isCollab">
-                • Permission: Collaborator
-              </p>
-              <p *ngIf="collaborator.isReadOnly">
-                • Permission: Reader
-              </p>
-            </ion-item>
-          </ion-list>
-        </ion-item>
+<!--        <ion-item *ngIf="restaurantList.collaborators && restaurantList.collaborators.length > 0">-->
+<!--          <ion-icon name="people-circle-outline"></ion-icon>-->
+<!--          <ion-label>Collaborators:</ion-label>-->
+<!--          <ion-list>-->
+<!--            <ion-item *ngFor="let collaborator of restaurantList.collaborators" class="collaborators-list">-->
+<!--              User: {{collaborator.username}}-->
+<!--              <p *ngIf="collaborator.isCollab">-->
+<!--                • Permission: Collaborator-->
+<!--              </p>-->
+<!--              <p *ngIf="collaborator.isReadOnly">-->
+<!--                • Permission: Reader-->
+<!--              </p>-->
+<!--            </ion-item>-->
+<!--          </ion-list>-->
+<!--        </ion-item>-->
 
         <ion-list *ngFor="let restaurant of restaurantList.restaurants">
 
         <ion-item>
           <ion-thumbnail class="ion-margin-end thumbnail">
-            <ion-img src="{{restaurant.thumbnailURL}}"/>
+            <ion-img src="{{restaurant.imageURL}}"/>
           </ion-thumbnail>
 
           <ion-label>
             <h1>
               <ion-icon name="restaurant-outline"></ion-icon>
-              {{restaurant.restaurantName}}
+              {{restaurant.name}}
             </h1>
             <h4>
               <ion-icon name="star-half-outline"></ion-icon>
