@@ -3,6 +3,7 @@ import {IonicModule, ModalController} from "@ionic/angular";
 import {ReactiveFormsModule} from "@angular/forms";
 import {NgForOf, NgIf} from "@angular/common";
 import {ShareRestaurantComponent} from "../share-restaurant/share-restaurant.component";
+import {Restaurant} from "../../models/Restaurant";
 @Component({
   selector: 'app-restaurant-details',
   standalone: true,
@@ -12,15 +13,7 @@ import {ShareRestaurantComponent} from "../share-restaurant/share-restaurant.com
 })
 export class RestaurantDetailsComponent implements OnInit {
 
-  restaurantId: number | undefined;
-  thumbnailURL: string = "";
-  restaurantName: string = "";
-  restaurantRanking: string = "";
-  restaurantCuisine: string = "";
-
-  restaurantAddress: string = "";
-
-  restaurantDescription: string = "";
+  public restaurant: Restaurant = {} as Restaurant;
   private modalController = inject(ModalController);
 
   constructor() { }
@@ -31,23 +24,14 @@ export class RestaurantDetailsComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  async shareRestaurant(
-                              thumbnailURL: string,
-                              restaurantName: string,
-                              restaurantRanking: string,
-                              restaurantCuisine: string,
-                              restaurantAddress: string,
-                              restaurantDescription: string) {
+  /**
+   * Show modal to share restaurant.
+   */
+  async shareRestaurant() {
+    const restaurant = this.restaurant;
     const modal = await this.modalController.create({
       component: ShareRestaurantComponent,
-      componentProps: {
-        thumbnailURL: thumbnailURL,
-        restaurantName: restaurantName,
-        restaurantRanking: restaurantRanking,
-        restaurantCuisine: restaurantCuisine,
-        restaurantAddress: restaurantAddress,
-        restaurantDescription: restaurantDescription
-      }
+      componentProps: { restaurant }
     });
     await modal.present();
     const { data, role } = await modal.onWillDismiss();
