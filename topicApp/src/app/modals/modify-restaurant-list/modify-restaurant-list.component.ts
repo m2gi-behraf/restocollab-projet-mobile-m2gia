@@ -71,6 +71,8 @@ export class ModifyRestaurantListComponent implements OnInit {
   }
 
   ngOnInit() {
+    // todo: remove everything in here at the end once the service/backend part is implemented
+    // this was an attempt to fix error: ExpressionChangedAfterItHasBeenCheckedError
     this.isModalOpen = true;
     this.cdRef.detectChanges(); // manually trigger change detection
   }
