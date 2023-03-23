@@ -35,7 +35,6 @@ export class ModifyRestaurantListComponent implements OnInit {
   isSubmitted = false;
   private modalController = inject(ModalController);
   private toastController = inject(ToastController);
-  private navController = inject(NavController);
 
   restaurantListName: string = "";
   restaurantsList: Restaurant[] = [];
@@ -81,7 +80,7 @@ export class ModifyRestaurantListComponent implements OnInit {
 
   ngOnInit() {
     this.modifyRestaurantListForm = this.formBuilder.group({
-      restaurantslistname: ['', [Validators.required]],
+      restaurantslistname: new FormControl(null),
       addedcollaborators: new FormControl(null),
       addedrestaurants: new FormControl(null)
     })
@@ -216,7 +215,7 @@ export class ModifyRestaurantListComponent implements OnInit {
       //todo: add server/service side (if successful)
       this.restaurantListName = this.modifyRestaurantListForm.controls['restaurantslistname'].value;
       this.toastController.create({
-        message: "Restaurant list creation successful!",
+        message: "Restaurant list modification successful!",
         duration: 1500,
         position: "bottom",
         color: 'success'
@@ -249,7 +248,14 @@ export class ModifyRestaurantListComponent implements OnInit {
               this.existingDatabaseRestaurantsList.splice(index, 1);
             }
             this.alertHandlerMessage = 'Deletion confirmed!';
-            console.log("UPDATED LIST OF RESTAURANTS");
+            this.toastController.create({
+              message: "Restaurant list deletion successful!",
+              duration: 1500,
+              position: "bottom",
+              color: 'success'
+            }).then(async (toast) => {
+              await toast.present()
+            });
             this.dismissModal();
           },
         },

@@ -159,6 +159,7 @@ export class LoginPage implements OnInit {
       //Creation of the user
       const fireUser = result[1] as FireUser;
       const user: User = this.userService.DEFAULT_USER;
+      user.id = fireUser.uid;
       user.imageUrl = fireUser.photoURL ?? user.imageUrl;
       user.firstname = fireUser.displayName ?? user.firstname;
       user.lastname = "";

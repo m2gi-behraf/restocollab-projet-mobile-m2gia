@@ -1,6 +1,17 @@
 import {inject, Injectable} from '@angular/core';
 import { User } from "../models/User";
-import { addDoc, collection, doc, where, query, Firestore, getDocs, DocumentReference, docData } from '@angular/fire/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  where,
+  query,
+  Firestore,
+  getDocs,
+  DocumentReference,
+  docData,
+  setDoc
+} from '@angular/fire/firestore';
 import {AuthenticationMethod} from "../models/Enums/AuthenticationMethod";
 import {firstValueFrom} from "rxjs";
 
@@ -88,8 +99,7 @@ export class UserService {
   }
 
   create(user: User) {
-    const collectionRef = collection(this.firestore, "users")
-    return addDoc(collectionRef, {
+    setDoc(doc(this.firestore, "users", `${user.id}`), {
       firstname: user.firstname,
       lastname: user.lastname,
       email: user.email,
