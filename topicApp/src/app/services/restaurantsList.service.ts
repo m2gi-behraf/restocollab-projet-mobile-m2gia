@@ -16,32 +16,39 @@ import {firstValueFrom, Observable, of} from "rxjs";
 import {RestaurantsList} from "../models/RestaurantsList";
 import {Restaurant} from "../models/Restaurant";
 import {UserService} from "./user.service";
-import {User} from "../models/User";
 import {Role} from "../models/Enums/Role";
-import {user} from "@angular/fire/auth";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestaurantsListService {
+  private readonly ROOT = "restaurants-list"
 
   private firestore = inject(Firestore)
   private userService = inject(UserService)
 
   constructor() { }
 
-  findOne(id: String): Observable<RestaurantsList | null> {
-    const documentRef = doc(this.firestore, `guides/${id}`) as DocumentReference<RestaurantsList>;
-    return docData<RestaurantsList>(documentRef);
+  /**
+   * Get all RestaurantsLists where the current user is Owner, Reader, or Writer
+   */
+  findMine(): Observable<RestaurantsList[]> {
+    const collectionRef = collection(this.firestore, `${this.ROOT}`) as CollectionReference<RestaurantsList>;
+    const allowedRoles = [Role[Role.OWNER].toLowerCase()]
+
+    console.log("User =>", this.userService.currentUser)
+    const q = query(collectionRef, where(`roles.${this.userService.currentUser.id}`, 'in', allowedRoles), limit(50));
+    return collectionData(q, { idField: 'id' })
   }
 
   /**
    * Get all RestaurantsLists where the current user is Owner, Reader, or Writer
    */
-  findMyRestaurantsLists(): Observable<RestaurantsList[]> {
-    const collectionRef = collection(this.firestore, `restaurants-list`) as CollectionReference<RestaurantsList>;
-    const allowedRoles = [Role[Role.OWNER].toLowerCase(), Role[Role.WRITER].toLowerCase(), Role[Role.READER].toLowerCase()]
+  findSharedWithMe(): Observable<RestaurantsList[]> {
+    const collectionRef = collection(this.firestore, `${this.ROOT}`) as CollectionReference<RestaurantsList>;
+    const allowedRoles = [Role[Role.WRITER].toLowerCase(), Role[Role.READER].toLowerCase()]
 
+    console.log("User =>", this.userService.currentUser)
     const q = query(collectionRef, where(`roles.${this.userService.currentUser.id}`, 'in', allowedRoles), limit(50));
     return collectionData(q, { idField: 'id' })
   }
@@ -57,12 +64,15 @@ export class RestaurantsListService {
   }
 
   create(restaurantsList: RestaurantsList): void {
-    const collectionRef = collection(this.firestore, `guides`);
-    addDoc(collectionRef, { name: restaurantsList.name, description: restaurantsList.description, writers: Array.of(this.userService.currentUser.id) });
+    const collectionRef = collection(this.firestore, `${this.ROOT}`);
+    const map = new Map([
+      [this.userService.currentUser.id, Role[Role.OWNER].toLowerCase()]
+    ])
+    addDoc(collectionRef, { name: restaurantsList.name, description: restaurantsList.description, roles: map });
   }
 
   delete(restaurantsList: RestaurantsList): void {
-    const documentRef = doc(this.firestore, `guides/${restaurantsList.id}`) as DocumentReference<RestaurantsList>
+    const documentRef = doc(this.firestore, `${this.ROOT}/${restaurantsList.id}`) as DocumentReference<RestaurantsList>
     deleteDoc(documentRef)
   }
 }

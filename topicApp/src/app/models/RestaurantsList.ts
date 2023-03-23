@@ -5,6 +5,7 @@ export interface RestaurantsList {
   name: string;
   description: string;
   restaurants: Restaurant[];
+  dateOfCreation: Date | any;
 
   /**
    * Map <UserID, Role> where Role equals 'writer', 'owner', 'reader'

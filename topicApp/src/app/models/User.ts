@@ -5,9 +5,10 @@ import {AuthenticationMethod} from "./Enums/AuthenticationMethod";
  */
 export interface User {
   id: string;
+  //username: string;
   lastname: string;
   firstname: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date | any;
   email: string;
   /**
    * Défini la méthode d'autentification, Facebook, Google ou email.

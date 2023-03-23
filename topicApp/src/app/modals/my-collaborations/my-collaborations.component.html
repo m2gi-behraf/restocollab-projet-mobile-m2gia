@@ -18,7 +18,7 @@
     </ion-item>
 
   </ion-toolbar>
-  <ion-card *ngIf="!(restaurantsList$)">
+  <ion-card *ngIf="!(myRestaurantsList$ | async)?.length">
     <ion-item>
       <h3>You still haven't created a list!</h3>
     </ion-item>
@@ -27,32 +27,30 @@
     </ion-item>
   </ion-card>
 
-  <div *ngIf="(restaurantsList$) | async">
-  <ion-card *ngFor="let restaurantList of restaurantsList$ | async">
+  <div *ngIf="(myRestaurantsList$ | async)?.length">
+  <ion-card *ngFor="let restaurantList of myRestaurantsList$ | async">
     <ion-item>
       <ion-list>
         <ion-item>
           <h3>{{restaurantList.name}}</h3>
-          <ion-button fill="clear" color="primary" slot="end" (click)="presentRestaurantListDeletionAlert(restaurantList.id, restaurantList.name)"><ion-icon name="trash-outline"></ion-icon></ion-button>
-          <ion-button fill="clear" color="primary" slot="end" (click)="showModifyRestaurantList(restaurantList.id)"><ion-icon name="create-outline"></ion-icon></ion-button>
+          <ion-button fill="clear" color="primary" slot="end" (click)="presentRestaurantListDeletionAlert(restaurantList)"><ion-icon name="trash-outline"></ion-icon></ion-button>
+<!--          <ion-button fill="clear" color="primary" slot="end" (click)="showModifyRestaurantList(restaurantList.id)"><ion-icon name="create-outline"></ion-icon></ion-button>-->
         </ion-item>
-<!--        <ion-item>-->
-<!--          <ion-icon name="calendar-outline"></ion-icon>-->
-<!--          <ion-label>Date of creation:</ion-label>-->
-<!--          {{restaurantList.}}-->
-<!--        </ion-item>-->
+        <ion-item>
+          <ion-icon name="calendar-outline"></ion-icon>
+          <ion-label>Date of creation:</ion-label>
+          {{restaurantList.dateOfCreation.toDate() | date: 'yyyy-MM-dd'}}
+        </ion-item>
 
-<!--        <ion-item *ngIf="restaurantList.collaborators && restaurantList.collaborators.length > 0">-->
+<!--    Collaborators-->
+<!--        <ion-item *ngIf="(getCollaborators(restaurantList) | async)?.length">-->
 <!--          <ion-icon name="people-circle-outline"></ion-icon>-->
 <!--          <ion-label>Collaborators:</ion-label>-->
 <!--          <ion-list>-->
-<!--            <ion-item *ngFor="let collaborator of restaurantList.collaborators" class="collaborators-list">-->
-<!--              User: {{collaborator.username}}-->
-<!--              <p *ngIf="collaborator.isCollab">-->
-<!--                • Permission: Collaborator-->
-<!--              </p>-->
-<!--              <p *ngIf="collaborator.isReadOnly">-->
-<!--                • Permission: Reader-->
+<!--            <ion-item *ngFor="let collaborator of getCollaborators(restaurantList) | async" class="collaborators-list">-->
+<!--              User: {{collaborator.firstname}}-->
+<!--              <p>-->
+<!--                • Permission : {{mapRoleLabel.get(restaurantList.roles.get(collaborator.id) ?? "")}}-->
 <!--              </p>-->
 <!--            </ion-item>-->
 <!--          </ion-list>-->
@@ -94,7 +92,7 @@
     <p>Shared with me</p>
   </ion-toolbar>
 
-  <ion-card *ngIf="!(sharedWithMeRestaurantLists && sharedWithMeRestaurantLists.length > 0)">
+  <ion-card *ngIf="!(sharedWithMeRestaurantsList$)">
     <ion-item>
       <h3>Uh-oh!</h3>
     </ion-item>
@@ -103,22 +101,22 @@
     </ion-item>
   </ion-card>
 
-  <div *ngIf="(sharedWithMeRestaurantLists && sharedWithMeRestaurantLists.length > 0)">
+  <div *ngIf="(sharedWithMeRestaurantsList$)">
     <ion-card>
-      <ion-item *ngFor="let sharedList of sharedWithMeRestaurantLists" detail (click)="goToSharedList(sharedList.sharedListName)">
+      <ion-item *ngFor="let sharedList of sharedWithMeRestaurantsList$ | async" detail (click)="goToSharedList(sharedList.name)">
         <ion-list>
         <ion-label>
           <h1>
             <ion-icon name="list-circle-outline"></ion-icon>
-            {{sharedList?.sharedListName}}
+            {{sharedList?.name}}
           </h1>
           <h4>
             <ion-icon name="pencil-outline"></ion-icon>
-            Author: {{sharedList?.sharedListAuthor}}
+            Author: TODO
           </h4>
           <h4>
             <ion-icon name="document-lock-outline"></ion-icon>
-            My permissions: {{sharedList?.myPermissions}}
+            My permissions: TODO
           </h4>
           <h4>
             <ion-icon name="fast-food-outline"></ion-icon>
@@ -126,7 +124,7 @@
           </h4>
           <h4>
             <ion-icon name="people-circle-outline"></ion-icon>
-            Number of collaborators: {{sharedList?.collaborators?.length}}
+            Number of collaborators: TODO
           </h4>
         </ion-label>
       </ion-list>

@@ -1,25 +1,36 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ReactiveFormsModule} from "@angular/forms";
 import {AlertController, IonicModule, ModalController} from "@ionic/angular";
-import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
+import {AsyncPipe, DatePipe, NgForOf, NgIf} from "@angular/common";
 import {CreateRestaurantListComponent} from "../create-restaurant-list/create-restaurant-list.component";
 import {ModifyRestaurantListComponent} from "../modify-restaurant-list/modify-restaurant-list.component";
 import {RestaurantsListService} from "../../services/restaurantsList.service";
 import {EMPTY, Observable} from "rxjs";
 import {Restaurant} from "../../models/Restaurant";
 import {RestaurantsList} from "../../models/RestaurantsList";
+import {User} from "../../models/User";
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-my-collaborations',
   standalone: true,
-  imports: [ReactiveFormsModule, IonicModule, NgIf, NgForOf, AsyncPipe],
+  imports: [ReactiveFormsModule, IonicModule, NgIf, NgForOf, AsyncPipe, DatePipe],
   templateUrl: './my-collaborations.component.html',
   styleUrls: ['./my-collaborations.component.scss'],
 })
 export class MyCollaborationsComponent implements OnInit {
+
   private modalController = inject(ModalController);
   private restaurantsListService = inject(RestaurantsListService);
-  restaurantsList$: Observable<RestaurantsList[] | null> = EMPTY;
+  private userService = inject(UserService);
+  readonly mapRoleLabel = new Map([
+    ["owner", "owner"],
+    ["writer", "collaborator"],
+    ["reader", "reader"],
+  ])
+
+  myRestaurantsList$: Observable<RestaurantsList[] | null> = EMPTY;
+  sharedWithMeRestaurantsList$: Observable<RestaurantsList[] | null> = EMPTY;
 
   alertHandlerMessage = '';
   alertRoleMessage = '';
@@ -54,52 +65,6 @@ export class MyCollaborationsComponent implements OnInit {
     },
   ];
 
-  // To test when the restaurantsList is empty, frontend works as expected
-
-  // yourRestaurantsLists: {
-  //   listID: number,
-  //   listName: string,
-  //   dateOfCreation: string,
-  //   restaurants?: {
-  //     id: number,
-  //     thumbnailURL: string,
-  //     restaurantName: string,
-  //     ranking: string,
-  //     cuisine: string,
-  //     address: string,
-  //     description: string
-  //   }[],
-  //   collaborators?: {
-  //     id: number,
-  //     username: string,
-  //     isReadOnly: bool, (READ-ONLY)   > BOTH ARE MUTUALLY EXCLUSIVE
-  //     isCollab: bool (READ-WRITE)     > BOTH ARE MUTUALLY EXCLUSIVE
-  //   }[]
-  // }[] = [];
-
-  // To test when the sharedWithMeRestaurantLists is empty, frontend works as expected
-  // sharedWithMeRestaurantLists? : {
-  //   sharedListID: number,
-  //   sharedListName: string,
-  //   sharedListAuthor: string,
-  //   myPermissions: string,
-  //   restaurants?: {
-  //     id: number,
-  //     thumbnailURL: string,
-  //     restaurantName: string,
-  //     ranking: string,
-  //     cuisine: string,
-  //     address: string,
-  //     description: string
-  //   }[],
-  //   collaborators?: {
-  //     id: number,
-  //     username: string,
-  //     isReadOnly: bool, (READ-ONLY)   > BOTH ARE MUTUALLY EXCLUSIVE
-  //     isCollab: bool (READ-WRITE)     > BOTH ARE MUTUALLY EXCLUSIVE
-  //   }[],
-  // }[] = [];
-
   sharedWithMeRestaurantLists = [
     {
       sharedListID: 1,
@@ -132,7 +97,8 @@ export class MyCollaborationsComponent implements OnInit {
   constructor(private alertController: AlertController) {}
 
   ngOnInit() {
-    this.restaurantsList$ = this.restaurantsListService.findMyRestaurantsLists()
+    this.myRestaurantsList$ = this.restaurantsListService.findMine()
+    this.sharedWithMeRestaurantsList$ = this.restaurantsListService.findSharedWithMe()
   }
 
   dismissModal() {
@@ -155,23 +121,19 @@ export class MyCollaborationsComponent implements OnInit {
   }
 
   deleteRestaurantList(restaurantListID: number, restaurantListName: string) {
-    //todo: removal of said restaurant list works, remains to implement this on the server/firebase side
-    console.log("Your Restaurants Lists -- BEFORE DELETION: \n" + this.yourRestaurantsLists.length);
-    console.log("DELETED: " + "\nListName: " + restaurantListName.toString() + "\nListID: " + restaurantListID.toString());
-    this.yourRestaurantsLists = this.yourRestaurantsLists.filter(list => list.listID != restaurantListID);
-    console.log("Your Restaurants Lists -- AFTER DELETION: \n" + this.yourRestaurantsLists.length);
+    //todo deleteRestaurantsList by service
   }
 
-  async presentRestaurantListDeletionAlert(restaurantListID: string, restaurantListName: string) {
+  async presentRestaurantListDeletionAlert(restaurantsList: RestaurantsList) {
     const alert = await this.alertController.create({
-      header: "You're about to delete: " + restaurantListName + "\nThis action is irreversible, are you sure you want to proceed?",
+      header: "You're about to delete: " + restaurantsList.name + "\nThis action is irreversible, are you sure you want to proceed?",
       buttons: [
         {
-          text: "Yes, I'm sure. \nDelete " + restaurantListName + ". ",
+          text: "Yes, I'm sure. \nDelete " + restaurantsList.name + ". ",
           role: 'confirm',
           handler: () => {
             this.alertHandlerMessage = 'Deletion confirmed!';
-            //this.deleteRestaurantList(restaurantListID, restaurantListName);
+            this.restaurantsListService.delete(restaurantsList);
           },
         },
         {
@@ -190,41 +152,47 @@ export class MyCollaborationsComponent implements OnInit {
     this.alertRoleMessage = `Dismissed with role: ${role}`;
   }
 
-  async showModifyRestaurantList(restaurantsListID: string) {
-    // const matchingRestaurantList = this.yourRestaurantsLists.find(list => list.listID == restaurantsListID);
-    //
-    // const collaborators = matchingRestaurantList?.collaborators?.map((collaborator) => {
-    //   return {
-    //     id: collaborator.id,
-    //     username: collaborator.username,
-    //     isReadOnly: collaborator.isReadOnly,
-    //     isCollab: collaborator.isCollab
-    //   }
-    // }) ?? [];
-    //
-    // const restaurants = matchingRestaurantList?.restaurants?.map((restaurant) => {
-    //   return {
-    //     id: restaurant.id,
-    //     thumbnailURL: restaurant.thumbnailURL,
-    //     restaurantName: restaurant.restaurantName,
-    //     ranking: restaurant.ranking,
-    //     cuisine: restaurant.cuisine,
-    //     address: restaurant.address,
-    //     description: restaurant.description
-    //   }
-    // }) ?? [];
-    //
-    // const modal = await this.modalController.create({
-    //   component: ModifyRestaurantListComponent,
-    //   componentProps: {
-    //     matchingRestaurantList: matchingRestaurantList,
-    //     restaurantListName: matchingRestaurantList?.listName,
-    //     restaurantsList: restaurants,
-    //     restaurantsListCollaborators: collaborators,
-    //   }
-    // });
-    // await modal.present();
-    // const { data, role } = await modal.onWillDismiss();
+  /**
+   * Return all collaborators of the given list
+   * @param restaurantsList restaurantsList
+   */
+  getCollaborators(restaurantsList: RestaurantsList) : Observable<User[]> {
+    return this.userService.getUsers(Array.from(Object.keys(restaurantsList.roles)))
   }
+
+  // async showModifyRestaurantList(restaurantsList: RestaurantsList) {
+  //   const collaborators = restaurantsList.collaborators.map((collaborator) => {
+  //     return {
+  //       id: collaborator.id,
+  //       username: collaborator.username,
+  //       isReadOnly: collaborator.isReadOnly,
+  //       isCollab: collaborator.isCollab
+  //     }
+  //   }) ?? [];
+  //
+  //   const restaurants = matchingRestaurantList?.restaurants?.map((restaurant) => {
+  //     return {
+  //       id: restaurant.id,
+  //       thumbnailURL: restaurant.thumbnailURL,
+  //       restaurantName: restaurant.restaurantName,
+  //       ranking: restaurant.ranking,
+  //       cuisine: restaurant.cuisine,
+  //       address: restaurant.address,
+  //       description: restaurant.description
+  //     }
+  //   }) ?? [];
+  //
+  //   const modal = await this.modalController.create({
+  //     component: ModifyRestaurantListComponent,
+  //     componentProps: {
+  //       matchingRestaurantList: matchingRestaurantList,
+  //       restaurantListName: matchingRestaurantList?.listName,
+  //       restaurantsList: restaurants,
+  //       restaurantsListCollaborators: collaborators,
+  //     }
+  //   });
+  //   await modal.present();
+  //   const { data, role } = await modal.onWillDismiss();
+  // }
 
 }
