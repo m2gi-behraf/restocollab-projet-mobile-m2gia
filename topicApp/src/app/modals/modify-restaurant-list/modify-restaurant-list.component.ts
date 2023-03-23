@@ -58,11 +58,13 @@ export class ModifyRestaurantListComponent implements OnInit {
 
   updateRole(user: User) {
     if (user.isCollab) {
+      // user.permission = "reader"
       user.isReadOnly = true;
       user.isCollab = false;
       console.log(this.restaurantsListCollaborators);
 
     } else {
+      // user.permission = "writer"
       user.isReadOnly = false;
       user.isCollab = true;
       console.log(this.restaurantsListCollaborators);
