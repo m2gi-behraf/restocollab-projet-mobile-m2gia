@@ -20,6 +20,7 @@ import {firstValueFrom} from "rxjs";
 })
 export class UserService {
   readonly DEFAULT_USER: User = {
+    username: "DEFAULT",
     firstname: "DEFAULT",
     lastname: "DEFAULT",
     id: "",

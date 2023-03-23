@@ -11,6 +11,23 @@
       <ion-card-content>
         <form class="wrapform" [formGroup]="signupForm" (ngSubmit)="submitForm()" novalidate>
           <ion-item>
+            <ion-icon name="qr-code-outline"></ion-icon>
+            <!-- Todo: Bind with Firebase/Auth !-->
+            <ion-input formControlName="username" type="text" name="username" required="true"
+                       placeholder="Username"></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+                    *ngIf="errorControl['username'].touched && errorControl['username'].errors?.['required'] || isSubmitted && errorControl['username'].errors?.['required']">
+      <span>
+        This field is required.
+      </span>
+          </ion-text>
+          <ion-text color="danger" *ngIf="errorControl['username'].touched && !signupForm.controls['username'].valid">
+      <span>
+        Username must be between 3 and 12 characters.
+      </span>
+          </ion-text>
+          <ion-item>
             <ion-icon name="person-circle-outline"></ion-icon>
             <!-- Todo: Bind with Firebase/Auth !-->
             <ion-input formControlName="firstname" type="text" name="firstname" required="true"
