@@ -40,7 +40,7 @@ export class ModifyRestaurantListComponent implements OnInit {
   restaurantsList: Restaurant[] = [];
   restaurantsListCollaborators: User[] = [
   ];
-
+  myPermissionOnThisList = ""; // can either be 'owner, 'read-write' or 'read-only' -> this can be an enum
   existingDatabaseUsers: User[] = [
     {id: 1, username: 'John', isReadOnly: false, isCollab: true},
     {id: 2, username: 'Mary', isReadOnly: true, isCollab: false},
@@ -74,8 +74,10 @@ export class ModifyRestaurantListComponent implements OnInit {
               private alertController: AlertController) {
     this.restaurantsListCollaborators = this.navParams.get('restaurantsListCollaborators');
     this.restaurantsList = this.navParams.get('restaurantsList');
+    this.myPermissionOnThisList = this.navParams.get('myPermission');
     console.log(this.restaurantsListCollaborators);
     console.log(this.restaurantsList);
+    console.log(this.myPermissionOnThisList);
   }
 
   ngOnInit() {
