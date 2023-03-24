@@ -1,0 +1,76 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="primary" slot="end" (click)="presentRestaurantListDeletionAlert()"><ion-icon name="trash-outline"></ion-icon></ion-button>
+      <ion-button fill="clear" color="primary" slot="end" (click)="showModifyRestaurantList()"><ion-icon name="create-outline"></ion-icon></ion-button>
+      <ion-button fill="clear" color="primary" (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="color-filter-outline" />
+      {{ this.restaurantsList.name }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngIf="this.restaurantsList">
+    <ion-item>
+      <ion-list>
+        <ion-item>
+          <h3>{{this.restaurantsList.name}}</h3>
+<!--          <ion-button fill="clear" color="primary" slot="end" (click)="presentRestaurantListDeletionAlert(restaurantList.listID, restaurantList.listName)"><ion-icon name="trash-outline"></ion-icon></ion-button>-->
+<!--          <ion-button fill="clear" color="primary" slot="end" (click)="showModifyRestaurantList(restaurantList.listID, restaurantList.myPermission)"><ion-icon name="create-outline"></ion-icon></ion-button>-->
+        </ion-item>
+        <ion-item>
+          <ion-icon name="calendar-outline"></ion-icon>
+          <ion-label>Date of creation:</ion-label>
+          TODO
+        </ion-item>
+
+        <ion-item *ngIf="collaborators$ | async">
+          <ion-icon name="people-circle-outline"></ion-icon>
+          <ion-label>Collaborators:</ion-label>
+          <ion-list>
+            <ion-item *ngFor="let collaborator of collaborators$ | async" class="collaborators-list">
+              User: {{collaborator.firstname}}
+<!--              TODO-->
+<!--              <p class="collaborator" *ngIf="collaborator.isCollab">-->
+<!--                • Permission: Collaborator-->
+<!--              </p>-->
+<!--              <p class="collaborator" *ngIf="collaborator.isReadOnly">-->
+<!--                • Permission: Reader-->
+<!--              </p>-->
+            </ion-item>
+          </ion-list>
+        </ion-item>
+
+        <ion-list *ngFor="let restaurant of restaurants$ | async">
+          <ion-item>
+            <ion-thumbnail class="ion-margin-end thumbnail">
+              <ion-img src="{{restaurant.imageURL}}"/>
+            </ion-thumbnail>
+
+            <ion-label>
+              <h1>
+                <ion-icon name="restaurant-outline"></ion-icon>
+                {{restaurant.name}}
+              </h1>
+              <h4>
+                <ion-icon name="star-half-outline"></ion-icon>
+                Ranking: {{restaurant.ranking}}/5
+              </h4>
+              <h4>
+                <ion-icon name="earth-outline"></ion-icon>
+                Cuisine: {{restaurant.cuisine}}
+              </h4>
+              <p>
+                <ion-icon name="pin-outline"></ion-icon>
+                {{restaurant.address}}
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-list>
+    </ion-item>
+  </ion-card>
+</ion-content>

@@ -3,6 +3,7 @@ import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, V
 import {AlertController, IonicModule, ModalController, NavController, ToastController} from "@ionic/angular";
 import {NgForOf, NgIf} from "@angular/common";
 import { NavParams } from '@ionic/angular';
+import {RestaurantsList} from "../../models/RestaurantsList";
 
 interface User {
   id: number,
@@ -31,13 +32,14 @@ interface Restaurant {
 
 export class ModifyRestaurantListComponent implements OnInit {
   userLoggedInIsOwner = true;
+  restaurantsList: RestaurantsList = {} as RestaurantsList
   modifyRestaurantListForm!: FormGroup;
   isSubmitted = false;
   private modalController = inject(ModalController);
   private toastController = inject(ToastController);
 
   restaurantListName: string = "";
-  restaurantsList: Restaurant[] = [];
+  restaurants: Restaurant[] = [];
   restaurantsListCollaborators: User[] = [
   ];
   myPermissionOnThisList = ""; // can either be 'owner, 'read-write' or 'read-only' -> this can be an enum
@@ -147,7 +149,7 @@ export class ModifyRestaurantListComponent implements OnInit {
   addRestaurants(selectedRestaurants: string[]) {
     // filter out any restaurants that already exist in the list (to avoid duplicates)
     const newRestaurantsList = selectedRestaurants.filter(newRestaurant =>
-      !this.restaurantsList.find(r => r.restaurantName === newRestaurant));
+      !this.restaurants.find(r => r.restaurantName === newRestaurant));
 
     // add new restaurants to the list (get all the properties of specific restaurantName)
     newRestaurantsList.forEach((restaurantName: string) => {
@@ -155,7 +157,7 @@ export class ModifyRestaurantListComponent implements OnInit {
 
       if (restaurant) {
         const newRestaurant: Restaurant = {
-          id: this.restaurantsList.length + 1,
+          id: this.restaurants.length + 1,
           thumbnailURL: restaurant.thumbnailURL || '',
           restaurantName: restaurant.restaurantName || '',
           ranking: restaurant.ranking || '',
@@ -163,7 +165,7 @@ export class ModifyRestaurantListComponent implements OnInit {
           address: restaurant.address || '',
           description: restaurant.description || ''
         }
-        this.restaurantsList.push(newRestaurant);
+        this.restaurants.push(newRestaurant);
         console.log(this.restaurantsList);
       } else {
         console.log(`Could not find restaurant with name ${restaurantName}`);
@@ -180,9 +182,9 @@ export class ModifyRestaurantListComponent implements OnInit {
           role: 'confirm',
           handler: () => {
             this.alertHandlerMessage = 'Deletion confirmed!';
-            const index = this.restaurantsList.findIndex(r => r.restaurantName === restaurantName);
+            const index = this.restaurants.findIndex(r => r.restaurantName === restaurantName);
             if (index !== -1) {
-              this.restaurantsList.splice(index, 1);
+              this.restaurants.splice(index, 1);
             }
           },
         },
@@ -227,7 +229,7 @@ export class ModifyRestaurantListComponent implements OnInit {
         await toast.present()
         console.log("The restaurant list now contains the following values: " +
           "\nRestaurant list name: " + this.restaurantListName +
-          "\nRestaurants inside: " + this.restaurantsList.map(m => m.restaurantName).join(", ") +
+          "\nRestaurants inside: " + this.restaurants.map(m => m.restaurantName).join(", ") +
           "\nCollaborators on the list and their permissions: " + "\n" + this.restaurantsListCollaborators.map(m => m.username).join(", "));
       });
       this.dismissModal(); // dismiss modal upon creation of list
