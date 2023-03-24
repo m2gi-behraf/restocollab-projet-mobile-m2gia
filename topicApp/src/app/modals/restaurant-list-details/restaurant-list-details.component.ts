@@ -3,7 +3,7 @@ import {UserService} from "../../services/user.service";
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
 import {RestaurantsListService} from "../../services/restaurantsList.service";
-import {EMPTY, Observable} from "rxjs";
+import {BehaviorSubject, EMPTY, Observable} from "rxjs";
 import {RestaurantsList} from "../../models/RestaurantsList";
 import {AlertController, IonicModule, ModalController} from "@ionic/angular";
 import {Restaurant} from "../../models/Restaurant";
@@ -45,7 +45,7 @@ export class RestaurantListDetailsComponent implements OnInit {
           role: 'confirm',
           handler: () => {
             this.alertHandlerMessage = 'Deletion confirmed!';
-            //TODO link deletion
+            this.restaurantsListService.delete(this.restaurantsList);
           },
         },
         {
