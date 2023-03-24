@@ -15,14 +15,15 @@ export class RestaurantsListService {
 
   constructor() { }
 
-  findOne(id: String): Observable<RestaurantsList | null> {
-    const documentRef = doc(this.firestore, `guides/${id}`) as DocumentReference<RestaurantsList>;
-    return docData<RestaurantsList>(documentRef);
+  findOne(id: String): Observable<RestaurantsList> {
+    const documentRef = doc(this.firestore, `restaurants-list/${id}`) as DocumentReference<RestaurantsList>;
+    return docData<RestaurantsList>(documentRef, {idField: 'id'});
   }
 
-  findAllRestaurants(idRestaurantsList: String): Observable<Restaurant[] | null> {
-    const collectionRef = collection(this.firestore, `guides/${idRestaurantsList}/restaurants`) as CollectionReference<Restaurant>;
-    return collectionData<any>(collectionRef)
+  findAllRestaurants(idRestaurantsList: String): Observable<Restaurant[]> {
+    console.log(idRestaurantsList);
+    const collectionRef = collection(this.firestore, `restaurants-list/${idRestaurantsList}/restaurants`) as CollectionReference<Restaurant>;
+    return collectionData<any>(collectionRef, {idField: 'id'})
   }
 
   addRestaurant(idRestaurantsList: string, restaurant: Restaurant): void {

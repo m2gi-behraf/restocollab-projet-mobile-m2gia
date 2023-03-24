@@ -4,6 +4,12 @@ import {AlertController, IonicModule, ModalController} from "@ionic/angular";
 import {NgForOf, NgIf} from "@angular/common";
 import {CreateRestaurantListComponent} from "../create-restaurant-list/create-restaurant-list.component";
 import {ModifyRestaurantListComponent} from "../modify-restaurant-list/modify-restaurant-list.component";
+import {RestaurantListDetailsComponent} from "../restaurant-list-details/restaurant-list-details.component";
+import {RestaurantsList} from "../../models/RestaurantsList";
+import {User} from "../../models/User";
+import {AuthenticationMethod} from "../../models/Enums/AuthenticationMethod";
+import {firstValueFrom} from "rxjs";
+import {RestaurantsListService} from "../../services/restaurantsList.service";
 
 @Component({
   selector: 'app-my-collaborations',
@@ -14,6 +20,7 @@ import {ModifyRestaurantListComponent} from "../modify-restaurant-list/modify-re
 })
 export class MyCollaborationsComponent implements OnInit {
   private modalController = inject(ModalController);
+  private restaurantsListService = inject(RestaurantsListService);
   alertHandlerMessage = '';
   alertRoleMessage = '';
 
@@ -141,8 +148,18 @@ export class MyCollaborationsComponent implements OnInit {
   //todo: implement expansion of shared list in another modal
   //todo: view in more details (restaurants list and collaborators list)
   //todo: if your permissions are "read-write" then display add button to the list
-  goToSharedList(sharedListName: string) {
-    console.log("Expand concerned shared list: " + sharedListName);
+  async goToSharedList(id: string) {
+    id = "XYJ5fpjqXUeW4aVdfDFR"
+    let list = await firstValueFrom(this.restaurantsListService.findOne(id));
+
+    const modal = await this.modalController.create({
+      component: RestaurantListDetailsComponent,
+      componentProps: {
+        restaurantsList: list
+        }
+    });
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss();
   }
 
   async showCreateRestaurantList() {

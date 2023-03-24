@@ -68,7 +68,7 @@
             </ion-select>
             <ion-button fill="clear" color="primary" (click)="addRestaurants(restaurantSelect.value)">ADD</ion-button>
           </ion-item>
-          <ion-list *ngFor="let restaurant of restaurantsList">
+          <ion-list *ngFor="let restaurant of restaurants">
             <ion-item>
               <ion-thumbnail class="ion-margin-end thumbnail">
                 <ion-img src="{{restaurant.thumbnailURL}}"/>
