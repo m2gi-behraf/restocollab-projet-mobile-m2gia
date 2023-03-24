@@ -1,7 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import { User } from "../models/User";
 import {
-  addDoc,
   collection,
   doc,
   where,

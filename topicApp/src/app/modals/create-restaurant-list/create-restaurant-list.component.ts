@@ -1,21 +1,35 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {IonicModule, ModalController, ToastController} from "@ionic/angular";
-import {NgForOf, NgIf} from "@angular/common";
+import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
+import {BehaviorSubject, EMPTY, firstValueFrom, Observable} from "rxjs";
+import {RestaurantsList} from "../../models/RestaurantsList";
+import {Restaurant} from "../../models/Restaurant";
+import {RestaurantsListService} from "../../services/restaurantsList.service";
+import {RestaurantService} from "../../services/restaurant.service";
+import {restaurant} from "ionicons/icons";
+import {UserService} from "../../services/user.service";
+import {Role} from "../../models/Enums/Role";
 
 @Component({
   selector: 'app-create-restaurant-list',
   standalone: true,
-  imports: [ReactiveFormsModule, IonicModule, NgIf, NgForOf],
+  imports: [ReactiveFormsModule, IonicModule, NgIf, NgForOf, AsyncPipe],
   templateUrl: './create-restaurant-list.component.html',
   styleUrls: ['./create-restaurant-list.component.scss'],
 })
 export class CreateRestaurantListComponent implements OnInit {
   restaurantListCreationForm!: FormGroup;
   isSubmitted = false;
+
+  pickerRestaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([])
+  restaurantsList: RestaurantsList = {} as RestaurantsList;
+  restaurants$: Observable<Restaurant[]> = EMPTY;
   private toastController = inject(ToastController);
   private modalController = inject(ModalController);
-
+  private restaurantsListService = inject(RestaurantsListService)
+  private restaurantService = inject(RestaurantService)
+  private userService = inject(UserService)
   // todo: this will need to be removed and replaced by the restaurant service that fetches all existing restaurants in the db
   existingRestaurantsList = [
     {id: 1, thumbnailURL: "../../assets/images/home/restaurant-la-ferme-a-dede.png", restaurantName: "La Ferme à Dédé", ranking: "4", cuisine: "🇫🇷", address:  "24 Rue Barnave, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
@@ -23,12 +37,12 @@ export class CreateRestaurantListComponent implements OnInit {
     {id: 3, thumbnailURL: "../../assets/images/home/restaurant-comptoire-ditalie.png", restaurantName: "Comptoire d'Italie", ranking: "4", cuisine: "🇮🇹", address:  "4 Pl. de Gordes, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
   ]
 
-  restaurantListName = "";
   selectedRestaurantsList = [];
 
   constructor(private formBuilder: FormBuilder) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.restaurants$ = this.restaurantService.findAll();
     this.restaurantListCreationForm = this.formBuilder.group({
       listname: ['', [Validators.required]],
       restaurants: ['', [Validators.required]]
@@ -45,13 +59,22 @@ export class CreateRestaurantListComponent implements OnInit {
   }
 
   handleRestaurantSelectionChange(e: any) {
-    console.log('ionChange fired with value: ' + e.detail.value);
     this.selectedRestaurantsList = e.detail.value;
-    console.log("The selected restaurants are: " + this.selectedRestaurantsList);
   }
 
-  handleCancel() {
-    console.log("Dismissed/cancelled.")
+  private async createRestaurantsList(name: string, ids: string[]){
+    let restaurantsList: RestaurantsList = {
+      name: name,
+      authorUsername: this.userService.currentUser.username,
+      dateOfCreation: new Date(),
+      description: "",
+      id: "",
+      roles: {} as Map<string,string>,
+      restaurants: this.restaurantService.findAllById(ids)
+    }
+
+    console.log(restaurantsList);
+    await this.restaurantsListService.create(restaurantsList)
   }
 
   async submitForm() {
@@ -69,11 +92,13 @@ export class CreateRestaurantListComponent implements OnInit {
       await toast.present();
       console.log('Please provide all the required values!')
       return false;
-    } else {
-      //todo: add server/service side
-      this.restaurantListName = this.restaurantListCreationForm.controls['listname'].value;
-      console.log("The restaurant list name is: " + this.restaurantListName
-        + "\nSelected restaurants are: " + this.selectedRestaurantsList);
+    }
+    else
+    {
+      let name = this.restaurantListCreationForm.controls['listname'].value;
+      let restaurants = this.restaurantListCreationForm.controls['restaurants'].value;
+      await this.createRestaurantsList(name, restaurants)
+
       this.toastController.create({
         message: "Restaurant list creation successful!",
         duration: 1500,

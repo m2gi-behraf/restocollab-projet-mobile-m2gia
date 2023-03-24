@@ -3,14 +3,13 @@ import {
   Firestore,
   collection,
   collectionData,
-  DocumentData,
   doc,
   addDoc,
   deleteDoc,
   docData,
   DocumentReference,
   CollectionReference,
-  query, where, getDocs, limit
+  query, where, limit, setDoc
 } from '@angular/fire/firestore';
 import {firstValueFrom, Observable, of} from "rxjs";
 import {RestaurantsList} from "../models/RestaurantsList";
@@ -58,27 +57,43 @@ export class RestaurantsListService {
   }
 
   findAllRestaurants(idRestaurantsList: String): Observable<Restaurant[]> {
-    console.log(idRestaurantsList);
     const collectionRef = collection(this.firestore, `restaurants-list/${idRestaurantsList}/restaurants`) as CollectionReference<Restaurant>;
     return collectionData<any>(collectionRef, {idField: 'id'})
   }
 
-  addRestaurant(idRestaurantsList: string, restaurant: Restaurant): void {
-    //TODO Fabien -> RestaurantsListService/AddRestaurant
-    //vérifier la non existence du restaurant
-    //vérfier les droits d'écritures
+  /**
+   * Add a restaurant to list
+   * @param idRestaurantsList
+   * @param restaurant
+   */
+  async addRestaurant(idRestaurantsList: string, restaurant: Restaurant): Promise<void> {
+    await setDoc(doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants`, `${restaurant.id}`), restaurant)
   }
 
   deleteRestaurant(idRestaurantsList: string, restaurant: Restaurant): void {
     //TODO Fabien -> Delete Restaurant
   }
 
-  create(restaurantsList: RestaurantsList): void {
+  /**
+   * Create a new RestaurantsList and add all selected restaurants into it
+   * @param restaurantsList
+   */
+  async create(restaurantsList: RestaurantsList): Promise<void> {
     const collectionRef = collection(this.firestore, `${this.ROOT}`);
-    const map = new Map([
-      [this.userService.currentUser.id, Role[Role.OWNER].toLowerCase()]
-    ])
-    addDoc(collectionRef, { name: restaurantsList.name, description: restaurantsList.description, roles: map });
+    const userId = this.userService.currentUser.id;
+    let docRef = await addDoc(collectionRef, {
+      name:restaurantsList.name,
+      description: restaurantsList.description,
+      authorUserName: restaurantsList.authorUsername,
+      dateOfCreation: restaurantsList.dateOfCreation,
+      roles: { [userId]: Role[Role.OWNER].toLowerCase() }
+    });
+
+    //add restaurants
+    let doc = await firstValueFrom(docData(docRef, {idField:'id'})) as RestaurantsList
+    restaurantsList.restaurants.forEach(async (restaurant) => {
+      await this.addRestaurant(doc.id as string, restaurant);
+    })
   }
 
   delete(restaurantsList: RestaurantsList): void {
