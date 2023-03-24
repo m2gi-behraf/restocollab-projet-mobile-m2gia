@@ -23,7 +23,7 @@
       <ion-item>
         <ion-icon name="calendar-outline"></ion-icon>
         <ion-label>Birthday</ion-label>
-        <ion-label>{{user.dateOfBirth | date:'mediumDate'}}</ion-label>
+        <ion-label>{{user.dateOfBirth.toDate() | date:'yyyy-MM-dd'}}</ion-label>
       </ion-item>
     </ion-list>
   </ion-card>

@@ -10,15 +10,16 @@ import {
   getDocs,
   DocumentReference,
   docData,
-  setDoc
+  setDoc, collectionData
 } from '@angular/fire/firestore';
 import {AuthenticationMethod} from "../models/Enums/AuthenticationMethod";
-import {firstValueFrom} from "rxjs";
+import {firstValueFrom, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  private readonly ROOT = "users"
   readonly DEFAULT_USER: User = {
     username: "DEFAULT",
     firstname: "DEFAULT",
@@ -39,19 +40,28 @@ export class UserService {
    * @param email User's email
    */
   async getUser(email: string): Promise<User | null> {
-    const usersRef = collection(this.firestore, "users");
+    const usersRef = collection(this.firestore, `${this.ROOT}`);
     const q = query(usersRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
 
     //check if query have matches
     if (!querySnapshot.empty && querySnapshot.docs[0].exists()) {
       const id = querySnapshot.docs[0].id
-      const docRef = doc(this.firestore, `users/${id}`) as DocumentReference<User>
-      return firstValueFrom(docData(docRef)) //return first match in a Promise
+      const docRef = doc(this.firestore, `${this.ROOT}/${id}`) as DocumentReference<User>
+      return firstValueFrom(docData(docRef, { idField: 'id' })) //return first match in a Promise
     }
     else {
       return null
     }
+  }
+
+  /**
+   * Return all users matching ids
+   * @param ids Users ids
+   */
+  getUsers(ids: string[]) : Observable<User[]> {
+    const usersRef = collection(this.firestore, `${this.ROOT}`)
+    return collectionData<any>(usersRef, { idField: 'id'})
   }
 
   /**
@@ -93,6 +103,7 @@ export class UserService {
         else {
           this.user = dbUser;
         }
+        console.log("SetUp User from google", dbUser);
     }).catch((error) => {
       console.error(error);
     })
