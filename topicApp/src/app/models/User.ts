@@ -5,6 +5,7 @@ import {AuthenticationMethod} from "./Enums/AuthenticationMethod";
  */
 export interface User {
   id: string;
+  username: string;
   lastname: string;
   firstname: string;
   dateOfBirth: Date;
