@@ -23,7 +23,7 @@ Resto'collab is a mobile application that allows users to create an account, vie
 * Run the application using ionic serve
 
 ## Deployment Link:
-* https://m2gi-mobile-behra-jawlakh.web.app/login
+* [RestoCollab](https://m2gi-mobile-behra-jawlakh.web.app)
 
 ## Acknowledgements:
 This project was developed by Jad JAWLAKH and Fabien BEHRA as part of the Android course at University Grenoble Alpes (ENSIMAG). We would like to thank our course instructors and teaching assistants for their support and guidance throughout the project.

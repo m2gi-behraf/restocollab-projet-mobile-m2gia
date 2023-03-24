@@ -23,6 +23,7 @@ export class SignupPage implements OnInit {
 
   ngOnInit() {
     this.signupForm = this.formBuilder.group({
+      username: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(12)])],
       firstname: ['', Validators.required],
       lastname: ['', Validators.required],
       birthday: ['', [Validators.required, Validators.pattern('^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[13-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$')]],
@@ -58,7 +59,9 @@ export class SignupPage implements OnInit {
     } else {
       const email = this.signupForm.controls['email'].value;
       const pwd = this.signupForm.controls['password'].value;
-
+      //todo: maybe check if the username is already taken
+      // const username = this.signupForm.controls['username'].value;
+      
       // Check if email is already used.
       if (await this.userService.isEmailAlreadyRegistered(email))
       {
@@ -85,6 +88,7 @@ export class SignupPage implements OnInit {
   private async signUp(email: string, password: string): Promise<void> {
     //Creation of the user
     const user: User = {
+      username: this.signupForm.controls['username'].value,
       firstname : this.signupForm.controls['firstname'].value,
       lastname : this.signupForm.controls['lastname'].value,
       dateOfBirth : this.signupForm.controls['birthday'].value,

@@ -51,7 +51,17 @@ export class RestaurantsListService {
     console.log("User =>", this.userService.currentUser)
     const q = query(collectionRef, where(`roles.${this.userService.currentUser.id}`, 'in', allowedRoles), limit(50));
     return collectionData(q, { idField: 'id' })
-  }
+
+  // findOne(id: String): Observable<RestaurantsList> {
+  //   const documentRef = doc(this.firestore, `restaurants-list/${id}`) as DocumentReference<RestaurantsList>;
+  //   return docData<RestaurantsList>(documentRef, {idField: 'id'});
+  // }
+
+  // findAllRestaurants(idRestaurantsList: String): Observable<Restaurant[]> {
+  //   console.log(idRestaurantsList);
+  //   const collectionRef = collection(this.firestore, `restaurants-list/${idRestaurantsList}/restaurants`) as CollectionReference<Restaurant>;
+  //   return collectionData<any>(collectionRef, {idField: 'id'})
+  // }
 
   addRestaurant(idRestaurantsList: string, restaurant: Restaurant): void {
     //TODO Fabien -> RestaurantsListService/AddRestaurant

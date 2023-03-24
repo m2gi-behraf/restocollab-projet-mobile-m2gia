@@ -21,6 +21,7 @@ import {firstValueFrom, Observable} from "rxjs";
 export class UserService {
   private readonly ROOT = "users"
   readonly DEFAULT_USER: User = {
+    username: "DEFAULT",
     firstname: "DEFAULT",
     lastname: "DEFAULT",
     id: "",

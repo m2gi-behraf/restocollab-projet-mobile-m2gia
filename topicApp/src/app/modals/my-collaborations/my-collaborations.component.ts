@@ -40,6 +40,7 @@ export class MyCollaborationsComponent implements OnInit {
     { listID: 1,
       listName: "My favourite restaurants",
       dateOfCreation: "19/03/2023",
+      myPermission: "owner",
       restaurants: [
         {id: 1, thumbnailURL: "../../assets/images/home/restaurant-la-ferme-a-dede.png", restaurantName: "La Ferme à Dédé", ranking: "4", cuisine: "🇫🇷", address:  "24 Rue Barnave, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
         {id: 2, thumbnailURL: "../../assets/images/home/restaurant-au-liban.png", restaurantName: "Au Liban", ranking: "4", cuisine: "🇱🇧", address:  "16 Pl. Sainte-Claire, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
@@ -52,6 +53,7 @@ export class MyCollaborationsComponent implements OnInit {
     { listID: 2,
       listName: "My favourites",
       dateOfCreation: "01/01/2023",
+      myPermission: "owner",
       restaurants:
         [ {id: 7, thumbnailURL: "../../assets/images/home/restaurant-la-ferme-a-dede.png", restaurantName: "La Ferme à Dédé", ranking: "4", cuisine: "🇫🇷", address:  "24 Rue Barnave, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
           {id: 8, thumbnailURL: "../../assets/images/home/restaurant-au-liban.png", restaurantName: "Au Liban", ranking: "4", cuisine: "🇱🇧", address:  "16 Pl. Sainte-Claire, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
@@ -70,26 +72,31 @@ export class MyCollaborationsComponent implements OnInit {
       sharedListID: 1,
       sharedListName: "A dear friend's list",
       sharedListAuthor: "Kevin",
-      myPermissions: "read-only",
+      dateOfCreation: "19/03/2023",
+      myPermission: "read-only",
       restaurants: [
         {id: 1, thumbnailURL: "../../assets/images/home/restaurant-la-ferme-a-dede.png", restaurantName: "La Ferme à Dédé", ranking: "4", cuisine: "🇫🇷", address:  "24 Rue Barnave, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
         {id: 2, thumbnailURL: "../../assets/images/home/restaurant-au-liban.png", restaurantName: "Au Liban", ranking: "4", cuisine: "🇱🇧", address:  "16 Pl. Sainte-Claire, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
       ],
       collaborators: [
-        {id: 1, username: "me", permission: "read-only"}
+        { id: 1, username: "Lana", isReadOnly: true, isCollab: false },
+        { id: 2, username: "Patrick", isReadOnly: false, isCollab: true },
+        { id: 3, username: "Ariana", isReadOnly: false, isCollab: true },
+        { id: 4, username: "Me", isReadOnly: true, isCollab: false },
       ]
     },
     {
-      sharedListID: 1,
-      sharedListName: "A dear friend's list",
-      sharedListAuthor: "Kevin",
-      myPermissions: "read-only",
+      sharedListID: 2,
+      sharedListName: "My favourite restaurants this year",
+      sharedListAuthor: "Marina",
+      dateOfCreation: "23/03/2023",
+      myPermission: "read-write",
       restaurants: [
         {id: 1, thumbnailURL: "../../assets/images/home/restaurant-la-ferme-a-dede.png", restaurantName: "La Ferme à Dédé", ranking: "4", cuisine: "🇫🇷", address:  "24 Rue Barnave, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
         {id: 2, thumbnailURL: "../../assets/images/home/restaurant-au-liban.png", restaurantName: "Au Liban", ranking: "4", cuisine: "🇱🇧", address:  "16 Pl. Sainte-Claire, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
       ],
       collaborators: [
-        {id: 1, username: "me", permission: "read-only"}
+        { id: 4, username: "Me", isReadOnly: false, isCollab: true },
       ]
     }
   ];
@@ -108,8 +115,18 @@ export class MyCollaborationsComponent implements OnInit {
   //todo: implement expansion of shared list in another modal
   //todo: view in more details (restaurants list and collaborators list)
   //todo: if your permissions are "read-write" then display add button to the list
-  goToSharedList(sharedListName: string) {
-    console.log("Expand concerned shared list: " + sharedListName);
+  async goToSharedList(id: string) {
+    id = "XYJ5fpjqXUeW4aVdfDFR"
+    let list = await firstValueFrom(this.restaurantsListService.findOne(id));
+
+    const modal = await this.modalController.create({
+      component: RestaurantListDetailsComponent,
+      componentProps: {
+        restaurantsList: list
+        }
+    });
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss();
   }
 
   async showCreateRestaurantList() {

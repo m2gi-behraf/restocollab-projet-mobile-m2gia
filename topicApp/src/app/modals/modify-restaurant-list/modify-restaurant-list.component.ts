@@ -3,6 +3,7 @@ import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, V
 import {AlertController, IonicModule, ModalController, NavController, ToastController} from "@ionic/angular";
 import {NgForOf, NgIf} from "@angular/common";
 import { NavParams } from '@ionic/angular';
+import {RestaurantsList} from "../../models/RestaurantsList";
 
 interface User {
   id: number,
@@ -31,16 +32,17 @@ interface Restaurant {
 
 export class ModifyRestaurantListComponent implements OnInit {
   userLoggedInIsOwner = true;
+  restaurantsList: RestaurantsList = {} as RestaurantsList
   modifyRestaurantListForm!: FormGroup;
   isSubmitted = false;
   private modalController = inject(ModalController);
   private toastController = inject(ToastController);
 
   restaurantListName: string = "";
-  restaurantsList: Restaurant[] = [];
+  restaurants: Restaurant[] = [];
   restaurantsListCollaborators: User[] = [
   ];
-
+  myPermissionOnThisList = ""; // can either be 'owner, 'read-write' or 'read-only' -> this can be an enum
   existingDatabaseUsers: User[] = [
     {id: 1, username: 'John', isReadOnly: false, isCollab: true},
     {id: 2, username: 'Mary', isReadOnly: true, isCollab: false},
@@ -58,11 +60,13 @@ export class ModifyRestaurantListComponent implements OnInit {
 
   updateRole(user: User) {
     if (user.isCollab) {
+      // user.permission = "reader"
       user.isReadOnly = true;
       user.isCollab = false;
       console.log(this.restaurantsListCollaborators);
 
     } else {
+      // user.permission = "writer"
       user.isReadOnly = false;
       user.isCollab = true;
       console.log(this.restaurantsListCollaborators);
@@ -74,8 +78,10 @@ export class ModifyRestaurantListComponent implements OnInit {
               private alertController: AlertController) {
     this.restaurantsListCollaborators = this.navParams.get('restaurantsListCollaborators');
     this.restaurantsList = this.navParams.get('restaurantsList');
+    this.myPermissionOnThisList = this.navParams.get('myPermission');
     console.log(this.restaurantsListCollaborators);
     console.log(this.restaurantsList);
+    console.log(this.myPermissionOnThisList);
   }
 
   ngOnInit() {
@@ -143,7 +149,7 @@ export class ModifyRestaurantListComponent implements OnInit {
   addRestaurants(selectedRestaurants: string[]) {
     // filter out any restaurants that already exist in the list (to avoid duplicates)
     const newRestaurantsList = selectedRestaurants.filter(newRestaurant =>
-      !this.restaurantsList.find(r => r.restaurantName === newRestaurant));
+      !this.restaurants.find(r => r.restaurantName === newRestaurant));
 
     // add new restaurants to the list (get all the properties of specific restaurantName)
     newRestaurantsList.forEach((restaurantName: string) => {
@@ -151,7 +157,7 @@ export class ModifyRestaurantListComponent implements OnInit {
 
       if (restaurant) {
         const newRestaurant: Restaurant = {
-          id: this.restaurantsList.length + 1,
+          id: this.restaurants.length + 1,
           thumbnailURL: restaurant.thumbnailURL || '',
           restaurantName: restaurant.restaurantName || '',
           ranking: restaurant.ranking || '',
@@ -159,7 +165,7 @@ export class ModifyRestaurantListComponent implements OnInit {
           address: restaurant.address || '',
           description: restaurant.description || ''
         }
-        this.restaurantsList.push(newRestaurant);
+        this.restaurants.push(newRestaurant);
         console.log(this.restaurantsList);
       } else {
         console.log(`Could not find restaurant with name ${restaurantName}`);
@@ -176,9 +182,9 @@ export class ModifyRestaurantListComponent implements OnInit {
           role: 'confirm',
           handler: () => {
             this.alertHandlerMessage = 'Deletion confirmed!';
-            const index = this.restaurantsList.findIndex(r => r.restaurantName === restaurantName);
+            const index = this.restaurants.findIndex(r => r.restaurantName === restaurantName);
             if (index !== -1) {
-              this.restaurantsList.splice(index, 1);
+              this.restaurants.splice(index, 1);
             }
           },
         },
@@ -223,7 +229,7 @@ export class ModifyRestaurantListComponent implements OnInit {
         await toast.present()
         console.log("The restaurant list now contains the following values: " +
           "\nRestaurant list name: " + this.restaurantListName +
-          "\nRestaurants inside: " + this.restaurantsList.map(m => m.restaurantName).join(", ") +
+          "\nRestaurants inside: " + this.restaurants.map(m => m.restaurantName).join(", ") +
           "\nCollaborators on the list and their permissions: " + "\n" + this.restaurantsListCollaborators.map(m => m.username).join(", "));
       });
       this.dismissModal(); // dismiss modal upon creation of list

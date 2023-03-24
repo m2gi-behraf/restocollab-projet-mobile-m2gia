@@ -30,7 +30,7 @@
        isCollab = false and isReadOnly = true
        and then we can change the properties within the list using the toggle switch
        -->
-          <ion-item>
+          <ion-item *ngIf="myPermissionOnThisList ==('owner')">
             <ion-select formControlName="addedcollaborators" placeholder="Add user(s)..." [multiple]="true" #userSelect>
               <ion-select-option *ngFor="let user of existingDatabaseUsers" value="{{user.username}}">{{user.username}}</ion-select-option>
             </ion-select>
@@ -42,7 +42,7 @@
                 <ion-col>
                   <ion-label>{{existingCollaborator.username}}</ion-label>
                 </ion-col>
-                <ion-col>
+                <ion-col *ngIf="myPermissionOnThisList ==('owner')">
                   <ion-toggle
                     [checked]="existingCollaborator.isCollab"
                     (ionChange)="updateRole(existingCollaborator)"
@@ -52,7 +52,7 @@
                   <ion-label *ngIf="existingCollaborator.isCollab">Collaborator</ion-label>
                   <ion-label *ngIf="existingCollaborator.isReadOnly">Reader</ion-label>
                 </ion-col>
-                <ion-col>
+                <ion-col *ngIf="myPermissionOnThisList ==('owner')">
                   <ion-button fill="clear" color="primary" (click)="removeCollaborator(existingCollaborator)"><ion-icon name="trash-outline"></ion-icon></ion-button>
                 </ion-col>
               </ion-row>
@@ -68,7 +68,7 @@
             </ion-select>
             <ion-button fill="clear" color="primary" (click)="addRestaurants(restaurantSelect.value)">ADD</ion-button>
           </ion-item>
-          <ion-list *ngFor="let restaurant of restaurantsList">
+          <ion-list *ngFor="let restaurant of restaurants">
             <ion-item>
               <ion-thumbnail class="ion-margin-end thumbnail">
                 <ion-img src="{{restaurant.thumbnailURL}}"/>
@@ -108,7 +108,7 @@
         </ion-list>
       <div class="buttons">
         <ion-button class="submit-button" fill="outline" shape="round" type="submit">Modify</ion-button>
-        <ion-button *ngIf="userLoggedInIsOwner" fill="solid" color="danger" shape="round" class="delete-restaurant-list-button" (click)="deleteRestaurantList(restaurantListName)">Delete List</ion-button>
+        <ion-button *ngIf="myPermissionOnThisList ==('owner')" fill="solid" color="danger" shape="round" class="delete-restaurant-list-button" (click)="deleteRestaurantList(restaurantListName)">Delete List</ion-button>
       </div>
     </form>
   </ion-card>
