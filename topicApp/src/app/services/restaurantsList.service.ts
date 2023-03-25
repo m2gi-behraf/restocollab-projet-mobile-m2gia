@@ -16,6 +16,7 @@ import {RestaurantsList} from "../models/RestaurantsList";
 import {Restaurant} from "../models/Restaurant";
 import {UserService} from "./user.service";
 import {Role} from "../models/Enums/Role";
+import {User} from "../models/User";
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,6 @@ export class RestaurantsListService {
     const collectionRef = collection(this.firestore, `${this.ROOT}`) as CollectionReference<RestaurantsList>;
     const allowedRoles = [Role[Role.OWNER].toLowerCase()]
 
-    console.log("User =>", this.userService.currentUser)
     const q = query(collectionRef, where(`roles.${this.userService.currentUser.id}`, 'in', allowedRoles), limit(50));
     return collectionData(q, { idField: 'id' })
   }
@@ -70,8 +70,14 @@ export class RestaurantsListService {
     await setDoc(doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants`, `${restaurant.id}`), restaurant)
   }
 
-  deleteRestaurant(idRestaurantsList: string, restaurant: Restaurant): void {
-    //TODO Fabien -> Delete Restaurant
+  /**
+   * delete a restaurant from a list
+   * @param idRestaurantsList list
+   * @param restaurant restaurant to delete
+   */
+  async deleteRestaurant(idRestaurantsList: string, restaurant: Restaurant): Promise<void> {
+      const documentRef = doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants/${restaurant.id}`) as DocumentReference<Restaurant>
+    await deleteDoc(documentRef);
   }
 
   /**
@@ -96,8 +102,39 @@ export class RestaurantsListService {
     })
   }
 
-  delete(restaurantsList: RestaurantsList): void {
+  /**
+   * Delete the restaurantsLists and all it's restaurants
+   * @param restaurantsList list to delete
+   */
+  async delete(restaurantsList: RestaurantsList): Promise<void> {
     const documentRef = doc(this.firestore, `${this.ROOT}/${restaurantsList.id}`) as DocumentReference<RestaurantsList>
-    deleteDoc(documentRef)
+    const collectionRef = collection(this.firestore, `${this.ROOT}/${restaurantsList.id}/restaurants`) as CollectionReference<Restaurant>
+
+    //Suppression des restaurants
+    let restaurants = await firstValueFrom(collectionData(collectionRef, {idField: 'id'}))
+    restaurants.forEach(async (restaurant) => {
+      await this.deleteRestaurant(restaurantsList.id, restaurant);
+    });
+
+    await deleteDoc(documentRef)
+  }
+
+  /**
+   * Return the permission of the user on the given list
+   * @param list list
+   */
+  getPermission(list: RestaurantsList, userId: string) : string {
+    let mapRoleLabel = new Map<string, string>([
+      ["owner", "owner"],
+      ["writer", "collaborator"],
+      ["reader", "reader"],
+    ]);
+
+    let keys = Object.keys(list.roles);
+    let values = Object.values(list.roles);
+
+    let role: string = values[keys.indexOf(userId)]
+    let mappedRole = mapRoleLabel.get(role) ?? "reader";
+    return mappedRole;
   }
 }

@@ -4,6 +4,7 @@ import {AlertController, IonicModule, ModalController, NavController, ToastContr
 import {NgForOf, NgIf} from "@angular/common";
 import { NavParams } from '@ionic/angular';
 import {RestaurantsList} from "../../models/RestaurantsList";
+import {RestaurantsListService} from "../../services/restaurantsList.service";
 
 interface User {
   id: number,
@@ -37,6 +38,7 @@ export class ModifyRestaurantListComponent implements OnInit {
   isSubmitted = false;
   private modalController = inject(ModalController);
   private toastController = inject(ToastController);
+  private restaurantsListService = inject(RestaurantsListService);
 
   restaurantListName: string = "";
   restaurants: Restaurant[] = [];
@@ -237,45 +239,5 @@ export class ModifyRestaurantListComponent implements OnInit {
     }
   }
 
-  async deleteRestaurantList(listName: string) {
-    const alert = await this.alertController.create({
-      header: "You're about to delete the list: " + listName + ".\nThis action is irreversible, are you sure you want to proceed?",
-      buttons: [
-        {
-          text: "Yes, I'm sure. \nDelete " + listName + ". ",
-          role: 'confirm',
-          handler: () => {
-            // todo: replace existingDatabaseRestaurantsList with list of restaurants that is displayed in the my-collaborations
-            // (user's list of restaurants)
-            //todo:               replace here
-            const index = this.existingDatabaseRestaurantsList.findIndex(l => listName === listName);
-            if (index !== -1) {
-              //todo: replace here
-              this.existingDatabaseRestaurantsList.splice(index, 1);
-            }
-            this.alertHandlerMessage = 'Deletion confirmed!';
-            this.toastController.create({
-              message: "Restaurant list deletion successful!",
-              duration: 1500,
-              position: "bottom",
-              color: 'success'
-            }).then(async (toast) => {
-              await toast.present()
-            });
-            this.dismissModal();
-          },
-        },
-        {
-          text: "Abort",
-          role: 'cancel',
-          handler: () => {
-            this.alertHandlerMessage = 'Deletion aborted. Alert canceled!';
-          },
-        },
-      ],
-    });
-    await alert.present();
-    const {role} = await alert.onDidDismiss();
-    this.alertRoleMessage = `Dismissed with role: ${role}`;
-  }
+
 }
