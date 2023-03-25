@@ -5,6 +5,8 @@ import {NgForOf, NgIf} from "@angular/common";
 import { NavParams } from '@ionic/angular';
 import {RestaurantsList} from "../../models/RestaurantsList";
 import {RestaurantsListService} from "../../services/restaurantsList.service";
+import {BehaviorSubject, EMPTY, Observable} from "rxjs";
+import {Role} from "../../models/Enums/Role";
 
 interface User {
   id: number,
@@ -32,7 +34,7 @@ interface Restaurant {
 })
 
 export class ModifyRestaurantListComponent implements OnInit {
-  userLoggedInIsOwner = true;
+  myPermission: string = "writer";
   restaurantsList: RestaurantsList = {} as RestaurantsList
   modifyRestaurantListForm!: FormGroup;
   isSubmitted = false;
@@ -40,11 +42,25 @@ export class ModifyRestaurantListComponent implements OnInit {
   private toastController = inject(ToastController);
   private restaurantsListService = inject(RestaurantsListService);
 
+  collaborators$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
+  nonAddedUsers$: Observable<User[]> = EMPTY;
+
+  restaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
+  nonAddedRestaurants$: Observable<User[]> = EMPTY;
+
   restaurantListName: string = "";
   restaurants: Restaurant[] = [];
+
+  /**
+   * Collaborators de la liste
+   */
   restaurantsListCollaborators: User[] = [
   ];
   myPermissionOnThisList = ""; // can either be 'owner, 'read-write' or 'read-only' -> this can be an enum
+
+  /**
+   * Users en base
+   */
   existingDatabaseUsers: User[] = [
     {id: 1, username: 'John', isReadOnly: false, isCollab: true},
     {id: 2, username: 'Mary', isReadOnly: true, isCollab: false},
@@ -60,33 +76,36 @@ export class ModifyRestaurantListComponent implements OnInit {
   alertHandlerMessage = '';
   alertRoleMessage = '';
 
+  get isOwner(): boolean {
+    return this.myPermission == Role[Role.OWNER].toLowerCase()
+  }
+
   updateRole(user: User) {
     if (user.isCollab) {
       // user.permission = "reader"
       user.isReadOnly = true;
       user.isCollab = false;
       console.log(this.restaurantsListCollaborators);
-
     } else {
       // user.permission = "writer"
       user.isReadOnly = false;
       user.isCollab = true;
       console.log(this.restaurantsListCollaborators);
-
     }
   }
 
   constructor(private navParams: NavParams, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder,
               private alertController: AlertController) {
-    this.restaurantsListCollaborators = this.navParams.get('restaurantsListCollaborators');
-    this.restaurantsList = this.navParams.get('restaurantsList');
-    this.myPermissionOnThisList = this.navParams.get('myPermission');
-    console.log(this.restaurantsListCollaborators);
-    console.log(this.restaurantsList);
-    console.log(this.myPermissionOnThisList);
+    // this.restaurantsListCollaborators = this.navParams.get('restaurantsListCollaborators');
+    // this.restaurantsList = this.navParams.get('restaurantsList');
+    // this.myPermission = this.navParams.get('myPermission');
+    // console.log(this.restaurantsListCollaborators);
+    // console.log(this.restaurantsList);
+    // console.log(this.myPermissionOnThisList);
   }
 
   ngOnInit() {
+    console.log(this.myPermission);
     this.modifyRestaurantListForm = this.formBuilder.group({
       restaurantslistname: new FormControl(null),
       addedcollaborators: new FormControl(null),
@@ -96,7 +115,6 @@ export class ModifyRestaurantListComponent implements OnInit {
   get errorControl() {
     return this.modifyRestaurantListForm.controls;
   }
-
 
   dismissModal() {
     this.modalController.dismiss();
@@ -238,6 +256,4 @@ export class ModifyRestaurantListComponent implements OnInit {
       return true;
     }
   }
-
-
 }
