@@ -22,7 +22,6 @@ export class CreateRestaurantListComponent implements OnInit {
   restaurantListCreationForm!: FormGroup;
   isSubmitted = false;
 
-  pickerRestaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([])
   restaurantsList: RestaurantsList = {} as RestaurantsList;
   restaurants$: Observable<Restaurant[]> = EMPTY;
   private toastController = inject(ToastController);
@@ -30,14 +29,6 @@ export class CreateRestaurantListComponent implements OnInit {
   private restaurantsListService = inject(RestaurantsListService)
   private restaurantService = inject(RestaurantService)
   private userService = inject(UserService)
-  // todo: this will need to be removed and replaced by the restaurant service that fetches all existing restaurants in the db
-  existingRestaurantsList = [
-    {id: 1, thumbnailURL: "../../assets/images/home/restaurant-la-ferme-a-dede.png", restaurantName: "La Ferme à Dédé", ranking: "4", cuisine: "🇫🇷", address:  "24 Rue Barnave, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
-    {id: 2, thumbnailURL: "../../assets/images/home/restaurant-au-liban.png", restaurantName: "Au Liban", ranking: "4", cuisine: "🇱🇧", address:  "16 Pl. Sainte-Claire, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
-    {id: 3, thumbnailURL: "../../assets/images/home/restaurant-comptoire-ditalie.png", restaurantName: "Comptoire d'Italie", ranking: "4", cuisine: "🇮🇹", address:  "4 Pl. de Gordes, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
-  ]
-
-  selectedRestaurantsList = [];
 
   constructor(private formBuilder: FormBuilder) { }
 
@@ -53,13 +44,8 @@ export class CreateRestaurantListComponent implements OnInit {
     return this.restaurantListCreationForm.controls;
   }
 
-
   dismissModal() {
     this.modalController.dismiss();
-  }
-
-  handleRestaurantSelectionChange(e: any) {
-    this.selectedRestaurantsList = e.detail.value;
   }
 
   private async createRestaurantsList(name: string, ids: string[]){
@@ -78,10 +64,7 @@ export class CreateRestaurantListComponent implements OnInit {
   }
 
   async submitForm() {
-    //todo: add server/service side
-    // -> we will keep the addition of collaborators exclusive to the edition of a list for now (v1.0)
     this.isSubmitted = true;
-    console.log("Restaurant list submission.");
     if (!this.restaurantListCreationForm.valid) {
       const toast = await this.toastController.create({
         message: "Please make sure you provided all required values correctly.",
@@ -90,7 +73,6 @@ export class CreateRestaurantListComponent implements OnInit {
         color: 'danger'
       });
       await toast.present();
-      console.log('Please provide all the required values!')
       return false;
     }
     else
