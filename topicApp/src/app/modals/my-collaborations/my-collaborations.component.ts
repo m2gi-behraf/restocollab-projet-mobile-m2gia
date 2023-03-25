@@ -63,23 +63,8 @@ export class MyCollaborationsComponent implements OnInit {
     return Object.keys(map).length;
   }
 
-  /**
-   * Return the permission of the user on the given list
-   * @param list list
-   */
   getMyPermission(list: RestaurantsList) : string {
-    let mapRoleLabel = new Map<string, string>([
-      ["owner", "owner"],
-      ["writer", "collaborator"],
-      ["reader", "reader"],
-    ]);
-
-    let keys = Object.keys(list.roles);
-    let values = Object.values(list.roles);
-
     let userId = this.userService.currentUser.id
-    let role: string = values[keys.indexOf(userId)]
-    let mappedRole = mapRoleLabel.get(role) ?? "reader";
-    return mappedRole;
+    return this.restaurantsListService.getPermission(list, userId);
   }
 }

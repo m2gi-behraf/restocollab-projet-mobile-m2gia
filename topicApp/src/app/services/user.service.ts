@@ -12,7 +12,8 @@ import {
   setDoc, collectionData
 } from '@angular/fire/firestore';
 import {AuthenticationMethod} from "../models/Enums/AuthenticationMethod";
-import {firstValueFrom, Observable} from "rxjs";
+import {firstValueFrom, Observable, of} from "rxjs";
+import {Restaurant} from "../models/Restaurant";
 
 @Injectable({
   providedIn: 'root'
@@ -55,12 +56,24 @@ export class UserService {
   }
 
   /**
-   * Return all users matching ids
-   * @param ids Users ids
+   * Try to find a USer inside firestore collection matching given id
+   * @param restaurantId Id of restaurant
    */
-  getUsers(ids: string[]) : Observable<User[]> {
-    const usersRef = collection(this.firestore, `${this.ROOT}`)
-    return collectionData<any>(usersRef, { idField: 'id'})
+  findOne(id: string): Observable<User>{
+    const documentRef = doc(this.firestore, `${this.ROOT}/${id}`) as DocumentReference<User>;
+    return docData<User>(documentRef, {idField: 'id'})
+  }
+
+  /**
+   * Return all restaurants matching given ids
+   */
+  findAllById(ids: string[]): Observable<User[]> {
+    let users: User[] = new Array<User>()
+    ids.forEach(async (id) => {
+      let user = await firstValueFrom(this.findOne(id)) as User
+      users.push(user);
+    });
+    return of(users);
   }
 
   /**
