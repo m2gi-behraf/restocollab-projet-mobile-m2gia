@@ -1,7 +1,16 @@
 import {inject, Injectable} from '@angular/core';
-import { Firestore, collection, collectionData, DocumentData, doc, addDoc, deleteDoc, docData, DocumentReference, CollectionReference } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  collectionData,
+  doc,
+  addDoc,
+  docData,
+  DocumentReference,
+  CollectionReference,
+} from '@angular/fire/firestore';
 import {Restaurant} from "../models/Restaurant";
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject, firstValueFrom, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +27,19 @@ export class RestaurantService {
    */
   findOne(restaurantId: string): Observable<Restaurant | null>{
     const documentRef = doc(this.firestore, `restaurants/${restaurantId}`) as DocumentReference<Restaurant>;
-    return docData<Restaurant>(documentRef)
+    return docData<Restaurant>(documentRef, {idField: 'id'})
+  }
+
+  /**
+   * Return all restaurants matching given ids
+   */
+  findAllById(ids: string[]): Restaurant[] {
+    let restaurants: Restaurant[] = new Array<Restaurant>()
+    ids.forEach(async (id) => {
+      let restaurant = await firstValueFrom(this.findOne(id)) as Restaurant
+      restaurants.push(restaurant);
+    });
+    return restaurants;
   }
 
   /**
