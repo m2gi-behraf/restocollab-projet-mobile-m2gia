@@ -63,7 +63,7 @@
               </ion-col>
 
               <ion-col *ngIf="isCurrentUserOwner">
-                <ion-button class="delete-restaurant-list-button" fill="clear" color="primary" [disabled]="isOwner(collaborator)" (click)="removeCollaborator(collaborator)"><ion-icon name="trash-outline"></ion-icon></ion-button>
+                <ion-button fill="clear" color="primary" [disabled]="isOwner(collaborator)" (click)="removeCollaborator(collaborator)"><ion-icon name="trash-outline"></ion-icon></ion-button>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -88,6 +88,7 @@
                     {{restaurant.name}}
                   </h4>
                 </ion-col>
+                <ion-col></ion-col>
                <ion-col class="ion-align-items-center ion-justify-content-center">
                  <ion-button fill="clear" color="primary" (click)="removeRestaurant(restaurant)"><ion-icon name="trash-outline"></ion-icon></ion-button>
                </ion-col>
