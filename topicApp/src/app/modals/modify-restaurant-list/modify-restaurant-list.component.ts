@@ -1,34 +1,37 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {AlertController, IonicModule, ModalController, NavController, ToastController} from "@ionic/angular";
-import {NgForOf, NgIf} from "@angular/common";
+import {AlertController, IonicModule, IonSelect, ModalController, NavController, ToastController} from "@ionic/angular";
+import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import { NavParams } from '@ionic/angular';
 import {RestaurantsList} from "../../models/RestaurantsList";
 import {RestaurantsListService} from "../../services/restaurantsList.service";
-import {BehaviorSubject, EMPTY, Observable} from "rxjs";
+import {BehaviorSubject, EMPTY, firstValueFrom, Observable} from "rxjs";
 import {Role} from "../../models/Enums/Role";
+import {UserService} from "../../services/user.service";
+import {User} from "../../models/User";
+import {Restaurant} from "../../models/Restaurant";
 
-interface User {
-  id: number,
-  username: string,
-  isReadOnly: boolean,
-  isCollab: boolean
-}
+// interface User {
+//   id: number,
+//   username: string,
+//   isReadOnly: boolean,
+//   isCollab: boolean
+// }
 
-interface Restaurant {
-  id: number,
-  thumbnailURL: string,
-  restaurantName: string,
-  ranking: string,
-  cuisine: string,
-  address:  string,
-  description: string,
-}
+// interface Restaurant {
+//   id: number,
+//   thumbnailURL: string,
+//   restaurantName: string,
+//   ranking: string,
+//   cuisine: string,
+//   address:  string,
+//   description: string,
+// }
 
 @Component({
   selector: 'app-modify-restaurant-list',
   standalone: true,
-  imports: [ReactiveFormsModule, IonicModule, NgIf, NgForOf, FormsModule],
+  imports: [ReactiveFormsModule, IonicModule, NgIf, NgForOf, FormsModule, AsyncPipe],
   templateUrl: './modify-restaurant-list.component.html',
   styleUrls: ['./modify-restaurant-list.component.scss'],
 })
@@ -40,11 +43,21 @@ export class ModifyRestaurantListComponent implements OnInit {
   isSubmitted = false;
   private modalController = inject(ModalController);
   private toastController = inject(ToastController);
+  private alertController = inject(AlertController);
   private restaurantsListService = inject(RestaurantsListService);
+  private userService = inject(UserService);
 
-  collaborators$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
-  nonAddedUsers$: Observable<User[]> = EMPTY;
+  //Collaborators
+  /**
+   * Array of the current roles, register all the changes to submit the hole map to firebase
+   * @private
+   */
+  private arrayCollabRoles: [string, string][] = []
+  pickerSelectedUsersIds: string[] = []
+  nonCollaborators$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
+  collaborators: User[] = [];
 
+  //Restaurants
   restaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
   nonAddedRestaurants$: Observable<User[]> = EMPTY;
 
@@ -58,83 +71,66 @@ export class ModifyRestaurantListComponent implements OnInit {
   ];
   myPermissionOnThisList = ""; // can either be 'owner, 'read-write' or 'read-only' -> this can be an enum
 
-  /**
-   * Users en base
-   */
-  existingDatabaseUsers: User[] = [
-    {id: 1, username: 'John', isReadOnly: false, isCollab: true},
-    {id: 2, username: 'Mary', isReadOnly: true, isCollab: false},
-    {id: 3, username: 'Tom', isReadOnly: false, isCollab: false}
-  ];
-
   existingDatabaseRestaurantsList = [
     {id: 1, thumbnailURL: "../../assets/images/home/restaurant-la-ferme-a-dede.png", restaurantName: "La Ferme à Dédé", ranking: "4", cuisine: "🇫🇷", address:  "24 Rue Barnave, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
     {id: 2, thumbnailURL: "../../assets/images/home/restaurant-au-liban.png", restaurantName: "Au Liban", ranking: "4", cuisine: "🇱🇧", address:  "16 Pl. Sainte-Claire, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
     {id: 3, thumbnailURL: "../../assets/images/home/restaurant-comptoire-ditalie.png", restaurantName: "Comptoire d'Italie", ranking: "4", cuisine: "🇮🇹", address:  "4 Pl. de Gordes, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
   ]
 
-  alertHandlerMessage = '';
   alertRoleMessage = '';
 
-  get isOwner(): boolean {
-    return this.myPermission == Role[Role.OWNER].toLowerCase()
-  }
 
-  updateRole(user: User) {
-    if (user.isCollab) {
-      // user.permission = "reader"
-      user.isReadOnly = true;
-      user.isCollab = false;
-      console.log(this.restaurantsListCollaborators);
-    } else {
-      // user.permission = "writer"
-      user.isReadOnly = false;
-      user.isCollab = true;
-      console.log(this.restaurantsListCollaborators);
-    }
-  }
+  constructor(private navParams: NavParams, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder) { }
 
-  constructor(private navParams: NavParams, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder,
-              private alertController: AlertController) {
-    // this.restaurantsListCollaborators = this.navParams.get('restaurantsListCollaborators');
-    // this.restaurantsList = this.navParams.get('restaurantsList');
-    // this.myPermission = this.navParams.get('myPermission');
-    // console.log(this.restaurantsListCollaborators);
-    // console.log(this.restaurantsList);
-    // console.log(this.myPermissionOnThisList);
-  }
+  async ngOnInit() {
+    // TODO
+    // - allRestaurants$ -> BehaviorSubject de tous les restaurants de la base
+    // - addedRestaurants$ -> BehaviorSubject de tous les restaurants ajoutés
+    // - pickerRestaurants -> array de restaurants bindé avec le picker
+    // Initialisation
+    // - Appel de RestaurantsOfThisLists et AllRestaurants -> et init des variables
+    //this.restaurants$ = this.restaurantsListService.findAllRestaurants(this.restaurantsList.id);
 
-  ngOnInit() {
-    console.log(this.myPermission);
     this.modifyRestaurantListForm = this.formBuilder.group({
       restaurantslistname: new FormControl(null),
       addedcollaborators: new FormControl(null),
       addedrestaurants: new FormControl(null)
     })
+
+    //get once all collaborators, because only one person can modify them, no observable needed
+    this.arrayCollabRoles = Object.entries(this.restaurantsList.roles);
+    this.collaborators = await firstValueFrom(this.userService.findAllById(Object.keys(this.restaurantsList.roles)));
+
+    //Add observable on all database users, if change -> refresh the picker list
+    this.userService.findAll().subscribe((users )=> {
+      let collabIds = this.collaborators.map(user => user.id);
+      this.nonCollaborators$.next(users.filter((user) => collabIds.indexOf(user.id) == -1 ));
+    });
   }
   get errorControl() {
     return this.modifyRestaurantListForm.controls;
+  }
+  get isCurrentUserOwner(): boolean {
+    return this.myPermission == Role[Role.OWNER].toLowerCase()
   }
 
   dismissModal() {
     this.modalController.dismiss();
   }
 
-  addCollaborators(selectedUsernames: string[]) {
-    // filter out any usernames that already exist in the list (to avoid duplicates)
-    const newCollaborators = selectedUsernames.filter(username =>
-      !this.restaurantsListCollaborators.find(c => c.username === username));
+  /**
+   * Add selected collaborators to the current list of collaborators
+   */
+  addCollaborators() {
+    if (this.pickerSelectedUsersIds.length == 0)
+      return;
 
-    // add new collaborators to the list
-    newCollaborators.forEach(username => {
-      const newUser: User = {
-        id: this.restaurantsListCollaborators.length + 1,
-        username: username,
-        isReadOnly: true,
-        isCollab: false
-      };
-      this.restaurantsListCollaborators.push(newUser);
-    });
+    let selectedUsers = this.nonCollaborators$.getValue().filter((user) => this.pickerSelectedUsersIds.indexOf(user.id) > -1)
+    selectedUsers.forEach((user) => this.arrayCollabRoles.push([user.id, Role[Role.READER].toLowerCase()]));
+
+    this.collaborators = this.collaborators.concat(selectedUsers);
+    this.nonCollaborators$.next(this.nonCollaborators$.getValue().filter((user) => this.collaborators.indexOf(user) == -1))
+    this.pickerSelectedUsersIds= [];
   }
 
   async removeCollaborator(user: User) {
@@ -143,49 +139,100 @@ export class ModifyRestaurantListComponent implements OnInit {
       buttons: [
         {
           text: "Yes, I'm sure. \nDelete " + user.username + ". ",
-          role: 'confirm',
-          handler: () => {
-            this.alertHandlerMessage = 'Deletion confirmed!';
-            const index = this.restaurantsListCollaborators.findIndex(collaborator => collaborator.username === user.username);
-            if (index !== -1) {
-              this.restaurantsListCollaborators.splice(index, 1);
-            }
-          },
+          role: 'confirm'
         },
         {
           text: "Abort",
-          role: 'cancel',
-          handler: () => {
-            this.alertHandlerMessage = 'Deletion aborted. Alert canceled!';
-          },
+          role: 'cancel'
         },
       ],
     });
     await alert.present();
     const {role} = await alert.onDidDismiss();
-    this.alertRoleMessage = `Dismissed with role: ${role}`;
+
+    if (role == 'confirm') {
+      this.collaborators.splice(this.collaborators.indexOf(user),1);
+      let tuple = this.arrayCollabRoles.filter((tuple) => tuple[0] === user.id);
+      this.arrayCollabRoles.splice(this.arrayCollabRoles.indexOf(tuple[0]), 1);
+      this.nonCollaborators$.next(this.nonCollaborators$.getValue().concat(user))
+
+      console.log("Collaborator deleted, remaining collaborators -> ", this.collaborators)
+    }
   }
+
+  /**
+   * Return the permission of the given user on the current list
+   * @param user user to get permissions of
+   */
+  getPermission(user: User) : string {
+    let tuple = this.arrayCollabRoles.filter((tuple) => tuple[0] === user.id);
+    return tuple[0][1];
+  }
+
+  /**
+   * Return the permission label (collaborator for writer) of the given user on the current list
+   * @param user user to get permissions of
+   */
+  getPermissionLabel(user: User) : string {
+    let tuple = this.arrayCollabRoles.filter((tuple) => tuple[0] === user.id);
+    return this.restaurantsListService.getPermissionLabel(tuple[0][1]);
+  }
+
+  /**
+   * Indicate if the given user have the role writer or greater
+   * @param user
+   */
+  isWriter(user: User) : boolean {
+    let permission = this.getPermission(user)
+    return permission == Role[Role.OWNER].toLowerCase() || permission == Role[Role.WRITER].toLowerCase()
+  }
+
+  /**
+   * Indicate if the given user have the role owner
+   * @param user
+   */
+  isOwner(user: User): boolean {
+    let permission = this.restaurantsListService.getPermission(this.restaurantsList, user.id)
+    return permission == Role[Role.OWNER].toLowerCase()
+  }
+
+  /**
+   * Change the role of the given user to writer or reader depends on its role
+   * @param user user
+   */
+  updateRole(user: User) {
+    let tupleUserRole = this.arrayCollabRoles.filter((tuple) => tuple[0] === user.id);
+    let index = this.arrayCollabRoles.indexOf(tupleUserRole[0]);
+
+    if (index > -1) {
+      let oldRole = this.arrayCollabRoles[index][1]
+      this.arrayCollabRoles[index][1] = oldRole == Role[Role.READER].toLowerCase()
+        ? Role[Role.WRITER].toLowerCase() : Role[Role.READER].toLowerCase();
+    }
+    console.log("Roles updated -> ", this.arrayCollabRoles);
+  }
+
 
   addRestaurants(selectedRestaurants: string[]) {
     // filter out any restaurants that already exist in the list (to avoid duplicates)
     const newRestaurantsList = selectedRestaurants.filter(newRestaurant =>
-      !this.restaurants.find(r => r.restaurantName === newRestaurant));
+      !this.restaurants.find(r => r.name === newRestaurant));
 
     // add new restaurants to the list (get all the properties of specific restaurantName)
     newRestaurantsList.forEach((restaurantName: string) => {
       const restaurant = this.existingDatabaseRestaurantsList.find(r => r.restaurantName === restaurantName);
 
       if (restaurant) {
-        const newRestaurant: Restaurant = {
-          id: this.restaurants.length + 1,
-          thumbnailURL: restaurant.thumbnailURL || '',
-          restaurantName: restaurant.restaurantName || '',
-          ranking: restaurant.ranking || '',
-          cuisine: restaurant.cuisine || '',
-          address: restaurant.address || '',
-          description: restaurant.description || ''
-        }
-        this.restaurants.push(newRestaurant);
+        // const newRestaurant: Restaurant = {
+        //   id: this.restaurants.length + 1,
+        //   thumbnailURL: restaurant.thumbnailURL || '',
+        //   restaurantName: restaurant.restaurantName || '',
+        //   ranking: restaurant.ranking || '',
+        //   cuisine: restaurant.cuisine || '',
+        //   address: restaurant.address || '',
+        //   description: restaurant.description || ''
+        // }
+        //this.restaurants.push(newRestaurant);
         console.log(this.restaurantsList);
       } else {
         console.log(`Could not find restaurant with name ${restaurantName}`);
@@ -201,8 +248,7 @@ export class ModifyRestaurantListComponent implements OnInit {
           text: "Yes, I'm sure. \nDelete " + restaurantName + ". ",
           role: 'confirm',
           handler: () => {
-            this.alertHandlerMessage = 'Deletion confirmed!';
-            const index = this.restaurants.findIndex(r => r.restaurantName === restaurantName);
+            const index = this.restaurants.findIndex(r => r.name === restaurantName);
             if (index !== -1) {
               this.restaurants.splice(index, 1);
             }
@@ -212,7 +258,6 @@ export class ModifyRestaurantListComponent implements OnInit {
           text: "Abort",
           role: 'cancel',
           handler: () => {
-            this.alertHandlerMessage = 'Deletion aborted. Alert canceled!';
           },
         },
       ],
@@ -249,7 +294,7 @@ export class ModifyRestaurantListComponent implements OnInit {
         await toast.present()
         console.log("The restaurant list now contains the following values: " +
           "\nRestaurant list name: " + this.restaurantListName +
-          "\nRestaurants inside: " + this.restaurants.map(m => m.restaurantName).join(", ") +
+          "\nRestaurants inside: " + this.restaurants.map(m => m.name).join(", ") +
           "\nCollaborators on the list and their permissions: " + "\n" + this.restaurantsListCollaborators.map(m => m.username).join(", "));
       });
       this.dismissModal(); // dismiss modal upon creation of list

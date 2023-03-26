@@ -23,6 +23,11 @@ import {User} from "../models/User";
 })
 export class RestaurantsListService {
   private readonly ROOT = "restaurants-list"
+  private readonly mapRoleLabel = new Map<string, string>([
+    ["owner", "owner"],
+    ["writer", "collaborator"],
+    ["reader", "reader"],
+  ]);
 
   private firestore = inject(Firestore)
   private userService = inject(UserService)
@@ -124,17 +129,15 @@ export class RestaurantsListService {
    * @param list list
    */
   getPermission(list: RestaurantsList, userId: string) : string {
-    let mapRoleLabel = new Map<string, string>([
-      ["owner", "owner"],
-      ["writer", "collaborator"],
-      ["reader", "reader"],
-    ]);
-
     let keys = Object.keys(list.roles);
     let values = Object.values(list.roles);
 
     let role: string = values[keys.indexOf(userId)]
-    let mappedRole = mapRoleLabel.get(role) ?? "reader";
+    let mappedRole = this.mapRoleLabel.get(role) ?? "undefined";
     return mappedRole;
+  }
+
+  getPermissionLabel(role: string) : string {
+    return this.mapRoleLabel.get(role) ?? 'undefined'
   }
 }
