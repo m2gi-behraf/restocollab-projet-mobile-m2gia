@@ -48,7 +48,7 @@
           <ion-grid>
             <ion-row>
               <ion-col>
-                <ion-label>{{collaborator.username}}</ion-label>
+                <ion-label class="collab-name">{{collaborator.username}}</ion-label>
               </ion-col>
               <ion-col *ngIf="isCurrentUserOwner">
                 <ion-toggle
@@ -68,6 +68,7 @@
             </ion-row>
           </ion-grid>
         </ion-item>
+      </ion-list>
         <ion-item>
           <ion-icon name="fast-food-outline"></ion-icon>
           <ion-label>Restaurants</ion-label>
@@ -128,7 +129,6 @@
             </ion-grid>
           </ion-item>
         </ion-list>
-      </ion-list>
 
       <div class="buttons">
         <ion-button class="submit-button" fill="outline" shape="round" type="submit">Modify</ion-button>
