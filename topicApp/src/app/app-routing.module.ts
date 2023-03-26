@@ -9,16 +9,6 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'topic',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./pages/topic/topic.page').then( m => m.TopicPage)
-  },
-  {
-    path: 'topic/:topicId',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./pages/topic-details/topic-details.page').then( m => m.TopicDetailsPage)
-  },
-  {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
