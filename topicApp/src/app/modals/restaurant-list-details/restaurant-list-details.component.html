@@ -21,47 +21,73 @@
         </ion-item>
         <ion-item>
           <ion-icon name="calendar-outline"></ion-icon>
-          <ion-label>Date of creation:</ion-label>
+          <ion-label>Date of creation</ion-label>
           {{ this.restaurantsList.dateOfCreation.toDate() | date: 'yyyy-MM-dd' }}
         </ion-item>
 
         <ion-item *ngIf="collaborators$ | async">
           <ion-icon name="people-circle-outline"></ion-icon>
-          <ion-label>Collaborators:</ion-label>
-          <ion-list>
-            <ion-item *ngFor="let collaborator of collaborators$ | async" class="collaborators-list">
-              User: {{collaborator.username}}
-              <p class="collaborator">
-                • Permission: {{ getPermission(collaborator) }}
-              </p>
-            </ion-item>
-          </ion-list>
+          <ion-grid>
+            <ion-row>
+          <ion-label>Collaborators</ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label *ngFor="let collaborator of collaborators$ | async" class="collaborator">
+                User: {{collaborator.username}}
+                  • Permission: {{ getPermission(collaborator) }}
+
+              </ion-label>
+            </ion-row>
+          </ion-grid>
         </ion-item>
 
+        <ion-item>
+          <ion-icon name="fast-food-outline"></ion-icon>
+          <ion-label>Restaurants</ion-label>
+        </ion-item>
         <ion-list *ngFor="let restaurant of restaurants$ | async">
           <ion-item>
-            <ion-thumbnail class="ion-margin-end thumbnail">
-              <ion-img src="{{restaurant.imageURL}}"/>
-            </ion-thumbnail>
-
-            <ion-label>
-              <h1>
-                <ion-icon name="restaurant-outline"></ion-icon>
-                {{restaurant.name}}
-              </h1>
-              <h4>
-                <ion-icon name="star-half-outline"></ion-icon>
-                Ranking: {{restaurant.ranking}}/5
-              </h4>
-              <h4>
-                <ion-icon name="earth-outline"></ion-icon>
-                Cuisine: {{restaurant.cuisine}}
-              </h4>
-              <p>
-                <ion-icon name="pin-outline"></ion-icon>
-                {{restaurant.address}}
-              </p>
-            </ion-label>
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                  <h4>
+                    <ion-icon name="restaurant-outline"></ion-icon>
+                    {{restaurant.name}}
+                  </h4>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="100%">
+                  <ion-thumbnail class="ion-margin-end thumbnail">
+                    <ion-img src="{{restaurant.imageURL}}"/>
+                  </ion-thumbnail>
+                </ion-col>
+                <ion-col>
+                  <ion-label>
+                    <ion-grid>
+                      <ion-row>
+                        <h4>
+                          <ion-icon name="star-half-outline"></ion-icon>
+                          Ranking: {{restaurant.ranking}}/5
+                        </h4>
+                      </ion-row>
+                      <ion-row>
+                        <h4>
+                          <ion-icon name="earth-outline"></ion-icon>
+                          Cuisine: {{restaurant.cuisine}}
+                        </h4>
+                      </ion-row>
+                      <ion-row>
+                        <p>
+                          <ion-icon name="pin-outline"></ion-icon>
+                          {{restaurant.address}}
+                        </p>
+                      </ion-row>
+                    </ion-grid>
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-item>
         </ion-list>
       </ion-list>
