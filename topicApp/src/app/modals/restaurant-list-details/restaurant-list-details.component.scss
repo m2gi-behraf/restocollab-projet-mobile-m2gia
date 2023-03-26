@@ -38,9 +38,9 @@ ion-button {
 }
 
 ion-thumbnail {
-  padding-right: 10px;
   width: 100px;
   height: 100px;
+  --border-radius: 8px;
 }
 
 ion-toolbar {
