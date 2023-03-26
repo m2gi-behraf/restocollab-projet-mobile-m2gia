@@ -17,6 +17,7 @@ import {Restaurant} from "../models/Restaurant";
 import {UserService} from "./user.service";
 import {Role} from "../models/Enums/Role";
 import {User} from "../models/User";
+import {restaurant} from "ionicons/icons";
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +76,12 @@ export class RestaurantsListService {
     await setDoc(doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants`, `${restaurant.id}`), restaurant)
   }
 
+  async addRestaurants(idRestaurantsList: string, restaurants: Restaurant[]): Promise<void> {
+    restaurants.forEach(async (r) => (
+      await this.addRestaurant(idRestaurantsList, r)
+    ));
+  }
+
   /**
    * delete a restaurant from a list
    * @param idRestaurantsList list
@@ -83,6 +90,12 @@ export class RestaurantsListService {
   async deleteRestaurant(idRestaurantsList: string, restaurant: Restaurant): Promise<void> {
       const documentRef = doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants/${restaurant.id}`) as DocumentReference<Restaurant>
     await deleteDoc(documentRef);
+  }
+
+  async deleteRestaurants(idRestaurantsList: string, restaurants: Restaurant[]): Promise<void> {
+    restaurants.forEach(async (r) => {
+      await this.deleteRestaurant(idRestaurantsList, r);
+    })
   }
 
   /**

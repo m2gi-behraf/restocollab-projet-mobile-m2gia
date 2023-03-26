@@ -5,30 +5,13 @@ import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import { NavParams } from '@ionic/angular';
 import {RestaurantsList} from "../../models/RestaurantsList";
 import {RestaurantsListService} from "../../services/restaurantsList.service";
-import {BehaviorSubject, EMPTY, firstValueFrom, Observable} from "rxjs";
+import {BehaviorSubject, firstValueFrom} from "rxjs";
 import {Role} from "../../models/Enums/Role";
 import {UserService} from "../../services/user.service";
 import {User} from "../../models/User";
 import {Restaurant} from "../../models/Restaurant";
 import {RestaurantService} from "../../services/restaurant.service";
-import {restaurant} from "ionicons/icons";
 
-// interface User {
-//   id: number,
-//   username: string,
-//   isReadOnly: boolean,
-//   isCollab: boolean
-// }
-
-// interface Restaurant {
-//   id: number,
-//   thumbnailURL: string,
-//   restaurantName: string,
-//   ranking: string,
-//   cuisine: string,
-//   address:  string,
-//   description: string,
-// }
 
 @Component({
   selector: 'app-modify-restaurant-list',
@@ -68,49 +51,23 @@ export class ModifyRestaurantListComponent implements OnInit {
   restaurantListName: string = "";
   pickerSelectedRestaurantsIds: string[] = []
   restaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
-  deletedRestaurantsIds: string[] = [];
-
-  /**
-   * Collaborators de la liste
-   */
-  restaurantsListCollaborators: User[] = [ ];
-  myPermissionOnThisList = ""; // can either be 'owner, 'read-write' or 'read-only' -> this can be an enum
-
-  existingDatabaseRestaurantsList = [
-    {id: 1, thumbnailURL: "../../assets/images/home/restaurant-la-ferme-a-dede.png", restaurantName: "La Ferme à Dédé", ranking: "4", cuisine: "🇫🇷", address:  "24 Rue Barnave, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
-    {id: 2, thumbnailURL: "../../assets/images/home/restaurant-au-liban.png", restaurantName: "Au Liban", ranking: "4", cuisine: "🇱🇧", address:  "16 Pl. Sainte-Claire, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
-    {id: 3, thumbnailURL: "../../assets/images/home/restaurant-comptoire-ditalie.png", restaurantName: "Comptoire d'Italie", ranking: "4", cuisine: "🇮🇹", address:  "4 Pl. de Gordes, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
-  ]
+  deletedRestaurants: Restaurant[] = [];
+  addedRestaurants: Restaurant[] = [];
 
   constructor(private navParams: NavParams, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder) { }
 
   async ngOnInit() {
-    // TODO
-    // - allRestaurants$ -> BehaviorSubject de tous les restaurants de la base
-    // - addedRestaurants$ -> BehaviorSubject de tous les restaurants ajoutés
-    // - pickerRestaurants -> array de restaurants bindé avec le picker
-    // Initialisation
-    // - Appel de RestaurantsOfThisLists et AllRestaurants -> et init des variables
     this.modifyRestaurantListForm = this.formBuilder.group({
       restaurantslistname: new FormControl(null),
       addedcollaborators: new FormControl(null),
       addedrestaurants: new FormControl(null)
     })
 
-    this.nonAddedRestaurants$.subscribe((restaurants) => {
-      console.log("Non Added Restaurants changed -> ", restaurants)
-    });
-
-    this.restaurants$.subscribe((restaurants) => {
-      console.log("List of Restaurants changed -> ", restaurants)
-    });
-
     this.addedRestaurants$.subscribe((restaurants) => {
-      console.log("Added Restaurants changed -> ", restaurants)
       let remoteAddedIds = restaurants.map((r) => r.id)
 
       this.restaurants$.next(restaurants
-        .filter((r) => !this.deletedRestaurantsIds.includes(r.id))
+        .filter((r) => !this.deletedRestaurants.map((x) => x.id).includes(r.id))
         .concat(this.restaurants$.getValue().filter((r) => !remoteAddedIds.includes(r.id))))
     });
 
@@ -258,6 +215,14 @@ export class ModifyRestaurantListComponent implements OnInit {
     let selectedRestaurants = this.nonAddedRestaurants$.getValue().filter((r) => this.pickerSelectedRestaurantsIds.includes(r.id))
     this.restaurants$.next(this.restaurants$.getValue().concat(selectedRestaurants));
 
+    selectedRestaurants.forEach((r) => {
+      this.addedRestaurants.push(r);
+
+      let index = this.deletedRestaurants.indexOf(r)
+      if (index > -1)
+        this.deletedRestaurants.splice(index, 1)
+    })
+
     let nonAddedRs = this.nonAddedRestaurants$.getValue().filter((r) => !this.restaurants$.getValue().map((x) => x.id).includes(r.id))
     this.nonAddedRestaurants$.next(nonAddedRs)
     this.pickerSelectedRestaurantsIds = [];
@@ -278,8 +243,6 @@ export class ModifyRestaurantListComponent implements OnInit {
         {
           text: "Abort",
           role: 'cancel',
-          handler: () => {
-          },
         },
       ],
     });
@@ -287,7 +250,12 @@ export class ModifyRestaurantListComponent implements OnInit {
     const {role} = await alert.onDidDismiss();
 
     if (role == 'confirm') {
-      this.deletedRestaurantsIds.concat(restaurant.id);
+      this.deletedRestaurants.push(restaurant);
+
+      let index = this.addedRestaurants.indexOf(restaurant)
+      if (index > 1)
+        this.addedRestaurants.splice(index, 1);
+
       let restaurants = this.restaurants$.getValue();
       restaurants.splice(this.restaurants$.getValue().indexOf(restaurant), 1);
       this.restaurants$.next(restaurants)
@@ -320,6 +288,9 @@ export class ModifyRestaurantListComponent implements OnInit {
       // @ts-ignore
       this.restaurantsList.roles = mapRole;
       this.restaurantsListService.update(this.restaurantsList);
+      this.restaurantsListService.deleteRestaurants(this.restaurantsList.id, this.deletedRestaurants)
+      this.restaurantsListService.addRestaurants(this.restaurantsList.id, this.addedRestaurants)
+
       this.toastController.create({
         message: "Restaurant list modification successful!",
         duration: 1500,
