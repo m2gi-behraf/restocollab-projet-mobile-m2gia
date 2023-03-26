@@ -10,6 +10,8 @@ import {Role} from "../../models/Enums/Role";
 import {UserService} from "../../services/user.service";
 import {User} from "../../models/User";
 import {Restaurant} from "../../models/Restaurant";
+import {RestaurantService} from "../../services/restaurant.service";
+import {restaurant} from "ionicons/icons";
 
 // interface User {
 //   id: number,
@@ -45,6 +47,7 @@ export class ModifyRestaurantListComponent implements OnInit {
   private toastController = inject(ToastController);
   private alertController = inject(AlertController);
   private restaurantsListService = inject(RestaurantsListService);
+  private restaurantService = inject(RestaurantService);
   private userService = inject(UserService);
 
   //Collaborators
@@ -58,11 +61,14 @@ export class ModifyRestaurantListComponent implements OnInit {
   collaborators: User[] = [];
 
   //Restaurants
-  restaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
-  nonAddedRestaurants$: Observable<User[]> = EMPTY;
+  addedRestaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
+  allRestaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
+  nonAddedRestaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
 
   restaurantListName: string = "";
-  restaurants: Restaurant[] = [];
+  pickerSelectedRestaurantsIds: string[] = []
+  restaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
+  deletedRestaurantsIds: string[] = [];
 
   /**
    * Collaborators de la liste
@@ -88,13 +94,40 @@ export class ModifyRestaurantListComponent implements OnInit {
     // - pickerRestaurants -> array de restaurants bindé avec le picker
     // Initialisation
     // - Appel de RestaurantsOfThisLists et AllRestaurants -> et init des variables
-    //this.restaurants$ = this.restaurantsListService.findAllRestaurants(this.restaurantsList.id);
-
     this.modifyRestaurantListForm = this.formBuilder.group({
       restaurantslistname: new FormControl(null),
       addedcollaborators: new FormControl(null),
       addedrestaurants: new FormControl(null)
     })
+
+    this.nonAddedRestaurants$.subscribe((restaurants) => {
+      console.log("Non Added Restaurants changed -> ", restaurants)
+    });
+
+    this.restaurants$.subscribe((restaurants) => {
+      console.log("List of Restaurants changed -> ", restaurants)
+    });
+
+    this.addedRestaurants$.subscribe((restaurants) => {
+      console.log("Added Restaurants changed -> ", restaurants)
+      let remoteAddedIds = restaurants.map((r) => r.id)
+
+      this.restaurants$.next(restaurants
+        .filter((r) => !this.deletedRestaurantsIds.includes(r.id))
+        .concat(this.restaurants$.getValue().filter((r) => !remoteAddedIds.includes(r.id))))
+    });
+
+    this.restaurantsListService.findAllRestaurants(this.restaurantsList.id)
+      .subscribe((restaurants) => {
+        this.addedRestaurants$.next(restaurants)
+        this.nonAddedRestaurants$.next(this.allRestaurants$.getValue().filter((r) => !this.addedRestaurants$.getValue().map(x => x.id).includes(r.id)))
+      });
+
+    this.restaurantService.findAll()
+      .subscribe((restaurants) => {
+        this.allRestaurants$.next(restaurants)
+        this.nonAddedRestaurants$.next(this.allRestaurants$.getValue().filter((r) => !this.addedRestaurants$.getValue().map(x => x.id).includes(r.id)))
+      });
 
     this.restaurantsListService.findOne(this.restaurantsList.id).subscribe((list) => this.restaurantsList = list)
 
@@ -111,6 +144,7 @@ export class ModifyRestaurantListComponent implements OnInit {
   get errorControl() {
     return this.modifyRestaurantListForm.controls;
   }
+
   get isCurrentUserOwner(): boolean {
     return this.myPermission == Role[Role.OWNER].toLowerCase()
   }
@@ -217,32 +251,19 @@ export class ModifyRestaurantListComponent implements OnInit {
     console.log("Roles updated -> ", this.arrayCollabRoles);
   }
 
+  /**
+   * Add selected restaurants to the current list of restaurants
+   */
+  addRestaurants() {
+    if (this.pickerSelectedRestaurantsIds.length == 0)
+      return;
 
-  addRestaurants(selectedRestaurants: string[]) {
-    // filter out any restaurants that already exist in the list (to avoid duplicates)
-    const newRestaurantsList = selectedRestaurants.filter(newRestaurant =>
-      !this.restaurants.find(r => r.name === newRestaurant));
+    let selectedRestaurants = this.nonAddedRestaurants$.getValue().filter((r) => this.pickerSelectedRestaurantsIds.includes(r.id))
+    this.restaurants$.next(this.restaurants$.getValue().concat(selectedRestaurants));
 
-    // add new restaurants to the list (get all the properties of specific restaurantName)
-    newRestaurantsList.forEach((restaurantName: string) => {
-      const restaurant = this.existingDatabaseRestaurantsList.find(r => r.restaurantName === restaurantName);
-
-      if (restaurant) {
-        // const newRestaurant: Restaurant = {
-        //   id: this.restaurants.length + 1,
-        //   thumbnailURL: restaurant.thumbnailURL || '',
-        //   restaurantName: restaurant.restaurantName || '',
-        //   ranking: restaurant.ranking || '',
-        //   cuisine: restaurant.cuisine || '',
-        //   address: restaurant.address || '',
-        //   description: restaurant.description || ''
-        // }
-        //this.restaurants.push(newRestaurant);
-        console.log(this.restaurantsList);
-      } else {
-        console.log(`Could not find restaurant with name ${restaurantName}`);
-      }
-    });
+    let nonAddedRs = this.nonAddedRestaurants$.getValue().filter((r) => !this.restaurants$.getValue().map((x) => x.id).includes(r.id))
+    this.nonAddedRestaurants$.next(nonAddedRs)
+    this.pickerSelectedRestaurantsIds = [];
   }
 
   async removeRestaurant(restaurantName: string) {
@@ -252,12 +273,12 @@ export class ModifyRestaurantListComponent implements OnInit {
         {
           text: "Yes, I'm sure. \nDelete " + restaurantName + ". ",
           role: 'confirm',
-          handler: () => {
-            const index = this.restaurants.findIndex(r => r.name === restaurantName);
-            if (index !== -1) {
-              this.restaurants.splice(index, 1);
-            }
-          },
+          // handler: () => {
+          //   const index = this.restaurants.findIndex(r => r.name === restaurantName);
+          //   if (index !== -1) {
+          //     this.restaurants.splice(index, 1);
+          //   }
+          // },
         },
         {
           text: "Abort",

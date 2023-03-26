@@ -73,12 +73,12 @@
           <ion-label>Restaurants</ion-label>
         </ion-item>
         <ion-item>
-          <ion-select formControlName="addedrestaurants" placeholder="Add Restaurant(s)" [multiple]="true" #restaurantSelect>
-            <ion-select-option *ngFor="let restaurant of existingDatabaseRestaurantsList" value="{{restaurant.restaurantName}}">{{restaurant.restaurantName}}</ion-select-option>
+          <ion-select formControlName="addedrestaurants" placeholder="Add Restaurant(s)" [multiple]="true" #restaurantSelect [(ngModel)]="pickerSelectedRestaurantsIds">
+            <ion-select-option *ngFor="let restaurant of nonAddedRestaurants$ | async" value="{{restaurant.id}}">{{restaurant.name}}</ion-select-option>
           </ion-select>
-          <ion-button fill="clear" color="primary" (click)="addRestaurants(restaurantSelect.value)">ADD</ion-button>
+          <ion-button fill="clear" color="primary" (click)="addRestaurants()">ADD</ion-button>
         </ion-item>
-        <ion-list *ngFor="let restaurant of restaurants">
+        <ion-list *ngFor="let restaurant of restaurants$ | async">
           <ion-item>
             <ion-thumbnail class="ion-margin-end thumbnail">
               <ion-img src="{{restaurant.imageURL}}"/>
