@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {AlertController, IonicModule, IonSelect, ModalController, NavController, ToastController} from "@ionic/angular";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {AlertController, IonicModule, ModalController, ToastController} from "@ionic/angular";
 import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
 import { NavParams } from '@ionic/angular';
 import {RestaurantsList} from "../../models/RestaurantsList";
@@ -67,8 +67,7 @@ export class ModifyRestaurantListComponent implements OnInit {
   /**
    * Collaborators de la liste
    */
-  restaurantsListCollaborators: User[] = [
-  ];
+  restaurantsListCollaborators: User[] = [ ];
   myPermissionOnThisList = ""; // can either be 'owner, 'read-write' or 'read-only' -> this can be an enum
 
   existingDatabaseRestaurantsList = [
@@ -97,6 +96,8 @@ export class ModifyRestaurantListComponent implements OnInit {
       addedrestaurants: new FormControl(null)
     })
 
+    this.restaurantsListService.findOne(this.restaurantsList.id).subscribe((list) => this.restaurantsList = list)
+
     //get once all collaborators, because only one person can modify them, no observable needed
     this.arrayCollabRoles = Object.entries(this.restaurantsList.roles);
     this.collaborators = await firstValueFrom(this.userService.findAllById(Object.keys(this.restaurantsList.roles)));
@@ -115,7 +116,7 @@ export class ModifyRestaurantListComponent implements OnInit {
   }
 
   dismissModal() {
-    this.modalController.dismiss();
+    this.modalController.dismiss(this.restaurantsList);
   }
 
   /**
@@ -133,6 +134,10 @@ export class ModifyRestaurantListComponent implements OnInit {
     this.pickerSelectedUsersIds= [];
   }
 
+  /**
+   * Remove the selected user from the collaborators list
+   * @param user
+   */
   async removeCollaborator(user: User) {
     const alert = await this.alertController.create({
       header: "You're about to delete the following user from your list: " + user.username + ".\nThis action is irreversible, are you sure you want to proceed?",
@@ -268,8 +273,6 @@ export class ModifyRestaurantListComponent implements OnInit {
   }
 
   async submitForm() {
-    // todo: add server/service side (if failure)
-    // -> we will keep the addition of collaborators exclusive to the edition of a list for now (v1.0)
     this.isSubmitted = true;
     console.log("Restaurant list submission.");
     if (!this.modifyRestaurantListForm.valid) {
@@ -283,8 +286,17 @@ export class ModifyRestaurantListComponent implements OnInit {
       console.log('Please provide all the required values!')
       return false;
     } else {
-      //todo: add server/service side (if successful)
-      this.restaurantListName = this.modifyRestaurantListForm.controls['restaurantslistname'].value;
+
+      //transform array into map
+      let mapRole = {};
+      this.arrayCollabRoles.forEach((tuple) => {
+        // @ts-ignore
+        mapRole[tuple[0] as string] = tuple[1]
+      });
+
+      // @ts-ignore
+      this.restaurantsList.roles = mapRole;
+      this.restaurantsListService.update(this.restaurantsList);
       this.toastController.create({
         message: "Restaurant list modification successful!",
         duration: 1500,
@@ -292,10 +304,6 @@ export class ModifyRestaurantListComponent implements OnInit {
         color: 'success'
       }).then(async (toast) => {
         await toast.present()
-        console.log("The restaurant list now contains the following values: " +
-          "\nRestaurant list name: " + this.restaurantListName +
-          "\nRestaurants inside: " + this.restaurants.map(m => m.name).join(", ") +
-          "\nCollaborators on the list and their permissions: " + "\n" + this.restaurantsListCollaborators.map(m => m.username).join(", "));
       });
       this.dismissModal(); // dismiss modal upon creation of list
       return true;

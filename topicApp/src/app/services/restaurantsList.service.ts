@@ -9,7 +9,7 @@ import {
   docData,
   DocumentReference,
   CollectionReference,
-  query, where, limit, setDoc
+  query, where, limit, setDoc, updateDoc
 } from '@angular/fire/firestore';
 import {firstValueFrom, Observable, of} from "rxjs";
 import {RestaurantsList} from "../models/RestaurantsList";
@@ -122,6 +122,24 @@ export class RestaurantsListService {
     });
 
     await deleteDoc(documentRef)
+  }
+
+  update(restaurantsList: RestaurantsList) {
+    console.log("update", restaurantsList)
+    let keys = Object.keys(restaurantsList.roles);
+    let values = Object.values(restaurantsList.roles);
+    let mapRole = {};
+    keys.forEach((id, index) => {
+      // @ts-ignore
+      mapRole[id] = values[index]
+    });
+    console.log(mapRole);
+
+    const documentRef = doc(this.firestore, `${this.ROOT}/${restaurantsList.id}`)
+    updateDoc(documentRef, {
+      name:restaurantsList.name,
+      roles: mapRole
+    })
   }
 
   /**
