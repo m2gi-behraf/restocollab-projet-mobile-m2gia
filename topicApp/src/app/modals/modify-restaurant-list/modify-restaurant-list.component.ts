@@ -82,9 +82,6 @@ export class ModifyRestaurantListComponent implements OnInit {
     {id: 3, thumbnailURL: "../../assets/images/home/restaurant-comptoire-ditalie.png", restaurantName: "Comptoire d'Italie", ranking: "4", cuisine: "🇮🇹", address:  "4 Pl. de Gordes, 38000 Grenoble", description: "The restaurant offers a welcoming atmosphere and a diverse menu with fresh ingredients. The staff is friendly and attentive, and they can help you choose from classic or adventurous dishes. Come and enjoy a delicious meal with friends or family!"},
   ]
 
-  alertRoleMessage = '';
-
-
   constructor(private navParams: NavParams, private cdRef: ChangeDetectorRef, private formBuilder: FormBuilder) { }
 
   async ngOnInit() {
@@ -266,19 +263,17 @@ export class ModifyRestaurantListComponent implements OnInit {
     this.pickerSelectedRestaurantsIds = [];
   }
 
-  async removeRestaurant(restaurantName: string) {
+  /**
+   * Remove the given restaurant from the current list
+   * @param restaurant restaurant to remove
+   */
+  async removeRestaurant(restaurant: Restaurant) {
     const alert = await this.alertController.create({
-      header: "You're about to delete the following restaurant from your list: " + restaurantName + ".\nThis action is irreversible, are you sure you want to proceed?",
+      header: "You're about to delete the following restaurant from your list: " + restaurant.name + ".\nThis action is irreversible, are you sure you want to proceed?",
       buttons: [
         {
-          text: "Yes, I'm sure. \nDelete " + restaurantName + ". ",
-          role: 'confirm',
-          // handler: () => {
-          //   const index = this.restaurants.findIndex(r => r.name === restaurantName);
-          //   if (index !== -1) {
-          //     this.restaurants.splice(index, 1);
-          //   }
-          // },
+          text: "Yes, I'm sure. \nDelete " + restaurant.name + ". ",
+          role: 'confirm'
         },
         {
           text: "Abort",
@@ -290,7 +285,14 @@ export class ModifyRestaurantListComponent implements OnInit {
     });
     await alert.present();
     const {role} = await alert.onDidDismiss();
-    this.alertRoleMessage = `Dismissed with role: ${role}`;
+
+    if (role == 'confirm') {
+      this.deletedRestaurantsIds.concat(restaurant.id);
+      let restaurants = this.restaurants$.getValue();
+      restaurants.splice(this.restaurants$.getValue().indexOf(restaurant), 1);
+      this.restaurants$.next(restaurants)
+      this.nonAddedRestaurants$.next(this.nonAddedRestaurants$.getValue().concat(restaurant))
+    }
   }
 
   async submitForm() {
