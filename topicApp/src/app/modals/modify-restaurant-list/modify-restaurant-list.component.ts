@@ -48,7 +48,6 @@ export class ModifyRestaurantListComponent implements OnInit {
   allRestaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
   nonAddedRestaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
 
-  restaurantListName: string = "";
   pickerSelectedRestaurantsIds: string[] = []
   restaurants$: BehaviorSubject<Restaurant[]> = new BehaviorSubject<Restaurant[]>([]);
   deletedRestaurants: Restaurant[] = [];
@@ -83,8 +82,6 @@ export class ModifyRestaurantListComponent implements OnInit {
         this.nonAddedRestaurants$.next(this.allRestaurants$.getValue().filter((r) => !this.addedRestaurants$.getValue().map(x => x.id).includes(r.id)))
       });
 
-    this.restaurantsListService.findOne(this.restaurantsList.id).subscribe((list) => this.restaurantsList = list)
-
     //get once all collaborators, because only one person can modify them, no observable needed
     this.arrayCollabRoles = Object.entries(this.restaurantsList.roles);
     this.collaborators = await firstValueFrom(this.userService.findAllById(Object.keys(this.restaurantsList.roles)));
@@ -95,6 +92,7 @@ export class ModifyRestaurantListComponent implements OnInit {
       this.nonCollaborators$.next(users.filter((user) => collabIds.indexOf(user.id) == -1 ));
     });
   }
+
   get errorControl() {
     return this.modifyRestaurantListForm.controls;
   }

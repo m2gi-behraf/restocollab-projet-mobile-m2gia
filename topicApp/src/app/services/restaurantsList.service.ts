@@ -88,7 +88,7 @@ export class RestaurantsListService {
    * @param restaurant restaurant to delete
    */
   async deleteRestaurant(idRestaurantsList: string, restaurant: Restaurant): Promise<void> {
-      const documentRef = doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants/${restaurant.id}`) as DocumentReference<Restaurant>
+    const documentRef = doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants/${restaurant.id}`) as DocumentReference<Restaurant>
     await deleteDoc(documentRef);
   }
 

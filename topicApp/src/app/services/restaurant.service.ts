@@ -41,7 +41,7 @@ export class RestaurantService {
     });
 
     console.log("RestaurantsServiec/findAllById", restaurants)
-    return Array.from(restaurants);
+    return restaurants;
   }
 
   /**
