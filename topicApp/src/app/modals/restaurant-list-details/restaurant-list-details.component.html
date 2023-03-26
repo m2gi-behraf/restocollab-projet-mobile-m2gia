@@ -21,23 +21,30 @@
         </ion-item>
         <ion-item>
           <ion-icon name="calendar-outline"></ion-icon>
-          <ion-label>Date of creation:</ion-label>
+          <ion-label>Date of creation</ion-label>
           {{ this.restaurantsList.dateOfCreation.toDate() | date: 'yyyy-MM-dd' }}
         </ion-item>
 
         <ion-item *ngIf="collaborators$ | async">
           <ion-icon name="people-circle-outline"></ion-icon>
-          <ion-label>Collaborators:</ion-label>
-          <ion-list>
-            <ion-item *ngFor="let collaborator of collaborators$ | async" class="collaborators-list">
-              User: {{collaborator.username}}
-              <p class="collaborator">
-                • Permission: {{ getPermission(collaborator) }}
-              </p>
-            </ion-item>
-          </ion-list>
+          <ion-grid>
+            <ion-row>
+          <ion-label>Collaborators</ion-label>
+            </ion-row>
+            <ion-row>
+              <ion-label *ngFor="let collaborator of collaborators$ | async" class="collaborator">
+                User: {{collaborator.username}}
+                  • Permission: {{ getPermission(collaborator) }}
+
+              </ion-label>
+            </ion-row>
+          </ion-grid>
         </ion-item>
 
+        <ion-item>
+          <ion-icon name="fast-food-outline"></ion-icon>
+          <ion-label>Restaurants</ion-label>
+        </ion-item>
         <ion-list *ngFor="let restaurant of restaurants$ | async">
           <ion-item>
             <ion-grid>
