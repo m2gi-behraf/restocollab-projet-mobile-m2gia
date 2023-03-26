@@ -34,11 +34,13 @@ export class RestaurantService {
    * Return all restaurants matching given ids
    */
   findAllById(ids: string[]): Restaurant[] {
-    let restaurants: Restaurant[] = new Array<Restaurant>()
+    let restaurants: Restaurant[] = []
     ids.forEach(async (id) => {
       let restaurant = await firstValueFrom(this.findOne(id)) as Restaurant
       restaurants.push(restaurant);
     });
+
+    console.log("RestaurantsServiec/findAllById", restaurants)
     return restaurants;
   }
 

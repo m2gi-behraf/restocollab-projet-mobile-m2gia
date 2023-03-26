@@ -3,7 +3,7 @@ import {UserService} from "../../services/user.service";
 import {AsyncPipe, DatePipe, NgForOf, NgIf} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
 import {RestaurantsListService} from "../../services/restaurantsList.service";
-import {EMPTY, Observable} from "rxjs";
+import {BehaviorSubject, EMPTY, firstValueFrom, Observable} from "rxjs";
 import {RestaurantsList} from "../../models/RestaurantsList";
 import {AlertController, IonicModule, ModalController, ToastController} from "@ionic/angular";
 import {Restaurant} from "../../models/Restaurant";
@@ -27,12 +27,12 @@ export class RestaurantListDetailsComponent implements OnInit {
 
   restaurantsList: RestaurantsList = {} as RestaurantsList;
   restaurants$: Observable<Restaurant[]> = EMPTY;
-  collaborators$: Observable<User[]> = EMPTY;
+  collaborators$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>({} as User[]);
   constructor() { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.restaurants$ = this.restaurantsListService.findAllRestaurants(this.restaurantsList.id);
-    this.collaborators$ = this.userService.findAllById(Object.keys(this.restaurantsList.roles));
+    this.userService.findAllById(Object.keys(this.restaurantsList.roles)).subscribe((users) => this.collaborators$.next(users));
 
     //Get role
     const keys = Object.keys(this.restaurantsList.roles)
@@ -65,12 +65,11 @@ export class RestaurantListDetailsComponent implements OnInit {
       }
     });
     await modal.present();
-    const { data, role } = await modal.onWillDismiss();
-    console.log(role);
-    if (role == 'deleted'){
-      console.log('dismissing modal')
-      this.dismissModal();
-    }
+    const { data } = await modal.onWillDismiss();
+    this.restaurantsList = data as RestaurantsList;
+    this.userService.findAllById(Object.keys(this.restaurantsList.roles)).subscribe((users) => {
+      this.collaborators$.next(users);
+    })
   }
 
   /**

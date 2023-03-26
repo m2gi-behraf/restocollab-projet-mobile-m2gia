@@ -9,7 +9,7 @@ import {
   getDocs,
   DocumentReference,
   docData,
-  setDoc, collectionData
+  setDoc, collectionData, CollectionReference
 } from '@angular/fire/firestore';
 import {AuthenticationMethod} from "../models/Enums/AuthenticationMethod";
 import {firstValueFrom, Observable, of} from "rxjs";
@@ -39,7 +39,7 @@ export class UserService {
    * Get the User class of the matching user with the same email address.
    * @param email User's email
    */
-  async getUser(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<User | null> {
     const usersRef = collection(this.firestore, `${this.ROOT}`);
     const q = query(usersRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
@@ -65,6 +65,14 @@ export class UserService {
   }
 
   /**
+   * Return all the users
+   */
+  findAll(): Observable<User[]> {
+    const usersRef = collection(this.firestore, `${this.ROOT}`) as CollectionReference<User>;
+    return collectionData(usersRef, {idField: 'id'})
+  }
+
+  /**
    * Return all restaurants matching given ids
    */
   findAllById(ids: string[]): Observable<User[]> {
@@ -81,7 +89,7 @@ export class UserService {
    * @param email Email to verify
    */
   async isEmailAlreadyRegistered(email: string): Promise<boolean> {
-    const user = await this.getUser(email);
+    const user = await this.findByEmail(email);
     return user !== null;
   }
 
@@ -91,7 +99,7 @@ export class UserService {
    * @param email User's email to set up.
    */
   async setUpCurrentUser(email: string) {
-    await this.getUser(email).then((user) => {
+    await this.findByEmail(email).then((user) => {
         this.user = (user) ? user : this.DEFAULT_USER
         console.log("Current User", user);
       })
@@ -107,7 +115,7 @@ export class UserService {
    * @param user User to set up.
    */
   async setUpCurrentUserFromGoogle(user: User) {
-    await this.getUser(user.email).then(async (dbUser) => {
+    await this.findByEmail(user.email).then(async (dbUser) => {
         if (dbUser === null) {
           await this.create(user);
           this.user = user;

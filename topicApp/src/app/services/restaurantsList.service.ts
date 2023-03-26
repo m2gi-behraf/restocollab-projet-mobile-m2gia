@@ -9,7 +9,7 @@ import {
   docData,
   DocumentReference,
   CollectionReference,
-  query, where, limit, setDoc
+  query, where, limit, setDoc, updateDoc
 } from '@angular/fire/firestore';
 import {firstValueFrom, Observable, of} from "rxjs";
 import {RestaurantsList} from "../models/RestaurantsList";
@@ -17,12 +17,18 @@ import {Restaurant} from "../models/Restaurant";
 import {UserService} from "./user.service";
 import {Role} from "../models/Enums/Role";
 import {User} from "../models/User";
+import {restaurant} from "ionicons/icons";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestaurantsListService {
   private readonly ROOT = "restaurants-list"
+  private readonly mapRoleLabel = new Map<string, string>([
+    ["owner", "owner"],
+    ["writer", "collaborator"],
+    ["reader", "reader"],
+  ]);
 
   private firestore = inject(Firestore)
   private userService = inject(UserService)
@@ -70,14 +76,26 @@ export class RestaurantsListService {
     await setDoc(doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants`, `${restaurant.id}`), restaurant)
   }
 
+  async addRestaurants(idRestaurantsList: string, restaurants: Restaurant[]): Promise<void> {
+    restaurants.forEach(async (r) => (
+      await this.addRestaurant(idRestaurantsList, r)
+    ));
+  }
+
   /**
    * delete a restaurant from a list
    * @param idRestaurantsList list
    * @param restaurant restaurant to delete
    */
   async deleteRestaurant(idRestaurantsList: string, restaurant: Restaurant): Promise<void> {
-      const documentRef = doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants/${restaurant.id}`) as DocumentReference<Restaurant>
+    const documentRef = doc(this.firestore, `${this.ROOT}/${idRestaurantsList}/restaurants/${restaurant.id}`) as DocumentReference<Restaurant>
     await deleteDoc(documentRef);
+  }
+
+  async deleteRestaurants(idRestaurantsList: string, restaurants: Restaurant[]): Promise<void> {
+    restaurants.forEach(async (r) => {
+      await this.deleteRestaurant(idRestaurantsList, r);
+    })
   }
 
   /**
@@ -119,22 +137,38 @@ export class RestaurantsListService {
     await deleteDoc(documentRef)
   }
 
+  update(restaurantsList: RestaurantsList) {
+    console.log("update", restaurantsList)
+    let keys = Object.keys(restaurantsList.roles);
+    let values = Object.values(restaurantsList.roles);
+    let mapRole = {};
+    keys.forEach((id, index) => {
+      // @ts-ignore
+      mapRole[id] = values[index]
+    });
+    console.log(mapRole);
+
+    const documentRef = doc(this.firestore, `${this.ROOT}/${restaurantsList.id}`)
+    updateDoc(documentRef, {
+      name:restaurantsList.name,
+      roles: mapRole
+    })
+  }
+
   /**
    * Return the permission of the user on the given list
    * @param list list
    */
   getPermission(list: RestaurantsList, userId: string) : string {
-    let mapRoleLabel = new Map<string, string>([
-      ["owner", "owner"],
-      ["writer", "collaborator"],
-      ["reader", "reader"],
-    ]);
-
     let keys = Object.keys(list.roles);
     let values = Object.values(list.roles);
 
     let role: string = values[keys.indexOf(userId)]
-    let mappedRole = mapRoleLabel.get(role) ?? "reader";
+    let mappedRole = this.mapRoleLabel.get(role) ?? "undefined";
     return mappedRole;
+  }
+
+  getPermissionLabel(role: string) : string {
+    return this.mapRoleLabel.get(role) ?? 'undefined'
   }
 }
