@@ -86,7 +86,7 @@ export class LoginPage implements OnInit {
         }
 
         //Set up user Data
-        await this.userService.setUpCurrentUser(userCredential.user.email ?? "")
+        await this.userService.setUpCurrentUser(userCredential.user.uid ?? "")
         await this.redirectToHome()
       }
     }
@@ -165,6 +165,7 @@ export class LoginPage implements OnInit {
       user.lastname = "";
       user.email = fireUser.email ?? user.email;
       user.authenticationMethod = AuthenticationMethod.GOOGLE;
+      user.username = fireUser.displayName ?? user.firstname.concat(user.lastname);
 
       //Set up current user
       await this.userService.setUpCurrentUserFromGoogle(user)

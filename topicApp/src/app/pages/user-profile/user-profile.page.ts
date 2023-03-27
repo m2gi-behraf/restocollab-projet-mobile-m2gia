@@ -3,6 +3,8 @@ import {ModalController, NavController, ToastController} from "@ionic/angular";
 import {ConfirmDeletionComponent} from "../../modals/confirm-deletion/confirm-deletion.component";
 import {UserService} from "../../services/user.service";
 import {AuthService} from "../../services/auth.service";
+import {User} from "../../models/User";
+import {AuthenticationMethod} from "../../models/Enums/AuthenticationMethod";
 
 @Component({
   selector: 'app-user-profile',
@@ -40,5 +42,9 @@ export class UserProfilePage implements OnInit {
     }).then(async (toast) => {
       await toast.present();
     });
+  }
+
+  signInByEmail(user: User){
+    return user.authenticationMethod == AuthenticationMethod.EMAIL;
   }
 }
