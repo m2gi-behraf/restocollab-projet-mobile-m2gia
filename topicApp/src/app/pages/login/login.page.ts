@@ -72,7 +72,7 @@ export class LoginPage implements OnInit {
         //Check mail is verified here bc Firebase does not throw error if email not verified
         if(!userCredential.user.emailVerified){
           this.toastController.create({
-            message: "Please, verify your email before signing in",
+            message: "Please, verify your email before signing in.",
             duration: 1500,
             position: "bottom",
             color: 'danger'
