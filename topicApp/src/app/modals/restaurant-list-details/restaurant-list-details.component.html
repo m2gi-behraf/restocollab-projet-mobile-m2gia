@@ -31,11 +31,10 @@
             <ion-row>
           <ion-label>Collaborators</ion-label>
             </ion-row>
-            <ion-row>
-              <ion-label *ngFor="let collaborator of collaborators$ | async" class="collaborator">
+            <ion-row *ngFor="let collaborator of collaborators$ | async">
+              <ion-label class="collaborator">
                 User: {{collaborator.username}}
-                  • Permission: {{ getPermission(collaborator) }}
-
+                  • Permission: {{ getPermission(collaborator) + "\n" }}
               </ion-label>
             </ion-row>
           </ion-grid>
