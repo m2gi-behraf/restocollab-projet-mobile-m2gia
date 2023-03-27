@@ -35,7 +35,7 @@ export class ShareRestaurantComponent implements OnInit {
 
     if (smedia == "whatsapp")
       this.toastController.create({
-        message: "Sharing via Whatsapp is coming in v2.0",
+        message: "Sharing via Whatsapp is coming in v2.0!",
         duration: 1500,
         position: "bottom",
         color: 'medium'
