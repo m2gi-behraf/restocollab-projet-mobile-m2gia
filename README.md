@@ -25,5 +25,10 @@ Resto'collab is a mobile application that allows users to create an account, vie
 ## Deployment Link:
 * [RestoCollab](https://m2gi-mobile-behra-jawlakh.web.app)
 
+## Useful Links:
+* [Firestore Rules](https://console.firebase.google.com/u/0/project/m2gi-mobile-behra-jawlakh/firestore/rules)
+* [Debug Apk](https://github.com/m2gi-behraf/restocollab-projet-mobile-m2gia/releases/tag/v1.0.0-debug)
+* [Release Apk](https://github.com/m2gi-behraf/restocollab-projet-mobile-m2gia/releases/tag/v1.0.0-release)
+
 ## Acknowledgements:
 This project was developed by Jad JAWLAKH and Fabien BEHRA as part of the Android course at University Grenoble Alpes (ENSIMAG). We would like to thank our course instructors and teaching assistants for their support and guidance throughout the project.
