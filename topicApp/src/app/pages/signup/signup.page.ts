@@ -54,19 +54,19 @@ export class SignupPage implements OnInit {
         color: 'danger'
       });
       await toast.present();
-      console.log('Please provide all the required values!')
       return false;
     } else {
       const email = this.signupForm.controls['email'].value;
       const pwd = this.signupForm.controls['password'].value;
+      const username = this.signupForm.controls['username'].value;
       //todo: maybe check if the username is already taken
       // const username = this.signupForm.controls['username'].value;
-      
+
       // Check if email is already used.
-      if (await this.userService.isEmailAlreadyRegistered(email))
+      if (await this.userService.isUsernameAlreadyRegistered(username))
       {
         this.toastController.create({
-          message: "The given email is already registered, are you sure you used the right email address?",
+          message: "The given username already exists, please try another username.",
           duration: 1500,
           position: "bottom",
           color: 'danger'
@@ -87,22 +87,27 @@ export class SignupPage implements OnInit {
    */
   private async signUp(email: string, password: string): Promise<void> {
     //Creation of the user
+    let dateSplit = this.signupForm.controls['birthday'].value.split('/')
+    let dateOfBirth = new Date(`${dateSplit[1]}-${dateSplit[0]}-${dateSplit[2]}`)
+
     const user: User = {
       username: this.signupForm.controls['username'].value,
       firstname : this.signupForm.controls['firstname'].value,
       lastname : this.signupForm.controls['lastname'].value,
-      dateOfBirth : this.signupForm.controls['birthday'].value,
+      dateOfBirth : dateOfBirth,
       email : email,
       imageUrl: "",
       authenticationMethod : AuthenticationMethod.EMAIL,
       id: Date.now().toString() + (Math.random() * 100).toFixed().toString()
     }
 
+    console.log(user)
+
     //Add user in firestore
     const authResult = await this.authService.signUp(email, password)
     if (authResult[0]) {
       user.id = authResult[1]?.uid ?? user.id; //id fireAuth for userId
-      await this.userService.create(user);
+      //await this.userService.create(user);
     }
 
     //toast success
