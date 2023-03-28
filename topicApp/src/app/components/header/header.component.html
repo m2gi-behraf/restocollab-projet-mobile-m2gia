@@ -6,8 +6,8 @@
       <ion-icon name="notifications" slot="end" (click)="showNotifications()"></ion-icon>
       <ion-badge class="notifications-badge" color="danger">3</ion-badge>
       <ion-icon name="color-filter-outline" slot="end" (click)="showMyCollaborations()"></ion-icon>
-      <img *ngIf="user.imageUrl" src="{{user.imageUrl}}" class="user-avatar" (click)="goToUserProfile()" slot="end"/>
-      <img *ngIf="!user.imageUrl" src="https://raw.githubusercontent.com/m2gi-behraf/restocollab-projet-mobile-m2gia/main/topicApp/src/assets/images/user/user-profile-picture.jpg  " class="user-avatar" (click)="goToUserProfile()" slot="end"/>
+      <img *ngIf="user.imageUrl" src="{{user.imageUrl}}" class="user-avatar" (click)="goToUserProfile()" referrerpolicy="no-referrer" slot="end"/>
+      <img *ngIf="!user.imageUrl" src="https://raw.githubusercontent.com/m2gi-behraf/restocollab-projet-mobile-m2gia/main/topicApp/src/assets/images/user/user-profile-picture.jpg" referrerpolicy="no-referrer" class="user-avatar" (click)="goToUserProfile()" slot="end"/>
     </ion-toolbar>
   </ion-toolbar>
 </ion-header>
